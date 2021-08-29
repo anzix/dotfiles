@@ -111,7 +111,7 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 
 # List alias
-alias ls="colorls --group-directories-first"
+alias ls="lsd --group-directories-first"
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
