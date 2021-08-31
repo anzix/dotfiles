@@ -112,6 +112,17 @@ source $ZSH/oh-my-zsh.sh
 
 # List alias
 alias ls="lsd --group-dirs"
+alias i3=”nano ~/.config/i3/config” 
+alias y="yay -S" #установка.
+alias yn="yay -S --noconfirm" #установка без подтверждения.
+alias ys="yay" #поиск с дальнейшим выбором по цифре.
+alias ysn="yay --noconfirm" #поиск с дальнейшим выбором по цифре, без подтверждения.
+alias yc="yay -Sc" #очистка кэша.
+alias yy="yay -Syy" #синхронизация баз зеркал.
+alias yu="yay -Syyu" #обновление.
+alias yun="yay -Syyu --noconfirm" #обновление без подтверждения.
+alias yr="yay -R" #удаление пакет(а,ов).
+alias yrn="yay -R --noconfirm" #удаление пакет(а,ов) без подтверждения.
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
