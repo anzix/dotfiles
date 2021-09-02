@@ -125,7 +125,7 @@ alias h="htop"
 # Редактирования конфиг файлов
 alias i3=”nano ~/.config/i3/config” 
 alias poly="nano ~/.config/polybar/config
-alias picom="mamo ~/.config/picom/config
+alias picom="mamo ~/.config/picom/picom.conf
 
 # Alias yay 
 alias y="yay -S" #установка.
