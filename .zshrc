@@ -110,9 +110,24 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
-# List alias
+# Список полезных alias команд
 alias ls="lsd --group-dirs"
+alias l="ls -l"
+alias la="ls -a"
+alias lla="ls -la"
+alias lt="ls --tree"'
+
+# Запуск прог
+alias fm="ranger"
+alias h="htop"
+
+
+# Редактирования конфиг файлов
 alias i3=”nano ~/.config/i3/config” 
+alias poly="nano ~/.config/polybar/config
+alias picom="mamo ~/.config/picom/config
+
+# Alias yay 
 alias y="yay -S" #установка.
 alias yn="yay -S --noconfirm" #установка без подтверждения.
 alias ys="yay" #поиск с дальнейшим выбором по цифре.
@@ -123,6 +138,7 @@ alias yu="yay -Syyu" #обновление.
 alias yun="yay -Syyu --noconfirm" #обновление без подтверждения.
 alias yr="yay -R" #удаление пакет(а,ов).
 alias yrn="yay -R --noconfirm" #удаление пакет(а,ов) без подтверждения.
+
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
