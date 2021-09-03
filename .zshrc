@@ -115,17 +115,11 @@ alias ls="lsd --group-dirs"
 alias l="ls -l"
 alias la="ls -a"
 alias lla="ls -la"
-alias lt="ls --tree"'
-
-# Запуск прог
-alias fm="ranger"
-alias h="htop"
-
+alias lt="ls --tree"
 
 # Редактирования конфиг файлов
-alias i3=”nano ~/.config/i3/config” 
-alias poly="nano ~/.config/polybar/config
-alias picom="nano ~/.config/picom/picom.conf
+alias i3="nano ~/.config/i3/config"
+alias poly="nano ~/.config/polybar/config"
 
 # Alias yay 
 alias y="yay -S" #установка.
