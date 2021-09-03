@@ -112,19 +112,22 @@ source $ZSH/oh-my-zsh.sh
 
 # Список полезных alias команд
 alias ls="lsd --group-dirs"
-alias l="ls -l"
-alias la="ls -a"
-alias lla="ls -la"
-alias lt="ls --tree"
+alias l="ls -l" # подробный список 
+alias la="ls -a" # обычный список 
+alias lla="ls -la" # подробный список со скрытыми файлами
+alias lt="ls --tree" # дерево директорий
 
-# Редактирования конфиг файлов
-alias i3="nano ~/.config/i3/config"
+# Запуск прог
+alias fm="ranger"
+
+# Удобное редактирования конфиг файлов
+alias i3c="nano ~/.config/i3/config"
 alias poly="nano ~/.config/polybar/config"
 
 # Alias yay 
 alias y="yay -S" #установка.
 alias yn="yay -S --noconfirm" #установка без подтверждения.
-alias ys="yay" #поиск с дальнейшим выбором по цифре.
+alias ys="yay" #поиск пакетов с дальнейшим выбором по цифре.
 alias ysn="yay --noconfirm" #поиск с дальнейшим выбором по цифре, без подтверждения.
 alias yc="yay -Sc" #очистка кэша.
 alias yy="yay -Syy" #синхронизация баз зеркал.
@@ -137,7 +140,6 @@ alias yrn="yay -R --noconfirm" #удаление пакет(а,ов) без по
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
