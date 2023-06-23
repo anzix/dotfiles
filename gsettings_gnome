@@ -1,5 +1,5 @@
 #!/bin/bash
-# bla
+
 # Включает расширение app indicator (пакет: gnome-shell-extension-appindicator)
 gsettings set org.gnome.shell enabled-extensions "['appindicatorsupport@rgcjonas.gmail.com']"
 
