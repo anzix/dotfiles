@@ -3,7 +3,7 @@
 # https://github.com/arkenfox/user.js/blob/master/user.js
 # https://github.com/farag2/Mozilla-Firefox/blob/master/user.js
 # https://github.com/gjpin/arch-linux/blob/main/setup.sh
-# bla
+
 sudo -u $(whoami) timeout 5 firefox --headless
 for FIREFOX_PROFILE_PATH in $HOME/.mozilla/firefox/*.default*
 do
