@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<auxStuff>
+    <RPEvents/>
+    <ExecProfiles/>
+    <FanProfiles>
+        <fanProfile name="anix" hysteresis="0" sensorInstance="0">
+            <step temperature="4" speed="25"/>
+            <step temperature="16" speed="31"/>
+            <step temperature="29" speed="35"/>
+            <step temperature="40" speed="50"/>
+            <step temperature="52" speed="61"/>
+            <step temperature="62" speed="71"/>
+            <step temperature="72" speed="85"/>
+            <step temperature="79" speed="100"/>
+        </fanProfile>
+        <fanProfile name="default" hysteresis="0" sensorInstance="0">
+            <step temperature="40" speed="35"/>
+            <step temperature="65" speed="100"/>
+        </fanProfile>
+    </FanProfiles>
+    <Plots/>
+    <TopbarItems>
+        <topbarItem type="0" primaryValueId="0" primaryColor="#fcfcfc" secondaryValueIdEnabled="1" secondaryValueId="1" secondaryColor="#fcfcfc" pieMaxValue="100"/>
+        <topbarItem type="1" primaryValueId="6" primaryColor="#fcfcfc" secondaryValueIdEnabled="0" secondaryValueId="65304" secondaryColor="#000000" pieMaxValue="100"/>
+        <topbarItem type="2" primaryValueId="13" primaryColor="#0000ff" secondaryValueIdEnabled="0" secondaryValueId="65304" secondaryColor="#000000" pieMaxValue="100"/>
+        <topbarItem type="2" primaryValueId="10" primaryColor="#ff0000" secondaryValueIdEnabled="0" secondaryValueId="65304" secondaryColor="#000000" pieMaxValue="100"/>
+        <topbarItem type="2" primaryValueId="11" primaryColor="#ffff00" secondaryValueIdEnabled="0" secondaryValueId="65304" secondaryColor="#000000" pieMaxValue="100"/>
+    </TopbarItems>
+    <OcProfiles>
+        <ocProfile name="default" powerCap="175">
+            <table tableName="OD_MCLK">
+                <state enabled="1" stateNumber="0" frequency="300" voltage="750"/>
+                <state enabled="1" stateNumber="1" frequency="1000" voltage="800"/>
+                <state enabled="1" stateNumber="2" frequency="1750" voltage="950"/>
+            </table>
+            <table tableName="OD_SCLK">
+                <state enabled="1" stateNumber="0" frequency="300" voltage="750"/>
+                <state enabled="1" stateNumber="1" frequency="600" voltage="769"/>
+                <state enabled="1" stateNumber="2" frequency="900" voltage="900"/>
+                <state enabled="1" stateNumber="3" frequency="1145" voltage="1112"/>
+                <state enabled="1" stateNumber="4" frequency="1215" voltage="1193"/>
+                <state enabled="1" stateNumber="5" frequency="1257" voltage="1150"/>
+                <state enabled="1" stateNumber="6" frequency="1300" voltage="1150"/>
+                <state enabled="1" stateNumber="7" frequency="1411" voltage="1150"/>
+            </table>
+        </ocProfile>
+    </OcProfiles>
+</auxStuff>

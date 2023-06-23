@@ -1,0 +1,156 @@
+# Мануал о всех опциях: man 'dunst(5)'
+# Бинды по dunst находятся в sxhkdrc
+
+[global]
+
+# --- Дисплей --- #
+
+    monitor = 0                  # Монитор на котором будет отображаться
+    follow = mouse               # Придерживаться [mouse/keyboard/none]
+    width = 500                  # Ширина
+    offset = 20x50               # Смещение
+    progress_bar_max_width = 500 # Макс. ширина полосы прогресс бара (сопоставляйте с параметром width)
+
+    # Показывает сколько сообщений скрыто
+    indicate_hidden = true
+
+    # Обрезать окно, если меньше чем ширина (игнорируется, если ширина 0)
+    shrink = no
+
+    # Отступ между текстом и разделителем (сепаратором)
+    padding = 8
+
+    # Горизонтальный отступ
+    horizontal_padding = 8
+
+    # Расстояние в пикселях от текста до иконки (или наоборот) в горизонтальную ось.
+    text_icon_padding = 0
+
+    # Рисовать линию между несколькими уведомлениями
+    separator_height = 2
+
+    # Цвет для разделителя: auto/foreground/frame/X color
+    separator_color = frame
+
+    # Отключает рамку (границу)
+    frame_width = 2
+    frame_color = "#4A5057"
+
+    # Сортировать сообщения по важности (urgency)
+    sort = yes
+
+    # Время простаивания (секунд)
+    idle_threshold = 120
+
+# --- Text --- #
+
+    # Шрифт уведомлений: Пакет AUR: nerd-fonts-jetbrains-mono
+    font = JetBrains Mono Nerd Font Medium 10
+
+    # Устанавливат высоту строк до высоты шрифта
+    line_height = 0
+
+    markup = full
+    format = "<b>%s</b>\n%b"
+
+    # Выровнять текст left/center/right
+    alignment = left
+
+    # Вертикальное выравнивание текста сообщения и иконок
+    vertical_alignment = center
+
+    # Показать, если сообщение старше X секунд (-1 для откл)
+    show_age_threshold = 60
+
+    # Warp слов, если они не вписывается в геометрию
+    word_wrap = yes
+
+    # Где размещать эллипсы, если опция word_wrap отключена
+    ellipsize = middle
+
+    # Игнорировать новую строку \n в уведомлении
+    ignore_newline = no
+
+    # Стакать дубликаты
+    stack_duplicates = true
+
+    # Скрывать кол-во (цифр) стакнутых уведомлений
+    hide_duplicate_count = false
+
+    # Отображать индикаторы для URL (U) и действий (A)
+    show_indicators = yes
+
+# ---- Icons ---- #
+
+    # icon_position = left    # Размещение иконок left/right/off
+    min_icon_size = 0       # Размер мелких иконок в уведомление
+    max_icon_size = 70      # Размер крупных иконок в уведомлении
+
+    # Пути иконок из темы Papirus
+    icon_path = /usr/share/icons/ePapirus/128x128/apps:/usr/share/icons/ePapirus/128x128/devices:/usr/share/icons/ePapirus/128x128/mimetypes:/usr/share/icons/ePapirus/128x128/places:/usr/share/icons/Papirus/48x48/actions:/usr/share/icons/Papirus/48x48/apps:/usr/share/icons/Papirus/48x48/devices:/usr/share/icons/Papirus/48x48:emblems:/usr/share/icons/Papirus/48x48/emotes:/usr/share/icons/Papirus/48x48/mimetypes:/usr/share/icons/Papirus/48x48/places:/usr/share/icons/Papirus/48x48/status:/usr/share/icons/Papirus/16x16/actions:/usr/share/icons/Papirus/16x16/apps:/usr/share/icons/Papirus/16x16/devices:/usr/share/icons/Papirus/16x16/emblems:/usr/share/icons/Papirus/16x16/emotes:/usr/share/icons/Papirus/16x16/mimetypes:/usr/share/icons/Papirus/16x16/panel:/usr/share/icons/Papirus/16x16/places:/usr/share/icons/Papirus/16x16/status
+
+
+# --- History --- #
+
+    # Избегать сроков скрытых уведомлений
+    sticky_history = yes
+
+    # Держать максимальное кол-во уведомлений в истории
+    history_length = 30
+
+# --- Misc/Advanced --- #
+
+    # Для вывода контекстного меню для URL (необходим пакет dmenu)
+    dmenu = /usr/bin/dmenu -p dunst
+
+    # Браузер для открытия url в контекстного меню
+    browser = /usr/bin/firefox -new-tab
+
+    # Всегда запустите правило, определяемые скриптами, даже если уведомление подавлено
+    always_run_script = true
+
+    # Определяет название заголовка, вызванного Dunst
+    title = Dunst
+
+    # Определите название окна, вызванного Dunst
+    class = Dunst
+
+    # Не игнорировать сообщение DBus Close уведомления
+    ignore_dbusclose = false
+
+
+# --- Legacy --- #
+
+    # Принудительно юзать вывод X11, даже на композиторе wayland
+    force_xwayland = false
+
+    # Юзать расширение Xinerama вместо Randr для поддержки Multi-Monitor
+    force_xinerama = false
+
+# --- Mouse --- #
+
+	# Для (U)RL - MMB
+	# Для (A)ction - LMB
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = context
+    mouse_right_click = close_all
+
+[experimental]
+    per_monitor_dpi = false
+
+[urgency_low]
+    background = "#11121D"
+    foreground = "#A0A8CD"
+    timeout = 8
+
+[urgency_normal]
+    background = "#11121D"
+    foreground = "#A0A8CD"
+    timeout = 8
+
+[urgency_critical]
+    background = "#11121D"
+    foreground = "#EE6D85"
+    timeout = 0
+
+# vim: ft=cfg

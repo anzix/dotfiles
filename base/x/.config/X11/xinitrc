@@ -1,0 +1,74 @@
+#!/bin/sh
+
+# user init scripts and settings
+[ -r $HOME/.config/X11/Xresources ] && xrdb -merge $HOME/.config/X11/Xresources
+
+# Запускает всё что находится в xinitrc.d/
+# !Не убирать данную строку во избежании медленного запуска GTK программ!
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+ for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+  [ -x "$f" ] && . "$f"
+ done
+ unset f
+fi
+
+# В инном случае раскомментируйте ниже строку чтобы избежать медленного старта GTK программ
+# dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+
+# Скорость печатания
+# Пояснение:
+# xset r rate [м/сек задержки] [м/сек скорости]
+xset r rate 210 35
+
+# Отключает bell
+xset -b
+
+# Отключает screen saver и функцию Energy Star (энергосбережение)
+xset s off -dpms
+
+# Вызывает splash скрин пред запуском сессии (необходим пакет xorg-xsetroot)
+xsetroot -solid black
+
+# Запасной курсор (Fallback)
+xsetroot -cursor_name left_ptr &
+
+# Caps -=> Escape
+# setxkbmap -option caps:escape
+# Caps -=> Ctrl
+# setxkbmap -option ctrl:nocaps
+
+# Исправление скролла мыши (Неактуально)
+# imwheel -b "45"
+
+# Запуск прог
+# /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & # Polkit аутентификатор
+/usr/bin/lxqt-policykit-agent &
+picom -b & # Композитор (b) - в фоне
+mpd & # Музыкальный демон
+mpDris2 & # Чтобы работал playerctl для mpd
+udiskie -At & # Монтирование usb флешек с треем (A) - без авто монтирования (t) - трей
+pasystray & # Мини версия pavucontrol с треем
+dunst & # Демон уведомлений
+keepassxc & # Менеджер паролей
+greenclip daemon & # dmenu менеджер буфера обмена
+cdemu-daemon & # Эмуляция iso образов
+nitrogen --restore & # Менеджер обоев (чтобы обои не слетали)
+# corectrl & # GUI контроль видюхи (необходимо добавить polkit правило для no root pass)
+steam -silent &
+# steam-native -silent &
+redshift & # Беречь глаза
+otd & # Драйвера opentabletdriver для XP-PEN G640
+# bluetoothctl power on & Включение Bluetooth
+# unclutter & # Убирает мышь при 5 сек простоя
+# blueman-applet & # Трей менеджера Bluetooth
+# copyq & # QT менеджер буфера обмена
+# kdeconnecttd & # Демон kdeconnect
+# kdeconnect-indicator & # Индикатор (трей) kdeconnect
+# telegram-desktop -startintray &
+
+xrandr --output DisplayPort-1 --mode 1920x1080 --rate 144
+
+# Запуск сессии, команды ниже этой линии будут игнорироваться.
+# Для подробностями man dbus-launch
+exec i3
+# dbus-launch --sh-syntax --exit-with-session

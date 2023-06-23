@@ -1,0 +1,11 @@
+feh --image-bg=black \
+--draw-filename \
+--scale-down \
+--auto-zoom \
+--fontpath /usr/share/fonts/TTF \
+--font Roboto-Regular/11 \
+--menu-font Roboto-Regular/11 \
+--action1 ";[Скопировать изображение в буфер обмена] xclip -selection clipboard -t image/png < %F && dunstify 'Изображение скопировано!' '%F'" \
+--action2 ";[Скопировать путь в буфер обмена] echo %F | xclip -i -selection clipboard && dunstify 'Путь к файлу скопирован' '%F'"  \
+--action3 ";[Отредактировать используя Gimp] gimp %F &" \
+--action4 ";[Показать в проводнике pcmanfm] pcmanfm %F/.. &"

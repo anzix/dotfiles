@@ -1,0 +1,173 @@
+# 1. sudo pacman -S ueberzug
+# 2. The scope file (~/.config/lf/scope for me), must have a command similar to
+#    mine to generate ueberzug images.
+# 3. A `set cleaner` line as below is a cleaner script.
+# 4. lf should be started through a wrapper script (~/.local/bin/lfub for me)
+#    that creates the environment for ueberzug. This command can be be aliased
+#    in your shellrc (`alias lf="lfub") or if set to a binding, should be
+#    called directly instead of normal lf.
+
+# Опции
+set hidden true
+set ignorecase true
+set shellopts '-eu'
+set ifs "\n"
+set scrolloff 10
+set icons
+set period 1
+set cleaner '~/.config/lf/cleaner'
+set previewer '~/.config/lf/scope'
+
+# define a custom 'open' command
+cmd open ${{
+    case $(file --mime-type "$(readlink -f $f)" -b) in
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+			localc $fx ;;
+        image/vnd.djvu|application/pdf|application/octet-stream|application/postscript)
+			setsid -f zathura $fx >/dev/null 2>&1 ;;
+        text/*|application/json|inode/x-empty)
+			$EDITOR $fx;;
+        image/x-xcf)
+			setsid -f gimp $f >/dev/null 2>&1 ;;
+        image/svg+xml)
+			display -- $f ;;
+        image/*)
+			setsid -f nsxiv-rifle $f >/dev/null 2>&1 ;;
+        audio/*)
+			mpv --audio-display=no --quiet=no $f ;;
+        video/*)
+			setsid -f mpv $f -quiet >/dev/null 2>&1 ;;
+		application/x-rar)
+			setsid -f file-roller $fx >/dev/null 2>&1 ;;
+        application/pdf|application/vnd*|application/epub*)
+			setsid -f zathura $fx >/dev/null 2>&1 ;;
+        application/pgp-encrypted)
+			$EDITOR $fx ;;
+        *) setsid -f xdg-open "$f" ;;
+    esac
+}}
+
+cmd mkd $mkdir -p "$(echo $* | tr ' ' '\ ')"
+
+# Необходим пакет atool
+# cmd ex ${{
+# 	clear; tput cup $(($(tput lines)/3)); tput bold
+# 	set -f
+# 	printf "%s\n\t" "$fx"
+# 	printf "Распаковать?[y/N]"
+# 	read ans
+# 	[ $ans = "y" ] && aunpack $fx
+# }}
+
+# Распаковать
+cmd ex ${{
+    set -f
+    case $f in
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
+        *.tar.gz|*.tgz) tar xzvf $f;;
+        *.tar.xz|*.txz) tar xJvf $f;;
+        *.zip) unzip $f;;
+        *.rar) unrar x $f;;
+        *.7z) 7z x $f;;
+    esac
+}}
+
+# Сжатие текущего файла или выбранных файлов с помощью TAR и Gunzip
+cmd tar ${{
+    set -f
+    mkdir $1
+    cp -r $fx $1
+    tar czf $1.tar.gz $1
+    rm -rf $1
+}}
+
+cmd del ${{
+	clear; tput cup $(($(tput lines)/3)); tput bold
+	set -f
+	printf "%s\n\t" "$fx"
+	printf "Удалить?[y/N]"
+	read ans
+	[ $ans = "y" ] && rm -rf -- $fx
+}}
+
+# cmd mvto ${{
+# 	clear; tput cup $(($(tput lines)/3)); tput bold
+# 	set -f
+# 	clear; echo "Куда переместить?"
+# 	dest="$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf | sed 's|~|$HOME|')" &&
+# 	for x in $fx; do
+# 		eval mv -iv \"$x\" \"$dest\"
+# 	done &&
+# 	notify-send " File(s) moved to $dest.""
+# }}
+
+# cmd cpto ${{
+# 	clear; tput cup $(($(tput lines)/3)); tput bold
+# 	set -f
+# 	clear; echo "Copy to where?"
+# 	dest="$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf | sed 's|~|$HOME|')" &&
+# 	for x in $fx; do
+# 		eval cp -ivr \"$x\" \"$dest\"
+# 	done &&
+# 	notify-send " File(s) copies to $dest."
+# }}
+
+# Массовое переименовывание
+# from: https://github.com/gokcehan/lf/wiki/Tips#bulk-rename-multiple-files
+cmd bulk-rename ${{
+  old="$(mktemp)"
+  new="$(mktemp)"
+  [ -z "$fs" ] && fs="$(ls)"
+  printf '%s\n' "$fs" >"$old"
+  printf '%s\n' "$fs" >"$new"
+  $EDITOR "$new"
+  [ "$(wc -l <"$new")" -ne "$(wc -l <"$old")" ] && exit
+  paste "$old" "$new" | while IFS= read -r names; do
+    src="$(printf '%s' "$names" | cut -f1)"
+    dst="$(printf '%s' "$names" | cut -f2)"
+    if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+      continue
+    fi
+    mv -- "$src" "$dst"
+  done
+  rm -- "$old" "$new"
+  lf -remote "send $id unselect"
+}}
+
+
+cmd setbg "$1"
+cmd setexecutable %chmod +x "$f"
+
+# Бинды
+map <c-f> $lf -remote "send $id select '$(fzf)'"
+map J $lf -remote "send $id cd $(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs | fzf)"
+map gh
+map g top
+map D del
+map E ex
+map C cpto
+map M mvto
+map <c-n> push :mkdir<space>
+map <c-r> reload
+map <c-s> set hidden!
+map <enter> shell
+map x $$f
+map X setexecutable
+map o &mimeopen $f
+map O $mimeopen --ask $f
+
+map A rename # at the very end
+map c push A<c-u> # new rename
+map I push A<c-a> # at the very beginning
+map i push A<a-b><a-b><a-f> # before extention
+map a push A<a-b> # after extention
+map B bulkrename
+map b $setbg $f
+
+map <c-e> down
+map <c-y> up
+map V push :!nvim<space>
+
+map W $setsid -f $TERMINAL >/dev/null 2>&1
+
+map Y $printf "%s" "$fx" | xclip -selection clipboard

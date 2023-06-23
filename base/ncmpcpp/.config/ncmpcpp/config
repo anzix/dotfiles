@@ -1,0 +1,54 @@
+# Директории
+# ---
+ncmpcpp_directory = "~/.config/ncmpcpp"
+lyrics_directory = "~/.local/share/lyrics"
+mpd_music_dir "/media/Media/music"
+
+# Основное
+# ---
+display_bitrate = "yes" # Отображать битрейт
+autocenter_mode = "yes" # Центрировать играющий трек в списке
+lines_scrolled = "2" # Скрол за 1 ход
+
+# Playlist View
+playlist_display_mode = classic
+song_list_format = "$7{%t}|{%D}$8 · $5%a$R $6%l"
+song_status_format = "{{%a{ $6·$9 %b{, %y}} $6·$9 }{%t$/b}}|{$b%f$/b}"
+now_playing_prefix = ">> $b"
+now_playing_suffix = "$/b"
+
+# Цвета
+main_window_color = "blue"
+current_item_prefix = "$(blue)$r"
+current_item_suffix = "$/r$(end)"
+
+# --- Настройка визуализации
+visualizer_data_source = /tmp/mpd.fifo
+visualizer_output_name = "Visualizer feed"
+visualizer_in_stereo = yes
+visualizer_type = ellipse
+visualizer_color =  8, 9, 2, 1
+
+## Список визуализаций (только один активный на выбор)
+# visualizer_look = "∗▐"
+# visualizer_look = "▒░"
+# visualizer_look = "◈░"
+# visualizer_look = "┃┃"
+# visualizer_look = ●┃
+# visualizer_look = "█┇"
+# visualizer_look = "▒░"
+# visualizer_look = "▋▍"
+# visualizer_look = "▋█"
+# visualizer_look = "▋█"
+# visualizer_look = "▋░"
+# visualizer_look = "▋▓"
+# visualizer_look = "▋☰"
+visualizer_look = "☰⛆"
+# visualizer_look = "☰▓"
+
+## Список прогремм бара (только один активный на выбор)
+progressbar_look = "┅┅┄"
+# progressbar_look = "░█ "
+# progressbar_look = "▒▒░"
+# progressbar_look = "=>"
+# progressbar_look = "─⊙┄"

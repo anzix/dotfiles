@@ -1,0 +1,7 @@
+[user]
+	email = givefly3@gmail.com
+	name = anzix
+[core]
+	sparseCheckout = true
+[pull]
+	ff = only

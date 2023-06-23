@@ -1,0 +1,137 @@
+### Построение для длинных команд
+# | (pipe) данные 1-ой команды действуют как входные данные для 2-ой команды
+# && (and) 2-ая команда будет выполнена только в том случае, если 1-ая успешно выполнена (юзать вместе с \)
+# \ (backslash) для объединения больших команд, распределение следующей команды вниз
+# ; является цепочкой для последовательной командой, выполняется за раз (полезно для для вывода уведомлений)
+
+# Не забывать о $PATH переменной в которой находится скрипты
+# Полный путь до скрипта не нужно прописывать в sxhkdrc
+
+# dmenu
+super + shift + space
+    dmenu_run
+
+# super + @space
+#     rofi -show drun
+
+# emoji menu
+mod1 + f
+	unicode_emoji
+
+# make sxhkd reload its configuration files
+super + Escape
+	pkill -USR1 -x sxhkd && notify-send "sxhkd" "Config reloaded"
+
+# Clipboard Manager CopyQ Quick Menu
+# ctrl + alt + x
+    # copyq menu
+
+# --- Screenshots --- #
+
+# Скрин всего экрана, без clipboard
+Print
+	IMG=~/Pictures/Screenshots/$(date +%s).png \
+    && maim $IMG \
+    && notify-send -i $IMG \
+    "Скриншот сохранён" "Место: $IMG" || notify-send "Failed to take screenshot"
+
+
+# Скрин с выделением области или клик на выбранное окно
+super + shift + s
+	PIC=~/Pictures/Screenshots/$(date +%s).png \
+	&& maim -suof png $PIC \
+	&& cat $PIC | xclip -selection clipboard -t image/png \
+	&& notify-send -i $PIC \
+	"Обрезанный скриншот сохранён в буфер обмена" "Место: $PIC" || notify-send "Failed to take screenshot"
+
+# Скрин окна который в фокусе (для тех у кого нету мышки)
+# super + 
+#     maim ~/Pictures/Screenshots/$(date +%s).png -ui \
+#     $(xdotool getactivewindow) \
+#     && notify-send -i ~/Pictures/Screenshots/$(date +%s).png \
+#     "Фокус скриншота сохранён" "Место: ~/Picturesg/Screenshots \nИмя: $(date +%s).png" || notify-send "Failed to take screenshot"
+
+# Сканер палитры
+super + shift + d
+    notify-send "Color Picker" "Выберите цвет" && \
+    maim /tmp/color-picker.png -ug $(slop -t 0) && \
+    convert -size 100x100 xc:"$(convert /tmp/color-picker.png -format '#%[hex:s]\n' info:)" /tmp/color-picker.png && \
+    notify-send -i /tmp/color-picker.png "Палитра скопирована в буфер обмена" $(convert /tmp/color-picker.png -format "#%[hex:s]\n" info:) && \
+    convert /tmp/color-picker.png -format "#%[hex:s]\n" info: | xclip -sel c
+
+# OCR сканер maim + tesseract + xclip
+super + shift + f
+    maim-ocr
+
+# QR сканер maim + zbar + xclip
+super + shift + Print
+    qr-scan
+
+# Быстрый перевод на Русский (tesseract + translate-shell + xclip)
+alt + r
+	ocr-translate
+
+# --- Giph --- #
+# https://github.com/phisch/giph
+
+# Начать/Остановить запись GIF рекордера
+ctrl + Print
+    { giph -f $(echo "Кол-во кадров в секунду" | dmenu) -s -o -y \
+    ~/Pictures/Gif/$(date +%s).gif, dunstify "Запись остановлена"; giph --stop }
+
+# Запись с выбором кол-во кадров и продолжительности записи
+ctrl + alt + Print
+    giph -f $(echo "Кол-во кадров в секунду" | dmenu) -s -o -y \
+    -t $(echo "Сколько секунд записать?" | dmenu) \
+    ~/Pictures/Gif/$(date +%s).gif
+
+
+
+# --- Dunst --- #
+
+# История уведомлений Dunst win+`
+super + grave
+    dunstctl history-pop
+
+# Greenclip clipboard manager [dmenu]
+super + v
+	dmenu-greenclip
+
+#	"greenclip print | grep . | dmenu -i -l 10 -p clipboard | xargs -r -d'\n' -I '{}' greenclip print '{}'"
+
+# ---- Flameshots ----#
+
+# Скрин всего экрана
+# Print
+#     flameshot full -p ~/Pictures/Screenshots
+
+# # Скрин с выделением и сохранением в буфер обмена
+# super + shift + s
+#     flameshot gui -c -p ~/Pictures/Screenshots
+
+
+# Бинды sxhkd
+super + F2
+    cat ~/.config/sxhkd/sxhkdrc | awk '/^[a-z]/ && last \{print $0,"\t",last\} \{last=""\} /^#/\{last=$0\}' | column -t -s $'\t' | rofi -dmenu -no-show-icons -i -p "sxhkd"
+
+
+
+# [mpc] Next/Prev track
+super + alt + {period, comma}
+    mpc {next, prev}
+
+# [mpc] Seek-/+ track
+super + alt + {bracketleft, bracketright}
+    mpc seek {-10, +10}
+
+
+# Рестарт WM и других штук
+# super + shift + r
+#     i3-msg restart | \
+#     pkill -USR1 -x sxhkd; \
+#     notify-send -t 600 'Maim' 'i3+sxhkd перезапущены'
+
+
+
+
+#:se ft=sh

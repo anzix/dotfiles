@@ -1,0 +1,33 @@
+#!/bin/bash
+# nowebp - find and convert WEBP images
+#
+# Usage: nowebp [DIR]
+#
+# nowebp searches the directory hierarchy starting from DIR (current
+# directory if absent) for images in WEBP format, and converts each
+# image it finds to PNG or JPG, depending on whether it is compressed
+# losslessly or contains transparent pixels, or neither, respectively.
+
+export LC_ALL=C
+
+find "${1-.}" \
+    -type f \( -name '*.webp' -o -name '*.jpg' -o -name '*.png' \) \
+    -exec sh -c '
+for file; do
+    case $(head -c 42 "$file" | tr -c A-Z0-9 x) in
+    RIFF????WEBPVP8X??????????????ANIM* | RIFF????WEBPVP8X??????????????ICCP????ANIM)
+        printf "%s: animated WEBP not supported\n" "$file" >&2
+        continue ;;
+    RIFF????WEBPVP8L* | RIFF????WEBPVP8X??????????????ALPH*)
+        format=png ;;
+    RIFF????WEBPVP8*)
+        format=jpg ;;
+    *)
+        continue
+    esac
+
+    ffmpeg -loglevel error -i "$file" "$file.$format" &&
+        rm -i "$file"
+done' sh {} +
+
+# vi: ft=sh

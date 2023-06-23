@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# Описание: Обнаруживает отсутствующие библиотеки и устанавливает их
+# Вдохновение: https://github.com/Forkk/MultiMC5/blob/master/package/linux/MultiMC
+# Использование: lddfix [исполняемый файл]
+
+# Печатать команды и их аргументы по мере их выполнения.
+# set -x
+# немедленно завершить работу, если команда завершается с ненулевым статусом.
+# set -e
+
+DEPS_LIST=$(ldd "$1" 2>/dev/null | grep "not found" | awk -vORS=", " '{ print $1 }')
+
+if [ "x$DEPS_LIST" = "x" ]; then
+
+	echo "Не найдены отсутствующие зависимости."
+
+	# Exit code.
+	exit $?
+else
+	#apt
+	if which apt-file 2>/dev/null; then
+		LIBRARIES=$(echo "$DEPS_LIST" | grep -oP "[^, ]*")
+		COMMAND_LIBS=$(for LIBRARY in $LIBRARIES; do apt-file -l search $LIBRARY; done)
+		echo "$COMMAND_LIBS" | awk -vORS=" " '{ print $1 }'
+		sudo apt-get install "$COMMAND_LIBS"
+
+	# pacman (работает)
+	elif which pkgfile 2>/dev/null; then
+		LIBRARIES=$(echo "$DEPS_LIST" | grep -oP "[^, ]*")
+		COMMAND_LIBS=$(for LIBRARY in $LIBRARIES; do pkgfile $LIBRARY; done)
+		echo "$COMMAND_LIBS" | awk -vORS=" " '{ print $1 }'
+		sudo pacman -S "$COMMAND_LIBS"
+
+	# yum
+	elif which yum 2>/dev/null; then
+		LIBRARIES=$(echo "$DEPS_LIST" | grep -oP "[^, ]*")
+		COMMAND_LIBS=$(for LIBRARY in $LIBRARIES; do yum whatprovides $LIBRARY; done)
+		echo "$COMMAND_LIBS" | awk -vORS=" " '{ print $1 }'
+		sudo yum install "$COMMAND_LIBS"
+
+	# zypper
+	elif which zypper 2>/dev/null; then
+		LIBRARIES=$(echo "$DEPS_LIST" | grep -oP "[^, ]*")
+		COMMAND_LIBS=$(for LIBRARY in $LIBRARIES; do zypper wp $LIBRARY; done)
+		echo "$COMMAND_LIBS" | awk -vORS=" " '{ print $1 }'
+		sudo zypper install "$COMMAND_LIBS"
+
+	# emerge
+	elif which pfl 2>/dev/null; then
+		LIBRARIES=$(echo "$DEPS_LIST" | grep -oP "[^, ]*")
+		COMMAND_LIBS=$(for LIBRARY in $LIBRARIES; do pfl $LIBRARY; done)
+		echo "$COMMAND_LIBS" | awk -vORS=" " '{ print $1 }'
+		sudo emerge "$COMMAND_LIBS"
+	fi
+fi

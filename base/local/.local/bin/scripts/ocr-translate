@@ -1,0 +1,12 @@
+#!/bin/bash
+IMAGE_NAME=/tmp/_.png
+FILE_NAME=/tmp/_.txt
+FILE_TMP=/tmp/__.txt
+x=$IMAGE_NAME && touch $x && maim -suo $x
+tesseract -l eng+jpn --dpi 200 $IMAGE_NAME "$(echo $FILE_NAME | awk '{split($0, a, "."); print a[1]}')"
+sed '/^[[:space:]]*$/d' $FILE_NAME > $FILE_TMP
+cat $FILE_TMP # | xclip -sel c # Для доступа к оригинальному скопированному тексту
+translation=$(trans -b "$(cat $FILE_TMP)")
+echo -n "$translation" | xclip -sel c # Для доступа к переведённому тексту
+notify-send "Перевод" "$translation"
+rm $IMAGE_NAME $FILE_NAME $FILE_TMP

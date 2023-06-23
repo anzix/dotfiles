@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Завершить текущие экземпляры polybar
+killall -q polybar
+
+# Запуск Polybar с пользовательским конфиг файлом в ~/.config/polybar/config.ini
+# example — название бара (название должно совпадать с конфиг файлом бара)
+# -r автоматически перезапустит бар при изменении его конфига
+# Запись логов в файл
+polybar example -r 2>&1 | tee -a /tmp/polybar.log & disown
+
+echo "Polybar запускается..."

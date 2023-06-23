@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Включает расширение app indicator (пакет: gnome-shell-extension-appindicator)
+gsettings set org.gnome.shell enabled-extensions "['appindicatorsupport@rgcjonas.gmail.com']"
+
+# Скорость печатания
+gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval 35
+gsettings set org.gnome.desktop.peripherals.keyboard delay 210
+
+# Позволяет увеличение звука выше 100%
+gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
+# Отключает bell
+gsettings set org.gnome.desktop.sound event-sounds false
+
+# GTK file-chooser
+# Сортировка директорий
+gsettings set org.gtk.Settings.FileChooser sort-directories-first true
+
+# Проводник nautilus
+gsettings set org.gnome.nautilus.icon-view default-zoom-level 'small'
+# Включает кнопку "Создать ссылку"
+gsettings set org.gnome.nautilus.preferences show-create-link true
+# Всегда показывать место ввода текста
+gsettings set org.gnome.nautilus.preferences always-use-location-entry true
+
+
+# Текстовый редактов (TextEditor)
+# Показывать номера строк
+gsettings set org.gnome.TextEditor show-line-numbers true
+# Показывать обзорную карту
+gsettings set org.gnome.TextEditor show-map true
+
+# Показывать день недели
+gsettings set org.gnome.desktop.calendar show-weekdate true
+
+
+# Отключение ускорение мыши
+gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat'
+
+# Смена моноширного шрифта терминала (Консоль Gnome) для отображения иконок
+# Pacman: ttf-hack-nerd или ttf-jetbrains-mono-nerd
+gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMono Nerd Font Medium 10' # 'Hack Nerd Font 10'
+
+# Шрифт
+gsettings set org.gnome.desktop.interface font-name 'Noto Sans 10' # Текст интерфейса
+gsettings set org.gnome.desktop.interface document-font-name 'Noto Sans 10' # Текст документа
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Noto Sans Bold 10' # Текст в устаревших заголовках окон
+
+# Не отключать пользовательские расширения
+gsettings set org.gnome.shell disable-user-extensions false
+
+# Добавляет кнопки Свернуть и Развернуть
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+
+# Не блокировать экран при включении скринсейвера
+gsettings set org.gnome.desktop.screensaver lock-enabled false
+
+# Время блокировка экрана, когда пользователь бездействует 11 минут (в секундах, по умолчанию 300 - 5 минут, 0 - выкл)
+gsettings set org.gnome.desktop.session idle-delay 600
+
+# Бинды
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['']"
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward "['']"
+
+gsettings set org.gnome.desktop.wm.keybindings close "['<Shift><Super>q']"
+gsettings set org.gnome.desktop.wm.keybindings switch-applications "[]"
+gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "[]"
+gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
+gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Alt>Tab']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>1']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>2']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>3']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>4']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Super>exclam']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Super>at']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Super>numbersign']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Super>dollar']"
+
+gsettings set org.gnome.shell.keybindings show-screen-recording-ui "['<Ctrl><Shift><Alt>R']"
+gsettings set org.gnome.shell.keybindings switch-to-application-1 "[]"
+gsettings set org.gnome.shell.keybindings switch-to-application-2 "[]"
+gsettings set org.gnome.shell.keybindings switch-to-application-3 "[]"
+gsettings set org.gnome.shell.keybindings switch-to-application-4 "[]"
+
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
+
+# Keybind 0
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "kgx"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Gnome Console"
+
+# Keybind 1
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Super>E"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "nautilus"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name "Nautilus"
+
+# Keybind 2
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding "<Shift><Control>Escape"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command "gnome-system-monitor"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name "Gnome System Monitor"

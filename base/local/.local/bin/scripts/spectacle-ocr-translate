@@ -1,0 +1,12 @@
+#!/bin/bash
+IMG="/tmp/scr.jpg"
+spectacle --background --region --nonotify --output $IMG
+# If press exit button
+[ ! -f $IMG ] && exit 0
+
+# Run tesseract
+TEXT="$(tesseract -l eng+jpn "$IMG" -)"
+translation=$(trans -b "$(echo -n $TEXT)")
+echo -n $translation | xclip -sel c
+notify-send -t 9000 "OCR перевод" "$translation"
+rm -f "$IMG"

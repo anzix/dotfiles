@@ -1,0 +1,47 @@
+# Мануал: man zathurarc
+
+# --- Основное ---
+
+# Шрифт
+set font Hack normal 9
+
+# Use primary selection instead of clipboard for copying
+set selection-clipboard clipboard
+
+# Показать: statusline, horizontal scrollbar, vertical scrollbar
+# set guioptions shv
+
+# Show ~ instead of home/ on the title
+set window-title-home-tilde true
+
+# Show ~ instead of home/ on status bar
+set statusbar-home-tilde true
+
+# Show page number dynamically in the title too, eg [3/7]
+set window-title-page true
+
+# Fit on open
+set adjust-open best-fit
+
+# Инкрементальный поиск при вводе
+set incremental-search true
+
+# Сохранение исходного оттенка при инвертировании цветов
+set recolor-keephue
+
+# Инвертировать цвета
+set recolor
+
+# Цвета
+set inputbar-bg \#404552
+set statusbar-bg \#404552
+
+# --- Custom mappings ---
+
+# Invert colors
+map I set recolor
+
+# Toggle status bar
+map t toggle_statusbar
+
+# vim: ft=conf

@@ -1,0 +1,16 @@
+#!/bin/sh
+# Использование
+# 16 / 24 / 192 [файл.flac]
+
+case $1 in
+    16|1644|cd)    bitrate=16; Hz=44100 ;;
+    24|2496)    bitrate=32; Hz=96000 ;;
+    192|24192)    bitrate=32; Hz=192000 ;;
+    #320)        ffmpeg -i "$f" -ab 320k -ar 44100 ;;
+    ""|*)        echo error!; return ;;
+esac
+outDir="${bitrate}_$Hz"
+mkdir "$outDir"
+for f in *.flac; do
+    ffmpeg -i "$f" -sample_fmt s${bitrate} -ar $Hz "$outDir/$f"
+done

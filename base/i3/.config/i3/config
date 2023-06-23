@@ -1,0 +1,321 @@
+# Ставит win клавишу как основную
+set $mod Mod4
+# Клавиша alt
+set $alt Mod1
+# Теримнал
+set $term alacritty
+
+for_window [class="^.*"] border pixel 1.5
+#smart_borders no_gaps
+#gaps inner 4
+gaps outer 0
+#gaps bottom 0
+#gaps inner 8
+#gaps outer 14
+
+
+# Шрифт заголовка окна (в режиме layout)
+font pango:monospace 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+#font pango:DejaVu Sans Mono 8
+
+# Start XDG autostart .desktop files using dex. See also
+# https://wiki.archlinux.org/index.php/XDG_Autostart
+exec --no-startup-id dex --autostart --environment i3
+
+# The combination of xss-lock, nm-applet and pactl is a popular choice, so
+# they are included here as an example. Modify as you see fit.
+
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# screen before suspend. Use loginctl lock-session to lock your screen.
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+
+# Use pactl to adjust volume in PulseAudio.
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+
+# Media player controls via playerctl (also require package mpdris2)
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+bindsym XF86AudioNext exec --no-startup-id playerctl next
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+bindsym XF86AudioStop exec --no-startup-id playerctl stop
+
+# Юзать мышь с зажатой клавишей win для перемещение окна
+floating_modifier $mod
+
+# Запуск терминала
+bindsym $mod+Return exec $term
+
+# Убить окно которое в фокусе
+bindsym $mod+q kill
+
+# Запуск Rofi
+bindsym $mod+d exec rofi -show drun -show-icons
+bindsym $mod+Tab exec rofi -show p -modi p:rofi-power-menu -font "JetBrains Mono Nerd Font 13" # Power Menu
+bindsym $alt+f exec rofi -modi emoji -show emoji # Rofi-Emoji
+bindsym $alt+ctrl+p exec kill -9 $(ps --sort=-pcpu a | rofi -dmenu | awk "{ print $1 }") # Процесс киллер
+
+# Менять фокус окна (Vim клавиши)
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# Менять фокус окна стрелочками:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Двигать окно в фокусе (Vim клавиши)
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Двигать окно в фокусе стрелочками:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+# bindsym $mod+h split h
+
+# split in vertical orientation
+# bindsym $mod+v split v
+
+# Full screen когда окно в фокусе
+bindsym $mod+f fullscreen toggle
+
+# Менять слой контейнера
+# Списком вниз
+bindsym $mod+s layout stacking
+# Табы
+bindsym $mod+w layout tabbed
+# Переключить разделение
+bindsym $mod+e layout toggle split
+
+# Переключить окно с тайлинга на плавающий, и наоборот
+bindsym $mod+Shift+b floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+
+# Определяет имя раб.столов (дефолт: цифры)
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Переключится на раб.стол
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# Перенести окно в раб.стол
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Перезапустить i3 (для обновления конфига i3)
+bindsym $mod+Shift+r restart
+
+# Выйти из i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Режим измение размер окна при тайлинге
+# Можно юзать мышь, нужно навестись на окно и зажать win+rmb
+bindsym $mod+r mode "resize"
+mode "resize" {
+        # Vim клавиши
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym j resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+
+        # Стрелки
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # Обратно в режим normal: Enter или Escape или $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+# dmenu
+bindsym $mod+shift+space exec \
+ dmenu_run
+
+
+# Clipboard Manager CopyQ Quick Menu
+# bindsym $alt+ctrl+x exec \
+#  copyq menu
+
+# --- Screenshots --- #
+
+# Flameshots
+# bindsym $mod+shift+s exec --no-startup-id flameshot gui -c -p ~/Pictures/Screenshots # Копирование скриншота в буфер + сохраняет его в папку
+# bindsym $mod+shift+d exec --no-startup-id flameshot full # Мгновенный скриншот всего экрана
+
+# Скрин всего экрана, без clipboard
+bindsym Print exec \
+ IMG=~/Pictures/Screenshots/$(date +%s).png \
+ && maim $IMG \
+ && notify-send -i $IMG \
+ "Скриншот сохранён" "Место: $IMG" || notify-send "Failed to take screenshot"
+
+# Скрин с выделением области или клик на выбранное окно
+bindsym $mod+shift+s exec \
+ PIC=~/Pictures/Screenshots/$(date +%s).png \
+ && maim -suof png $PIC \
+ && cat $PIC | xclip -selection clipboard -t image/png \
+ && notify-send -i $PIC \
+ "Обрезанный скриншот сохранён в буфер обмена" "Место: $PIC" || notify-send "Failed to take screenshot"
+
+# Скрин окна который в фокусе (для тех у кого нету мышки)
+# bindsym $mod+shift+d exec --no-startup-id \
+#  maim ~/Pictures/Screenshots/$(date +%s).png -ui \
+#  $(xdotool getactivewindow) \
+#  && notify-send -i ~/Pictures/Screenshots/$(date +%s).png \
+#  "Фокус скриншота сохранён" "Место: ~/Picturesg/Screenshots \nИмя: $(date +%s).png" || notify-send "Failed to take screenshot"
+
+# Сканер палитры
+bindsym $mod+shift+d exec \
+ notify-send "Color Picker" "Выберите цвет" && \
+ maim /tmp/color-picker.png -ug $(slop -t 0) && \
+ convert -size 100x100 xc:"$(convert /tmp/color-picker.png -format '#%[hex:s]\n' info:)" /tmp/color-picker.png && \
+ notify-send -i /tmp/color-picker.png "Палитра скопирована в буфер обмена" $(convert /tmp/color-picker.png -format "#%[hex:s]\n" info:) && \
+ convert /tmp/color-picker.png -format "#%[hex:s]\n" info: | xclip -sel c
+
+# OCR сканер maim + tesseract + xclip
+bindsym $mod+shift+f exec \
+ maim-ocr
+
+# QR сканер maim + zbar + xclip
+bindsym $mod+shift+Print exec \
+ qr-scan
+
+# Быстрый перевод на Русский (tesseract + translate-shell + xclip)
+bindsym $alt+r exec \
+ ocr-translate
+
+# --- Giph --- #
+# https://github.com/phisch/giph
+
+# Начать/Остановить запись GIF рекордера (Не работает через bindsym)
+# bindsym ctrl+Print exec \
+#  giph -f $(echo "Кол-во кадров в секунду" | dmenu) -s -o -y \
+#  ~/Pictures/Gif/$(date +%s).gif, dunstify "Запись остановлена" || exec giph --stop
+
+# Запись с выбором кол-во кадров и продолжительности записи
+bindsym $alt+ctrl+x exec \
+ giph -f $(echo "Кол-во кадров в секунду" | dmenu) -s -o -y \
+ -t $(echo "Сколько секунд записать?" | dmenu) \
+ ~/Pictures/Gif/$(date +%s).gif
+
+
+# История уведомлений Dunst win+`
+bindsym $mod+grave exec dunstctl history-pop
+
+# Greenclip clipboard manager [dmenu]
+bindsym $mod+v exec dmenu-greenclip
+
+# [mpc] Next/Prev track
+bindsym $mod+$alt+comma exec mpc prev
+bindsym $mod+$alt+period exec mpc next
+
+# screenkey - показ клавиш
+bindsym $mod+p exec "killall screenkey || screenkey
+
+# Start i3bar
+# bar {
+#         status_command i3status
+# }
+
+
+# Запуск программ
+exec_always --no-startup-id autotiling
+exec_always polybar-launch
+
+
+# Окна программ которые должны быть плавающими
+for_window [class="^Steam$" title="^(?!Steam$)"] floating enable
+for_window [title="^galculator"] floating enable
+for_window [class="^File-roller|Xarchiver"] floating enable
+for_window [window_role="task_dialog|bubble|page-info|Preferences|pop-up|About"] floating enable
+
+for_window [class="(?i)virtualbox"] floating enable
+for_window [class="(?i)System-config-printer.py"] floating enable
+for_window [instance="origin.exe|eadesktop.exe|telegram-desktop"] floating enable
+for_window [class="Mojosetup"] floating enable, move position center
+for_window [class="steam_app_*" title="Origin"] floating enable
+
+for_window [class="^Riot|League of Legends|dota_linux"] floating enable
+for_window [class="battle.net.exe"] floating enable
+for_window [title="hl2_linux"] fullscreen enable
+for_window [class="Olive|Kdenlive"] focus
+
+for_window [class=".*\.EXE"] floating enable # Yes, I know (?i) makes it case insensitive, but it's hard to remember
+for_window [class=".*\.exe"] floating enable # It's easier to just copy the line
+for_window [instance=".*\.EXE"] floating enable
+for_window [instance=".*\.exe"] floating enable
+for_window [class="[Ll]utris"] floating enable, move position center
+# for_window [instance="explorer.exe"] floating enable
+# for_window [class="Wine"] floating enable
+
+for_window [class="Lxappearance|qt5ct"] floating enable
+for_window [title="KeePassXC( \(.*\))?$"] floating enable, move to scratchpad
+bindsym $mod+Shift+a [class="KeePassXC"] scratchpad show, move position center
+#, resize set 1280 720
+
+# Сфокусироватся на рабочую область со срочным окном
+# for_window [urgent=latest] focus
+
+# class                 border  backgr. text    indicator child_border
+client.focused_inactive #0d1010 #212121 #d9d9d9 #063340 #063340
+client.unfocused        #0d1010 #212121 #d9d9d9 #424242 #063340
+client.focused          #2e9ef4 #2e9ef4 #000000 #2e9ef4 #2e9ef4
+
+
+
