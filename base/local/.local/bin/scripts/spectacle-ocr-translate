@@ -1,4 +1,6 @@
 #!/bin/bash
+# Source: https://github.com/MarcoDiFrancesco/dotfiles/blob/master/scripts/tesseract-ocr-screenshot
+
 IMG="/tmp/scr.jpg"
 spectacle --background --region --nonotify --output $IMG
 # If press exit button
