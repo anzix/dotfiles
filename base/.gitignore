@@ -7,22 +7,13 @@ mpd/.config/mpd/syslog
 mpv/.config/mpv/watch_later
 mpv/.config/mpv/volume
 ncmpcpp/.config/ncmpcpp/error.log
+nvim_lua/.config/nvim/plugin/packer_compiled.lua
 nvim/.config/nvim/plugged/
 nvim/.config/vim/plugged/
 nvim/.config/vim/viminfo
-ranger/.config/ranger/plugins/__pycache__/
-ranger/.config/ranger/plugins/__init__.py
 zsh/.config/zsh/.zcompdump
-zsh/.config/zsh/.zsh_history
-zsh/.config/zsh/.zsh_sessions/
 zsh/.config/zsh/.zcompcache/
 zsh/.config/zsh/plugins/
-local/.local/bin/rnnoise
-radeon-profile/.config/radeon-profile/radeon-profile-settings
-
-local/.local/share/applications/*
-!local/.local/share/applications/file.desktop
-!local/.local/share/applications/nsxiv-rifle.desktop
 
 gtk/.config/gtk-3.0/assets/*
 gtk/.config/gtk-3.0/colors.css

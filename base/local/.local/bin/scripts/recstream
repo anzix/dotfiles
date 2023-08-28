@@ -1,0 +1,12 @@
+#!/bin/bash
+# Запись стрима используя streamlink
+
+# Чтобы запустить в цикле/loop:
+# while true
+# do
+#     recstream "URL"
+# done
+
+URL=$1
+OUTNAME=$HOME/Stream/$2{author}_{category}_{id}_{time:%Y%m$d-%H%M%S}.mp4
+streamlink --hls-live-restart --retry-streams 20 --retry-max 0 -o ${OUTNAME} ${URL} best

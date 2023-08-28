@@ -1,15 +1,16 @@
 # Some useful options (man zshoptions)
 setopt NO_BEEP                 # Не пищать при дополнении или ошибках
-setopt AUTO_CD                 # Можно переходить в директории без ввода cd
-setopt EXTENDED_GLOB           # Использовать #, ~ и ^ в шаблонах (https://linuxhint.com/bash_globbing_tutorial/)
-setopt autoparamslash          # If a parameter is completed whose content is the name of a directory, then add a trailing slash instead of a space
+setopt AUTO_CD                 # Переход в директорию без ввода cd
+setopt EXTENDED_GLOB           # Использовать #, ~ и ^ в шаблонах. Не забудьте поставить '^', '~' и '#' в кавычки!
+setopt autoparamslash          # При автодополнении содержащий каталог в конце добавляется /.
 setopt NO_NOMATCH              # При отсутствии результатов globbing-а, не показывалась ошибка, а введённое выражение использовалось как есть. Пример: echo =foo
 setopt interactive_comments    # Разрешает # комментарии в shell, для копирования и вставки
 setopt nocheckjobs             # Не предупреждать о запущенных процессах при выходе (exit)
-setopt numericglobsort         # Sort filenames numerically when it makes sense
-setopt rcexpandparam           # Array expension with parameters
+setopt numericglobsort         # Сортировать имена файлов по номерам для ls
+setopt rcexpandparam           # Раскрывает параметры при чтении команд из zshrc
 setopt prompt_subst            # Для правильного отображения промта
-setopt BRACE_CCL               # Включение поддержки выражений вроде «{1-3}» или «{a-d}» — они будут разворачиваться в «1 2 3» и «a b c d».Пример: echo {1-5}
+setopt BRACE_CCL               # Включение поддержки выражений вроде «{1-3}» или «{a-d}» — они будут разворачиваться в «1 2 3» и «a b c d». Пример: echo {1-5}
+setopt longlistjobs            # Отображать PID о приостановке процесса (Ctrl+Z)
 
 ## History command configuration
 setopt APPEND_HISTORY          # Добавляет список историй в файл истории zsh

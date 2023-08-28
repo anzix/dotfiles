@@ -1,5 +1,10 @@
+local status_ok, lualine = pcall(require, "lualine")
+if not status_ok then
+  return
+end
+
 --Set statusbar
-require("lualine").setup({
+lualine.setup({
 	options = {
 		component_separators = "|",
 		section_separators = "",

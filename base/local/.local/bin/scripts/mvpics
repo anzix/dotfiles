@@ -1,0 +1,29 @@
+#!/bin/bash
+# Необходима доработка
+# Переименовывает изображения на ваш выбор
+
+for pic in *
+do
+
+    feh $pic &
+    # & makes the script continue after opening so you dont have to close it
+
+    echo "1 - uno"
+    echo "2 - two"
+    echo "f - rekt images"
+    echo "yolo - yolo images"
+
+    read folder_choice;
+    killall feh
+    # will close the feh image after you input your choice
+
+    case $folder_choice in
+        1) mv $pic uno;;
+        2) mv $pic two;;
+        f) mv $pic rekt;;
+        yolo) mv $pic yolo;;
+    esac
+    clear
+
+done
+

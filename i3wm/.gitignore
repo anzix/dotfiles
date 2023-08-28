@@ -1,0 +1,3 @@
+local/.local/share/applications/*
+!local/.local/share/applications/file.desktop
+!local/.local/share/applications/nsxiv-rifle.desktop

@@ -1,15 +1,25 @@
-require('tokyonight').setup({
+local status_ok, tokyonight = pcall(require, "tokyonight")
+if not status_ok then
+  return
+end
+
+
+tokyonight.setup({
+	style = "moon",
     transparent = true
 })
 
-function ColorFix(color)
-	color = color or "tokyonight-moon"
-	vim.cmd.colorscheme(color)
+local colorscheme = "tokyonight"
 
-	vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Делает neovim прозрачным
-	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-	vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" }) -- nvim-gitgutter прозрачная линия
-	vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- Прозрачное окно буффера
+local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
+
+if not status_ok then
+  vim.notify("colorscheme " .. colorscheme .. " not found!")
+  return
 end
 
-ColorFix()
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Делает neovim прозрачным
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" }) -- nvim-gitgutter прозрачная линия
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- Прозрачное окно буффера
+

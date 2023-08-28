@@ -26,7 +26,7 @@ git clone --recurse-submodules https://gitlab.com/anzix/dotfiles && cd dotfiles/
 - (~) - HOME директория
 
 ```sh
-# Вытащить всё
+# Вытащить всё из base
 stow -vt ~ */
 ```
 
@@ -59,4 +59,15 @@ yay -S --needed - < AUR-pkglist.txt
 
 # Всё сразу
 yay -S --needed - < pkglist.txt
+```
+
+## Настройка оформления GTK к root окружению
+
+```sh
+# GTK 2.0
+sudo rm -r /usr/share/gtk-2.0/gtkrc
+sudo ln -sv ~/.config/gtk-2.0/gtkrc-2.0 /usr/share/gtk-2.0/gtkrc
+# GTK 3.0
+sudo rm -r /usr/share/gtk-3.0/settings.ini
+sudo ln -sv ~/.config/gtk-3.0/settings.ini /usr/share/gtk-3.0/settings.ini
 ```

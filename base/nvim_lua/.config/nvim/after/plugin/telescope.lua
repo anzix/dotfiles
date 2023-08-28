@@ -1,6 +1,11 @@
-local telescope = require('telescope')
+local status_ok, telescope = pcall(require, "telescope")
+if not status_ok then
+  return
+end
+
 local builtin = require('telescope.builtin')
 local actions = require('telescope.actions')
+
 vim.keymap.set('n', '<leader>f', builtin.find_files, {}) -- Поиск файлов
 vim.keymap.set('n', '<leader>g', builtin.live_grep, {}) -- Grep
 vim.keymap.set('n', '<leader>h', builtin.help_tags, {}) -- Помощь по тегам

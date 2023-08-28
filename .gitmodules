@@ -1,6 +1,3 @@
 [submodule "base/mpv/.config/mpv/scripts/mpv-webtorrent-hook"]
 	path = base/mpv/.config/mpv/scripts/mpv-webtorrent-hook
 	url = https://github.com/noctuid/mpv-webtorrent-hook
-[submodule "base/ranger/.config/ranger/plugins/ranger_devicons"]
-	path = base/ranger/.config/ranger/plugins/ranger_devicons
-	url = https://github.com/alexanderjeurissen/ranger_devicons

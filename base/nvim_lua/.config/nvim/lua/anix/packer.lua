@@ -31,7 +31,7 @@ packer.init({
 })
 
 -- Install your plugins here
-return packer.startup(function(use)
+return require('packer').startup(function(use)
 	use("wbthomason/packer.nvim") -- Have packer manage itself
 
 	use({
@@ -42,12 +42,7 @@ return packer.startup(function(use)
 
 	use("nvim-lua/plenary.nvim")
 
-	use({
-		"folke/tokyonight.nvim", -- Тема
-		require("tokyonight").setup({
-			transparent = true,
-		}),
-	})
+	use("folke/tokyonight.nvim") -- Тема
 
 	use("theprimeagen/harpoon") -- Быстрое переключение
 

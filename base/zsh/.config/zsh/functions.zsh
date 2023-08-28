@@ -148,10 +148,40 @@ favicon() {
 urlencode() { python3 -c "import sys, urllib.parse as parse; print(parse.quote(sys.argv[1]))" $1; }
 urldecode() { python3 -c "import sys, urllib.parse as parse; print(parse.unquote(sys.argv[1]))" $1; }
 
+# Переименовывает ПРОПИСНЫЕ в строчные (и наоборот) названия всех файлов и каталогов
+# Использовать внутри каталога
+uppercase2lowercase() {
+	for f in * ; do
+		mv -v -- "$f" "$(tr [:upper:] [:lower:] <<< "$f")" ;
+	done
+}
+lowercase2uppercase() {
+	for f in * ; do
+		mv -v -- "$f" "$(tr [:lower:] [:upper:] <<< "$f")" ;
+	done
+}
+
+# Скачивает медиа файлы с URL треда 2ch.hk
+downloadMedia2ch() {
+	# Скачает HTML-страницу
+	wget -qNc --show-progress -O /tmp/page.html "$1"
+	# Замените href="/ на href="https://2ch.hk/" в загруженном HTML-файле.
+	sed -i 's#href="/#href="https://2ch.hk/#g' /tmp/page.html
+	# Извлечение ссылок на медиафайлы (включая .webp и .webm), удаление дубликатов ссылок и массово скачивает файлы
+	wget -qNc --show-progress $(grep -Eo 'href="https?://[^"]+\.(jpg|jpeg|png|gif|webp|webm|mp4)"' /tmp/page.html | cut -d'"' -f2 | sort -u)
+}
+
+# Делится файлами на localhost, необходим gnu-netcat
+# Использование: serve_file text.txt &
+serve_file() {
+    echo "Serving '$1' on localhost:8080"
+    length=$(stat --format=%s "$1")
+    while true; do { echo -ne "HTTP/1.1 200 OK\r\nContent-Length: $length\r\n\r\n" ; cat "$1" ; } | nc -lnp 8080 ; done
+}
+
 ### IMAGE COMPRESSION
 # usage: imageoptim <file> <options>
-imageoptim ()
-{
+imageoptim () {
   if [ -f $1 ] ; then
     case $1 in
       *.jpg)   jpegoptim $1 "${@:2}";;
@@ -164,10 +194,52 @@ imageoptim ()
   fi
 }
 
-# Конвертирование изображений HEIC на jpg
-# Использовать находясь внутри папки
-heic-to-jpg() {
-	for f in *.HEIC; do heif-convert -q 100 $f $f.jpg; done
+# Конвертирование изображений
+# Использовать находясь внутри каталога
+bulk_heic2jpg() {
+	for f in *.HEIC; do
+		heif-convert -q 100 $f "${f%.*}.jpg"
+	done
+}
+bulk_all2jxl() {
+	for f in *.png *.jpg *.ppm; do
+		cjxl -e 8 -d 0 "$f" "${f%.*}.jxl"
+	done
+}
+
+# Конверация видео форматов (полезно для Davinci Resolve)
+bulk_mkv2mov() {
+	for i in *.mkv; do
+		ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"
+	done
+}
+bulk_mp42mov() {
+	# использовать MKV как мост
+	for i in *.mp4; do
+		ffmpeg -i "$i" -c copy "${i%.*}.mkv";
+	done
+	;
+	for i in *.mkv; do
+		ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"
+	done; rm *.mkv
+}
+
+# Извлечение аудио дорожки из видео
+bulk_mp42flac() {
+	for i in *.mp4; do
+		ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"
+	done
+}
+bulk_mkv2flac() {
+	for i in *.mkv; do
+		ffmpeg -i "$i" -vn -y "${i%.*}.flac"
+	done
+}
+
+# Извлечение кадров из видео
+vid2frames() {
+	mkdir $(pwd)/FrameDir
+	ffmpeg -i "$1" "FrameDir/frame-%03d.jpg"
 }
 
 # Download soundcloud music and add metadata.
@@ -199,10 +271,32 @@ scdl() {
     done
 }
 
-### Power Mode Options
+# Обновление уникального hosts файла StevenBlack с обработкой
+# 1. Убираю строки localhost (уже есть)
+# 2. Убираю все комментарии
+# 3. Добавляю отступ следующей строки в начале
+uphosts () {
+ wget -t 2 -O- https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts \
+  | grep '^0\.0\.0\.0' \
+  | grep -v '^0\.0\.0\.0 [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*$' \
+  | sed '1s/^/\n/' > /tmp/adlist-all
+
+ # Сравниваем содержимое файлов /etc/hosts и /tmp/adlist-all, игнорируя первые три строки
+ diff <(tail -n +4 /etc/hosts) /tmp/adlist-all > diff.txt
+
+ # Заменяем содержимое файла /etc/hosts на объединение изменений из diff.txt
+ sudo patch /etc/hosts < diff.txt
+
+ # Корректировка правил универсального hosts файла
+ sudo sed -i "/^0.0.0.0 clck.ru/s/^/#/g" /etc/hosts # Реф ссылки pepper.ru
+
+ # Удаляем временный файл diff.txt
+ rm diff.txt
+}
+
+# Power Mode Options
 # usage: powermode <options/which/powersave/performance>
-powermode ()
-{
+powermode () {
   case $1 in
     which)        cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor                          ;;
     options)      cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors               ;;
@@ -214,14 +308,13 @@ powermode ()
   esac
 }
 
-# Генерация паролей
-genpasswd () {
-    local l=$1
-        [ "$l" == "" ] && l=20
-        tr -dc A-Za-z0-9_- < /dev/urandom | head -c ${l} | xargs
+# Узнать MIME тип файла
+read_mime() {
+  local file="$1"
+  xdg-mime query filetype "$file" 2>/dev/null | cut -d ';' -f 1
 }
 
-# Сравнение HEX бинарников
+# HEX сравнение 2-х бинарников
 # - RED $1
 # + GREEN $2
 function bindiff {
@@ -259,7 +352,7 @@ function android_screen_capture() {
     echo "Capture saved as $filename"
 }
 
-# Convert a Chrome cookie to Netscape text format
+# Преобразование файла cookie Chrome в текстовый формат Netscape
 # Полезно для: $ wget --load-cookies=cookies.txt ...
 # usage: chromecookies > cookies.txt
 function chromecookies() {
@@ -284,20 +377,10 @@ function chromecookies() {
   sqlite3 -separator '	' "${COOKIES:-Cookies}" "$QUERY"
 }
 
-# git.io больше не принимает короткие ссылки
-# Создаёт короткий URL-адрес git.io
-function gitio() {
-  if [ -z "${1}" -o -z "${2}" ]; then
-    echo "Usage: \`gitio slug url\`";
-    return 1;
-  fi;
-  curl -i http://git.io/ -F "url=${2}" -F "code=${1}";
-}
-
 # Конвертирует видео фрагмент в гифку
 vid2gif() {
     if test $# -lt 4; then
-        echo "Usage: $0 input.(mp4|avi|webm|flv|...) output.gif horizontal_resolution fps"
+		echo "Usage: $0 input.(mp4|avi|webm|flv|...) output.gif hor_res(1080|720|...) fps"
         return 0
     fi
 
@@ -318,14 +401,71 @@ vboxshare () {
   sudo mount -t vboxsf -o rw,uid=1000,gid=984 vboxshare vboxshare
 }
 # share qemu
+# HOST_FOLDER: ~/Shared
+# GUEST_FOLDER: vmshare
+# В VirtManager'е нужно добавить оборудование "Файловая система" с "virtio-9p"
+#
 vmshare () {
   [[ ! -d ~/vmshare ]] && mkdir -p ~/vmshare
   sudo mount -t 9p -o trans=virtio,version=9p2000.L host0 vmshare
 }
 
+# Очистить имена файлов, используя различные правила
+# Использование (только вывод): clean_file_names /home/anix/Изображения/*
+# Использование вместе с xargs (выполнение): clean_file_names /home/anix/Изображения/* | xargs -I {} sh -c "{}"
+function clean_file_names() {
+	for i in "$@"
+	do
+		b=$(\
+			echo "$i" | \
+			sed \
+			-e 's%([^()]*)%%g' -e '# Remove all parentheses' \
+			-e's%[♪▶♫♥"»«"]\+%%g' -e '# Removes one or more of various unwanted characters' \
+		  	-e "s%[,']\+%%g" -e '# Remove commas and single quotes' \
+			-e "s%\.\+%.%g" -e '# convert multiple consecutive periods into single period' \
+			-e "s%[:»]\+%_%g" -e '# convert multiple these unwanted characters into single _' \
+			-e "s%&%_and_%g" -e '# convert ampersand ("&") to "_and_"' \
+			-e's%^[-_\. ]\+%%' -e '# Remove dashes, periods, and spaces at beginning' \
+			-e's%-\+%-%g' -e '# convert multiple consecutive dashes into one dash' \
+			-e's%_\{2,99\}%__%g' -e '# convert multiple underscores to one __.' \
+			-e's%\(_-\)\+_%_-_%g' -e '# convert multiple _-_-_ to one __' \
+			-e's% \+% %g' -e '# convert multiple spaces to one space' \
+			-e's% - YouTube%%g' \
+			-e's%[-_ ]\+\(\.[^\.]\+\)$%\1%g' -e'# Remove spaces, periods, dashes, etc. before suffix/extension' \
+			-e's%[-_\. ]\+$%%' -e'# Remove dashes, periods, or whitespace at end (after extension)' \
+		)
+		c=$( echo "$i" | sed -e's%"%\\"%g')
+		[ "$i" != "$b" ] && echo "mv -v -- \"$c\" \"$b\""
+	done
+}
+
+# (CLI) Краткая информация из Википедии по теме
+# Требуется пакет jq
+# Использование: wikip linux
+function wikip() {
+	LANG="ru"
+	if [[ -z $1 ]]; then
+	  echo -e "No argument specified.\nUsage: wikip TOPIC\n"
+	else
+	  var=$(echo $* | sed 's/ /_/g')             # Transforms 'One Time' to 'One_Time'
+	  wiki_data=$(curl -s "https://"$LANG".m.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&titles="$var"&redirects" | jq '.query.pages | to_entries[0] | .value.extract')
+	  data=$(echo $wiki_data | sed 's/\\\"/"/g') # Removes \" characters
+	  if [[ $data = "null" ]]; then
+		echo "Nothing found. Check query/topic."
+	  else
+		url="https://en.m.wikipedia.org/wiki/"$var
+		echo -e ${data:1:${#data}-2}"\n"
+		echo "See more on "$url
+	  fi
+	fi
+}
+# fun times: look something up on wikipedia via DNS query
+# Необходим bind
+# wikip() { dig +short txt $1.wp.dg.cx; }
+
 # http://brettterpstra.com/2013/03/14/more-command-line-handiness/
 # ls archives (inspired by `extract`)
-lsz() {
+lsa() {
 	if [ $# -ne 1 ]
 	then
 		echo "lsz filename.[tar,tgz,gz,zip,etc]"
@@ -367,7 +507,7 @@ ex () {
         *.Z)         uncompress ../$1  ;;
         *.7z)        7z x ../$1        ;;
         *.xz)        unxz ../$1        ;;
-        *.exe)       cabextract ../$1  ;;
+        *.exe)       cabextract ../$1  ;; # Если это sfx архив тогда unrar x sfx.exe
         *)           echo "extract: '$1' - unknown archive method" ;;
       esac
     else
@@ -397,12 +537,12 @@ pk () {
     fi
 }
 
-# Install packages using yay
+# TUI Установщик пакетов используя yay+fzf
 function yin () {
     yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}' | xargs -ro yay -S
 }
 
-# Remove installed packages
+# TUI Деинсталятор пакетов используя yay+fzf
 function yre () {
     # yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns # Удалить с зависимостями
     yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rn

@@ -1,0 +1,362 @@
+# vim: ft=sh
+# NOTE: use 'swaymsg -t get_tree' to get window criteria:
+# - class
+# - instance
+# - app_id
+# - title
+
+
+# Переменные
+set {
+	# Ставит win клавишу как основную
+	$mod Mod4
+	# Клавиша alt
+	$alt Mod1
+	# Терминал
+	$term alacritty
+}
+
+# Заставлять юзать для приложений и игр xwayland
+xwayland force
+
+
+#smart_borders no_gaps
+# gaps inner 4
+# gaps outer 3
+smart_gaps off
+#gaps bottom 0
+
+
+# Убираеть Title bar
+default_border pixel 2
+default_floating_border pixel 2
+
+# Шрифт заголовка окна (в режиме layout)
+font pango:monospace 8
+
+
+# Media control
+bindsym --locked {
+    XF86AudioLowerVolume exec pulsemixer --change-volume -2
+    XF86AudioRaiseVolume exec pulsemixer --change-volume +2
+    XF86AudioMute        exec pulsemixer --toggle-mute
+	# Media player controls via playerctl (also require package mpdris2)
+    XF86AudioPlay exec playerctl play-pause
+    XF86AudioNext exec playerctl next
+    XF86AudioPrev exec playerctl previous
+	XF86AudioStop exec playerctl stop
+}
+
+# Юзать мышь с зажатой клавишей win для перемещение окна
+floating_modifier $mod normal
+
+# Запуск терминала
+bindsym $mod+Return exec $term
+
+# Убить окно которое в фокусе
+bindsym $mod+q kill
+
+# Запуск Wofi
+bindsym $mod+d exec wofi --show drun --allow-images
+
+# bindcode - Бинд независимо от раскладки клавиатуры, будь то русская или английская
+bindsym {
+	# Менять фокус окна vim клавишами
+	$mod+h focus left
+	$mod+j focus down
+	$mod+k focus up
+	$mod+l focus right
+	# Менять фокус окна стрелочками
+	$mod+Left focus left
+	$mod+Down focus down
+	$mod+Up focus up
+	$mod+Right focus right
+	# Двигать окно в фокусе vim клавишами
+	$mod+Shift+h move left
+	$mod+Shift+j move down
+	$mod+Shift+k move up
+	$mod+Shift+l move right
+	# Двигать окно в фокусе стрелочками
+	$mod+Shift+Left move left
+	$mod+Shift+Down move down
+	$mod+Shift+Up move up
+	$mod+Shift+Right move right
+}
+# bindsym {
+# 	# Разделить по горизонтали
+# 	$mod+h splith
+# 	# Разделить по вертикали
+# 	$mod+v splitv
+# }
+
+# Full screen когда окно в фокусе
+bindsym $mod+f fullscreen
+
+# Менять стиль контейнера
+bindsym {
+	# Списком вниз
+	$mod+s layout stacking
+	# Табы
+	$mod+w layout tabbed
+	# Переключить разделение
+	$mod+e layout toggle split
+}
+
+# Переключить окно с тайлинга на плавающий, и наоборот
+bindsym $mod+Shift+space floating toggle
+
+
+bindsym {
+	# Переключится на раб.стол
+	$mod+1 workspace number 1
+	$mod+2 workspace number 2
+	$mod+3 workspace number 3
+	$mod+4 workspace number 4
+	$mod+5 workspace number 5
+	$mod+6 workspace number 6
+	$mod+7 workspace number 7
+	$mod+8 workspace number 8
+	$mod+9 workspace number 9
+	$mod+0 workspace number 10
+	# Перенести окно в раб.стол
+	$mod+Shift+1 move container to workspace number 1
+	$mod+Shift+2 move container to workspace number 2
+	$mod+Shift+3 move container to workspace number 3
+	$mod+Shift+4 move container to workspace number 4
+	$mod+Shift+5 move container to workspace number 5
+	$mod+Shift+6 move container to workspace number 6
+	$mod+Shift+7 move container to workspace number 7
+	$mod+Shift+8 move container to workspace number 8
+	$mod+Shift+9 move container to workspace number 9
+	$mod+Shift+0 move container to workspace number 10
+}
+
+# Перезагрузить sway конфиг файл
+bindsym $mod+Shift+c reload
+
+# Выйти из sway (logs you out of your Wayland session)
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+
+# Scratchpad:
+bindsym {
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    $mod+Shift+minus move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    $mod+minus scratchpad show
+}
+
+
+# Режим измение размер окна при тайлинге
+# Можно юзать мышь, окно в фокусе и зажать win+rmb
+bindsym $mod+r mode "resize"
+mode "resize" {
+	bindsym {
+		# Vim клавиши
+		h resize shrink width 10 px or 10 ppt
+		k resize grow height 10 px or 10 ppt
+		j resize shrink height 10 px or 10 ppt
+		l resize grow width 10 px or 10 ppt
+		# Стрелки
+		Left resize shrink width 10 px or 10 ppt
+		Down resize grow height 10 px or 10 ppt
+		Up resize shrink height 10 px or 10 ppt
+		Right resize grow width 10 px or 10 ppt
+		# Обратно в режим normal: Enter, Escape или win+r
+		Return mode "default"
+		Escape mode "default"
+		$mod+r mode "default"
+	}
+}
+
+
+
+output DP-2 mode 1920x1080@144Hz {
+	bg "/media/Media/Галарея/Обои на раб.стол/Ramen.jpg" fill
+}
+
+input "type:keyboard" {
+    # Смена раскладки
+	xkb_layout us,ru
+    xkb_options grp:caps_toggle,grp_led:caps,grp:switch
+
+	# Ускорение печатания
+	repeat_delay 210
+    repeat_rate 40
+}
+
+input "1133:49284:Logitech_G102_Prodigy_Gaming_Mouse" {
+	accel_profile "flat"
+}
+
+# Старт waybar
+bar swaybar_command waybar
+
+# Тема и размер курсора
+seat * xcursor_theme capitaine-cursors 16
+
+# Запуск программ и скриптов
+exec {
+	autotiling
+	/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+	mako
+	mpd
+	mpDris2
+	udiskie -t
+	corectrl
+	steam -silent
+	kdeconnecttd
+	kdeconnect-indicator
+	gammastep-indicator
+	otd
+	# Clipboard (https://github.com/sentriz/cliphist)
+	wl-paste --watch cliphist store
+	# Запускает xwayland игры на основной монитор
+	xrandr --output XWAYLAND0 --primary
+	# Load Xrdb
+	xrdb -merge $HOME/.config/X11/Xresources
+	# dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+}
+
+exec_always {
+	# Фикс GTK3 Темы
+	~/.config/sway/import-gsettings
+}
+
+# Правила для плавающих окон
+# floating_minimum_size 1280 x 720
+# floating_maximum_size -1 x -1
+
+# Окна программ которые должны быть плавающими
+for_window {
+	[class="^Steam$" title="^(?!Steam$)"] floating enable
+	[title="^galculator"] floating enable
+	[window_role = "About"] floating enable
+
+	[instance="origin.exe"] floating enable
+	[class="steam_app_*" title="Origin"] floating enable
+
+	# [instance="explorer.exe"] floating enable
+	# [class="Wine"] floating enable
+
+	[title="hl2_linux"] fullscreen enable
+
+	[app_id=".*pavucontrol.*"] floating enable
+	[class="KeePassXC"] floating enable, move to scratchpad
+
+	[app_id=$term title=".*pulsemixer.*"] floating enable
+	# Kill Firefox sharing indicator. It opens as an own container. Does not kill functionality
+	[title = "Firefox - Sharing Indicator"] kill
+	[title = "Firefox — Sharing Indicator"] kill
+	# Маркировать xwayland окна [X]
+	# [shell="xwayland"] title_format "<span>[X] %title</span>"
+	# Disable swayidle on fullscreen apps
+	# [class="^.*"] inhibit_idle fullscreen
+	# [app_id="^.*"] inhibit_idle fullscreen
+}
+
+# Показать clipboard (для копирования)
+bindsym $mod+v exec cliphist list \
+  | wofi -d \
+  | cliphist decode \
+  | wl-copy
+# Win+Alt+Shift+| Показать clipboard (для удаления)
+bindsym $mod+Alt+Bar exec cliphist list \
+  | wofi -d \
+  | cliphist delete
+
+# --- Screenshots --- #
+# Requres: slurp grim swappy wl-copy
+set $scr-dir ~/Pictures/Screenshots
+
+# Full Screenshot, без буфера обмена
+bindsym Print exec --no-startup-id \
+  IMG=$scr-dir/$(date +%s).png \
+  && grim $scr-dir/$(date +%s).png \
+  && notify-send -i $IMG \
+  "Скриншот сохранён" "Место: $IMG" || notify-send "Failed to take screenshot"
+
+
+# Скрин с выделением области или клик на окно в фокусе + буфер обмена
+# Если вам не нужен буфер обмена уберите строку с wl-copy
+bindsym $mod+Shift+s exec --no-startup-id \
+  IMG=$scr-dir/$(date +%s).png \
+  && swaymsg -t get_tree \
+	| jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
+	| slurp \
+	| grim -t png -g - "$IMG" \
+  && wl-copy -t image/png < $IMG \
+  && notify-send -i $IMG "Обрезанный скриншот сохранён в буфер обмена" "Место: $IMG" || notify-send "Failed to take screenshot"
+
+
+# Сканер палитры (color picker)
+# https://github.com/swaywm/sway/wiki/Tricks#html-color-picker
+# bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -n 1 | cut -d ' ' -f 4 | wl-copy
+bindsym $mod+Shift+d exec --no-startup-id \
+	notify-send "Color Picker" "Выберите цвет" && \
+    grim -g "$(slurp -p)" -t ppm /tmp/color-picker.png && \
+    convert -size 100x100 xc:"$(convert /tmp/color-picker.png -format '#%[hex:s]\n' info:)" /tmp/color-picker.png && \
+    notify-send -i /tmp/color-picker.png "Палитра скопирована в буфер обмена" $(convert /tmp/color-picker.png -format "#%[hex:s]\n" info:) && \
+    convert /tmp/color-picker.png -format "#%[hex:s]\n" info: | wl-copy -n
+
+# OCR сканер
+# Требуется: tesseract tesseract-data-rus tesseract-data-eng tesseract-data-jpn wl-copy slurp
+bindsym $mod+Shift+f exec --no-startup-id slurp \
+  | xargs -I {} grim -s 2 -t png -g {} - \
+  | tesseract -l rus+eng+jpn - - \
+  | wl-copy -n
+
+
+# QR код сканер
+# Требуется: slurp grim zbar wl-copy
+# bindsym Shift+Print exec grim -g "$(slurp -d)" - | zbarimg -q --raw PNG:- | wl-copy
+bindsym Shift+Print exec \
+	wl-copy $(slurp | grim -g - - | zbarimg -q --raw -) \
+	&& qr=$(wl-paste) \
+	&& notify-send "QR-code" "QR-code successfully read and copied to clipboard: <i>$qr</i>" -t 6000
+
+# Быстрый перевод на Русский
+# Требуется: tesseract tesseract-data-rus tesseract-data-eng tesseract-data-jpn translate-shell slurp grim wl-copy
+bindsym alt+t exec --no-startup-id \
+	ocr-translate-sway
+
+# История уведомлений Mako win+`
+bindsym $mod+grave exec makoctl restore
+
+
+# Screenshot:
+# requires wl-copy grim slurp swappy
+#
+# set $mode_screenshot (f)ullscreen, (w)indow, (s)election, selection to (c)lipboard, (d)rawing
+# mode "$mode_screenshot" {
+#         bindsym f exec --no-startup-id exec grim $scr-dir/$(date +%s).png, mode "default"
+#         bindsym w exec --no-startup-id exec grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') $scr-dir/$(date +%s).png, mode "default"
+#         bindsym s exec --no-startup-id exec grim -g "$(slurp)" $scr-dir/$(date +%s).png, mode "default"
+#         bindsym c exec --no-startup-id exec grim -g "$(slurp)" - | wl-copy, mode "default"
+#         bindsym d exec --no-startup-id exec grim -g "$(slurp)" - | swappy -f -, mode "default"
+
+#         bindsym Return mode "default"
+#         bindsym Escape mode "default"
+#     }
+# bindsym $mod+Print mode "$mode_screenshot"
+
+# wshowkeys - показ клавиш
+bindsym $mod+p exec "killall wshowkeys || wshowkeys -a bottom -t 1"
+
+
+# bindsym $mod+Shift+a [class="KeePassXC"] scratchpad show, move position center
+#, resize set 1280 720
+
+# class                 border  backgr. text    indicator child_border
+client.focused_inactive #0d1010 #212121 #d9d9d9 #063340 #063340
+client.unfocused        #0d1010 #212121 #d9d9d9 #424242 #063340
+client.focused          #2e9ef4 #2e9ef4 #000000 #2e9ef4 #2e9ef4
+
+
+include /etc/sway/config.d/*
+

@@ -36,6 +36,7 @@ mason_lspconfig.setup({
 -- Форматтеры/Линтеры-Диагностеры
 mason_null_ls.setup({
 	ensure_installed = {
+		"djlint", -- htmldjango
 		"stylua", -- lua formatter
 		"prettier", -- markdown formatter
 		"markdownlint", -- markdown diagnostic

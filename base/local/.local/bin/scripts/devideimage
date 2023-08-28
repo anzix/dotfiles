@@ -1,0 +1,12 @@
+#!/bin/sh
+# Скрипт для автоматического разделения изображения на сегменты и запроса на удаление ненужных изображений по завершении.
+# Пример: divideimage file.jpg 5x4
+# Написано для использования с exiftool (perl-image-exiftool), bc, imagemagick, and nsxiv.
+segment=$( ( exiftool "$1" | sed '/^Image Size/!d;s/^Image Size *: //'
+    echo $2
+) | tr 'x' '\n' | pr -2 -s" / " -t | bc | paste -sd 'x')
+
+exiftool -all= "$1"
+convert "$1" -crop $segment "${1%.*}-%02d.jpg"
+rm "${1}_original"
+nsxiv -to . | xargs rm -v
