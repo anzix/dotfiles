@@ -13,8 +13,3 @@ nvim/.config/vim/viminfo
 zsh/.config/zsh/.zcompdump
 zsh/.config/zsh/.zcompcache/
 zsh/.config/zsh/plugins/
-
-gtk/.config/gtk-3.0/assets/*
-gtk/.config/gtk-3.0/colors.css
-gtk/.config/gtk-3.0/window_decorations.css
-
