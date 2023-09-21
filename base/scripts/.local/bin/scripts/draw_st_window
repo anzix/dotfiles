@@ -1,0 +1,13 @@
+#!/bin/sh -e
+# spawn a new terminal window inside a drawn rectangle
+
+wglyph=7
+hglyph=16
+border=10
+
+slop | tr 'x+' ' ' | {
+    read w h x y
+    w=$(( ( w - border ) / wglyph ))
+    h=$(( ( h - border ) / hglyph ))
+    test "$1" = -e && exec st -g ${w}x${h}+${x}+${y} $(echo $@) || exec st -g ${w}x${h}+${x}+${y} &
+}

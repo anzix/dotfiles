@@ -1,7 +1,7 @@
 local opt = vim.opt
 
 opt.nu = true
-opt.relativenumber = true
+-- opt.relativenumber = true
 
 opt.tabstop = 4
 opt.softtabstop = 4
@@ -24,7 +24,7 @@ opt.list = true -- Без этой опции не будет работать l
 opt.listchars = "tab:→ ,nbsp:•,trail:•,extends:⟩,precedes:⟨" --,eol:↴
 -- opt.showbreak = "↪"
 
-opt.clipboard = "unnamed,unnamedplus" -- Включает буффер обмена
+opt.clipboard = "unnamedplus" -- Включает буффер обмена
 
 opt.swapfile = false
 opt.backup = false
@@ -39,7 +39,7 @@ opt.ignorecase = true -- Игнорировать регистр букв
 opt.smartcase = true -- Если юзать Заглавные, поиск будет с учётом заглавных
 
 -- Установить стиль курсора (:help 'guicursor')
-opt.guicursor = 'n-v-c-sm:block-blinkon300,i-ci-ve:ver25,r-cr-o:hor20'
+opt.guicursor = 'n-v-c-sm:block-blinkon300,i-ci-ve:ver25-blinkon300,r-cr-o:hor20'
 
 -- Необходимо для работы nvim-colorizer
 opt.termguicolors = true

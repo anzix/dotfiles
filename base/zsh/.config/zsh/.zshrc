@@ -25,7 +25,6 @@ autoload -U history-substring-search-down
 zle -N history-substring-search-up
 zle -N history-substring-search-down
 
-
 # Ctrl+xx открывает текущую линию в $EDITOR, полезно когда пишешь функции или редактируешь множество команд.
 autoload -U edit-command-line
 zle -N edit-command-line

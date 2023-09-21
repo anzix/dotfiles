@@ -20,7 +20,6 @@ bindkey '^x^x' edit-command-line
 bindkey '^[u' undo # Alt+u
 bindkey '^[r' redo # Alt+r
 
-
 # dirhistory plugin
 # Alt+Left   # cd into the previous directory
 # Alt+Right  # cd into the next directory

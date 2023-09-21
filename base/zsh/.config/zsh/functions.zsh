@@ -92,9 +92,9 @@ killp() {
 }
 
 
-if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
-  export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
-fi
+# if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
+#   export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
+# fi
 
 open() {
   if [[ -n "${commands[xdg-open]}" ]]; then
@@ -161,24 +161,6 @@ lowercase2uppercase() {
 	done
 }
 
-# Скачивает медиа файлы с URL треда 2ch.hk
-downloadMedia2ch() {
-	# Скачает HTML-страницу
-	wget -qNc --show-progress -O /tmp/page.html "$1"
-	# Замените href="/ на href="https://2ch.hk/" в загруженном HTML-файле.
-	sed -i 's#href="/#href="https://2ch.hk/#g' /tmp/page.html
-	# Извлечение ссылок на медиафайлы (включая .webp и .webm), удаление дубликатов ссылок и массово скачивает файлы
-	wget -qNc --show-progress $(grep -Eo 'href="https?://[^"]+\.(jpg|jpeg|png|gif|webp|webm|mp4)"' /tmp/page.html | cut -d'"' -f2 | sort -u)
-}
-
-# Делится файлами на localhost, необходим gnu-netcat
-# Использование: serve_file text.txt &
-serve_file() {
-    echo "Serving '$1' on localhost:8080"
-    length=$(stat --format=%s "$1")
-    while true; do { echo -ne "HTTP/1.1 200 OK\r\nContent-Length: $length\r\n\r\n" ; cat "$1" ; } | nc -lnp 8080 ; done
-}
-
 ### IMAGE COMPRESSION
 # usage: imageoptim <file> <options>
 imageoptim () {
@@ -222,6 +204,11 @@ bulk_mp42mov() {
 	for i in *.mkv; do
 		ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"
 	done; rm *.mkv
+}
+bulk_webm2mp4() {
+	for i in *.webm; do
+		ffmpeg -fflags +genpts -i "$i" -r 24 "${i%.*}.mp4"
+	done
 }
 
 # Извлечение аудио дорожки из видео
@@ -314,6 +301,19 @@ read_mime() {
   xdg-mime query filetype "$file" 2>/dev/null | cut -d ';' -f 1
 }
 
+
+# Ищет текст во всех файлах в текущей папке.
+function ftext() {
+    # -i case-insensitive
+    # -I ignore binary files
+    # -H causes filename to be printed
+    # -r recursive search
+    # -n causes line number to be printed
+    # optional: -F treat search term as a literal, not a regular expression
+    # optional: -l only print filenames and not the matching lines ex. grep -irl "$1" *
+    grep -iIHrn --color=always "$1" . | less -r
+}
+
 # HEX сравнение 2-х бинарников
 # - RED $1
 # + GREEN $2
@@ -352,30 +352,6 @@ function android_screen_capture() {
     echo "Capture saved as $filename"
 }
 
-# Преобразование файла cookie Chrome в текстовый формат Netscape
-# Полезно для: $ wget --load-cookies=cookies.txt ...
-# usage: chromecookies > cookies.txt
-function chromecookies() {
-  CHROME="${HOME}/.config/chromium/Default/"
-  #echo $CHROME
-  COOKIES="$CHROME/Cookies"
-  #echo ${COOKIES:-Cookies}
-
-  QUERY="select host_key, 'TRUE', path, 'FALSE', expires_utc, name, value from cookies"
-
-  if [[ $# == 1 ]]; then
-      domain=$1
-      QUERY="$QUERY where host_key like '$domain'"
-  fi
-
-  #echo $QUERY
-
-  # This is to make the exported cookies.txt recognizable by some libraries.
-  # e.g. http.cookiejar.MozillaCookieJar will deny it without this string... -_-//.
-  # The library does not trust the programmer but searches for this magic string..
-  echo "# Netscape HTTP Cookie File"
-  sqlite3 -separator '	' "${COOKIES:-Cookies}" "$QUERY"
-}
 
 # Конвертирует видео фрагмент в гифку
 vid2gif() {
@@ -394,74 +370,21 @@ vid2gif() {
     rm -f "$palette"
 }
 
-# share vbox В локальной машине mkdir vboxshare
+# Vbox
+# В локальной машине mkdir vboxshare
 # в виртуалке uid={имя пользователя} git={группа}
 vboxshare () {
   [[ ! -d ~/vboxshare ]] && mkdir -p ~/vboxshare
   sudo mount -t vboxsf -o rw,uid=1000,gid=984 vboxshare vboxshare
 }
-# share qemu
-# HOST_FOLDER: ~/Shared
-# GUEST_FOLDER: vmshare
-# В VirtManager'е нужно добавить оборудование "Файловая система" с "virtio-9p"
-#
+# Qemu (virtio-9p)
+# HOST_PATH (куда ложить файлы): /home/user/Public
+# GUEST_PATH (mount_tag): host0
+# https://www.baeldung.com/linux/qemu-from-terminal#6-sharing-a-directory-between-host-and-guest
 vmshare () {
   [[ ! -d ~/vmshare ]] && mkdir -p ~/vmshare
-  sudo mount -t 9p -o trans=virtio,version=9p2000.L host0 vmshare
+  sudo mount -v -t 9p -o trans=virtio,version=9p2000.L host0 ~/vmshare
 }
-
-# Очистить имена файлов, используя различные правила
-# Использование (только вывод): clean_file_names /home/anix/Изображения/*
-# Использование вместе с xargs (выполнение): clean_file_names /home/anix/Изображения/* | xargs -I {} sh -c "{}"
-function clean_file_names() {
-	for i in "$@"
-	do
-		b=$(\
-			echo "$i" | \
-			sed \
-			-e 's%([^()]*)%%g' -e '# Remove all parentheses' \
-			-e's%[♪▶♫♥"»«"]\+%%g' -e '# Removes one or more of various unwanted characters' \
-		  	-e "s%[,']\+%%g" -e '# Remove commas and single quotes' \
-			-e "s%\.\+%.%g" -e '# convert multiple consecutive periods into single period' \
-			-e "s%[:»]\+%_%g" -e '# convert multiple these unwanted characters into single _' \
-			-e "s%&%_and_%g" -e '# convert ampersand ("&") to "_and_"' \
-			-e's%^[-_\. ]\+%%' -e '# Remove dashes, periods, and spaces at beginning' \
-			-e's%-\+%-%g' -e '# convert multiple consecutive dashes into one dash' \
-			-e's%_\{2,99\}%__%g' -e '# convert multiple underscores to one __.' \
-			-e's%\(_-\)\+_%_-_%g' -e '# convert multiple _-_-_ to one __' \
-			-e's% \+% %g' -e '# convert multiple spaces to one space' \
-			-e's% - YouTube%%g' \
-			-e's%[-_ ]\+\(\.[^\.]\+\)$%\1%g' -e'# Remove spaces, periods, dashes, etc. before suffix/extension' \
-			-e's%[-_\. ]\+$%%' -e'# Remove dashes, periods, or whitespace at end (after extension)' \
-		)
-		c=$( echo "$i" | sed -e's%"%\\"%g')
-		[ "$i" != "$b" ] && echo "mv -v -- \"$c\" \"$b\""
-	done
-}
-
-# (CLI) Краткая информация из Википедии по теме
-# Требуется пакет jq
-# Использование: wikip linux
-function wikip() {
-	LANG="ru"
-	if [[ -z $1 ]]; then
-	  echo -e "No argument specified.\nUsage: wikip TOPIC\n"
-	else
-	  var=$(echo $* | sed 's/ /_/g')             # Transforms 'One Time' to 'One_Time'
-	  wiki_data=$(curl -s "https://"$LANG".m.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&titles="$var"&redirects" | jq '.query.pages | to_entries[0] | .value.extract')
-	  data=$(echo $wiki_data | sed 's/\\\"/"/g') # Removes \" characters
-	  if [[ $data = "null" ]]; then
-		echo "Nothing found. Check query/topic."
-	  else
-		url="https://en.m.wikipedia.org/wiki/"$var
-		echo -e ${data:1:${#data}-2}"\n"
-		echo "See more on "$url
-	  fi
-	fi
-}
-# fun times: look something up on wikipedia via DNS query
-# Необходим bind
-# wikip() { dig +short txt $1.wp.dg.cx; }
 
 # http://brettterpstra.com/2013/03/14/more-command-line-handiness/
 # ls archives (inspired by `extract`)
@@ -483,37 +406,40 @@ lsa() {
 }
 
 
-# Распаковка
+# Распаковка нескольких архивов с вложенными папками
 ex () {
   if [ -z "$1" ]; then
     # display usage if no parameters given
-    echo "Использование: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "Использование: ex <path/file_name1>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz> [<path/file_name2> ...]"
   else
-    if [ -f $1 ] ; then
-      NAME=${1%.*}
-      mkdir $NAME && cd $NAME
-      case $1 in
-        *.tar.bz2)   tar xvjf ../$1    ;;
-        *.tar.gz)    tar xvzf ../$1    ;;
-        *.tar.xz)    tar xvJf ../$1    ;;
-        *.lzma)      unlzma ../$1      ;;
-        *.bz2)       bunzip2 ../$1     ;;
-        *.rar)       unrar x -ad ../$1 ;;
-        *.gz)        gunzip ../$1      ;;
-        *.tar)       tar xvf ../$1     ;;
-        *.tbz2)      tar xvjf ../$1    ;;
-        *.tgz)       tar xvzf ../$1    ;;
-        *.zip)       unzip ../$1       ;;
-        *.Z)         uncompress ../$1  ;;
-        *.7z)        7z x ../$1        ;;
-        *.xz)        unxz ../$1        ;;
-        *.exe)       cabextract ../$1  ;; # Если это sfx архив тогда unrar x sfx.exe
-        *)           echo "extract: '$1' - unknown archive method" ;;
-      esac
-    else
-      echo "$1 - file does not exist"
-    fi
-fi
+    for file in "$@"; do
+      if [ -f "$file" ] ; then
+        NAME=${file%.*}
+        mkdir "$NAME" && cd "$NAME"
+        case "$file" in
+          *.tar.bz2)   tar xvjf "../$file"    ;;
+          *.tar.gz)    tar xvzf "../$file"    ;;
+          *.tar.xz)    tar xvJf "../$file"    ;;
+          *.lzma)      unlzma "../$file"      ;;
+          *.bz2)       bunzip2 "../$file"     ;;
+          *.rar)       unrar x -ad "../$file" ;;
+          *.gz)        gunzip "../$file"      ;;
+          *.tar)       tar xvf "../$file"     ;;
+          *.tbz2)      tar xvjf "../$file"    ;;
+          *.tgz)       tar xvzf "../$file"    ;;
+          *.zip)       unzip "../$file"       ;;
+          *.Z)         uncompress "../$file"  ;;
+          *.7z)        7z x "../$file"        ;;
+          *.xz)        unxz "../$file"        ;;
+          *.exe)       cabextract "../$file"  ;; # Если это sfx архив тогда unrar x sfx.exe
+          *)           echo "extract: '$file' - unknown archive method" ;;
+        esac
+        cd ..
+      else
+        echo "$file - file does not exist"
+      fi
+    done
+  fi
 }
 
 

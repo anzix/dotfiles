@@ -108,18 +108,22 @@ alias \
  bat="bat --style=numbers" \
  obs-gs="OBS_USE_EGL=1 obs" \
  imgsum="identify -format '%#\n' $1" \
- gdl="gallery-dl -d $HOME/Pictures/gallery-dl/"
+ gdl="gallery-dl -d $HOME/Pictures/gallery-dl/" \
+ hdmp="od -Ax -tx1z -v" `# Дамп бинарного файла в формате hexademical` \
+ disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T`
 
 # xargs-I="xargs -I {} "
 
 # Package Manager & AUR helper
 alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su" # Использовать в первую очередь если очень долго не обновлялись
+alias checkupdates="checkupdates; yay -Qqu"
 alias \
  yay="yay -Pw; yay" `# обновление` \
  y="yay -S --needed" `# установка пакета` \
  yn="yay -S --noconfirm --needed" `# установка пакета без подтверждения` \
  yo="yay -S --overwrite='*'" `# установив пакет, перезаписав существующие файлы` \
  yuo="yay -U --overwrite='*'" \
+ yg="yay -G" `# Выгрузить PKGBUILD в pwd` \
  ysc="yay -Sc" `# очистка кэша но оставить локально установленные` \
  yscc="yay -Scc" `# очистить весь кэш` \
  yr="yay -R" `# удаление пакет(а,ов)` \
@@ -132,6 +136,9 @@ alias \
 # Показывает опциональные пакеты, полезно юзать для wine
 # пример: sudo pacman -S --needed $(popts wine-staging)
 popts() { expac -S '%o' $1 | tr ' ' '\n' | sed '/^$/d' }
+
+# Вывести лист всех пакетов из офф репо Arch которые не имеют зависимостей
+alias lsnulldeps='expac -S '%n %E%o' | awk '$2==""{print $1}''
 
 # Фиксит ошибку: failed to synchronize all databases (не удалось заблокировать базу данных)
 alias punlock='sudo rm /var/lib/pacman/db.lck'
@@ -183,6 +190,13 @@ alias \
  syslist="systemctl list-unit-files" `# --state=enabled` \
  sysuserlist="systemctl --user list-unit-files"
 
+# btrfs / snapper
+alias \
+ btrfsfs="sudo btrfs filesystem df /" \
+ btrfsls="sudo btrfs su li / -t" \
+ snapls="sudo snapper list" \
+ snapcr="sudo snapper -c root create"
+
 # Чистка и обслуживание
 alias \
  rm-ds-store="find . -name '*.DS_Store' -type f -ls -delete" `# Recursively delete .DS_Store files` \
@@ -201,10 +215,10 @@ alias \
 # Генерирует коричневый шум, улучшающий концентрацию(?) с помощью sox
 # from interesting hn thread https://news.ycombinator.com/item?id=5872414
 alias \
-  brownnoise='play --show-progress -c 2 --null synth brownnoise reverb bass 6 treble -3 echos 0.8 0.9 1000 0.3 1800 0.25' \
-  warpcore='play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1' \
-  warpcore2='play -c2 -n synth whitenoise band -n 100 24 band -n 300 100 gain +20' \
-  podracer='play -c2 -n synth whitenoise tremolo 8 70 flanger band -n 100 80 band -n 850 100 gain +20'
+ brownnoise='play --show-progress -c 2 --null synth brownnoise reverb bass 6 treble -3 echos 0.8 0.9 1000 0.3 1800 0.25' \
+ warpcore='play -n -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +25 fade h 1 864000 1' \
+ warpcore2='play -c2 -n synth whitenoise band -n 100 24 band -n 300 100 gain +20' \
+ podracer='play -c2 -n synth whitenoise tremolo 8 70 flanger band -n 100 80 band -n 850 100 gain +20'
 
 # Просмотр HTTP-трафика
 alias sniff="sudo ngrep -d 'enp6s0' -t '^(GET|POST) ' 'tcp and port 80'"
@@ -218,8 +232,8 @@ lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | co
 # Полезно при проверке на вирус
 alias cutexe="sed '$ s/\x30*$//' $1"
 
-# Убивает сессию X11
-alias killsession="sudo pkill -u ${whoami}"
+# Убивает сессию X11 (использовать с root привилегиями)
+alias killsession="pkill -u $(whoami)"
 
 # Python - смена версий (для сборки)
 # Проверить версию: python -V
@@ -228,13 +242,17 @@ alias \
  py2="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python2 $HOME/.local/bin/python && sudo ln -s /usr/bin/python2-config $HOME/.local/bin/python-config" \
  py3="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python $HOME/.local/bin/python && sudo ln -s /usr/bin/python-config $HOME/.local/bin/python-config"
 
-# Конвертирование всех документов
+# Конвертирование документов
 alias \
- doc2pdf="libreoffice --headless --convert-to pdf *.doc" \
- docx2pdf="libreoffice --headless --convert-to pdf *.docx" \
- odt2pdf="libreoffice --headless --convert-to pdf *.odt" \
- ppt2pdf="libreoffice --headless --convert-to pdf *.pptx"
+ 2pdf="libreoffice --headless --convert-to pdf" \
+ 2csv='libreoffice --headless --convert-to csv'
 
+# Конвертирование котировок
+alias \
+ win2utf="iconv -cf CP1251 -t UTF-8" \
+ koi2utf="iconv -cf KOI8-R -t UTF-8"
+
+# Не проверено
 # Команда запись на диск (болванку)
 alias cdwrite='xorrecord -v speed=16 dev=/dev/sr0 -eject blank=as_needed'
 # Тоже самое?
@@ -252,14 +270,10 @@ alias viewcsv="cat $1 | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S"
 # Ensure that 'xhost' has been run prior to enable permissions to X11 display.
 alias d-run="docker run --rm -it --net=host --cpuset-cpus 0 --memory 512mb -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY "
 
-# Быстрый шорткат для открытия файлового менеджера в текущем каталоге,
-# не загромождая терминал сообщениями из него.
-alias here="pcmanfm . &>/dev/null &"
-
 # ncdu - анализатор диска
 alias \
  hdu="ncdu --color dark --show-percent --hide-graph -rr -x --exclude .git --exclude node_modules" `# Статистика свободного места ~` \
- root-du='sudo ncdu --color dark --show-percent --hide-graph -rr -x --exclude .git --exclude node_modules /' `# Статистика свободного места корня`
+ rdu='sudo ncdu --color dark --show-percent --hide-graph -rr -x --exclude .git --exclude node_modules /' `# Статистика свободного места корня`
 
 
 # lgogdownloader - GOG обвёртка
@@ -297,11 +311,16 @@ logssh() { ssh $1 | tee sshlog ;}
 genpass() { head -c 32 < /dev/urandom | base64 | tr -dc '[:alnum:]' | head -c ${1:-20} ; echo }
 
 # Проверка правописания aspell
-# Туториал видео: http://www.youtube.com/watch?v=UEwz5eeaZzc
 # Для Русского языка может проверять файлы только с UTF8 кодировкой
 check-word() { echo "$1" | aspell -a ;}
 check-list() { cat "$1" | aspell list ;}
 check-file() { aspell check "$1" ;}
+
+# Проверка правописания hunspell
+check-word-en () { echo "$1" | hunspell -d en_US ;}
+check-word-ru () { echo "$1" | hunspell -d ru_RU ;}
+check-list () { hunspell -d en_US,ru_RU -l "$1" }
+check-file () { hunspell -d en_US,ru_RU "$1" ;}
 
 # Конвертирование
 # usage: hex2text "68656c6c6f"
@@ -380,11 +399,15 @@ alias \
 
 # Pastebins
 # Использование:
-# cat log.txt | <np/ix/sprunge/catbox>
-# dmesg | <np/ix/sprunge/catbox>
+# cat log.txt | <np/ix/clb/sprunge/catbox>
+# systemctl status [service] | <np/ix/clb/sprunge/catbox>
+# journalctl -k -b | <np/ix/clb/sprunge/catbox>
+# journalctl -b -u [service] | <np/ix/clb/sprunge/catbox>
+# dmesg | <np/ix/clb/sprunge/catbox>
 alias \
  np="curl -F 'file=@-' https://0x0.st" \
  ix="curl -F 'f:1=<-' http://ix.io" \
+ clb="curl -F 'clbin=<-' https://clbin.com" \
  sprunge="curl -F 'sprunge=<-' http://sprunge.us" \
  catbox="curl -sF 'reqtype=fileupload' -F 'fileToUpload=@-' https://catbox.moe/user/api.php"
 
