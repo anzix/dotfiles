@@ -16,6 +16,8 @@ export TERMINAL="alacritty"
 export BROWSER="chromium"
 export READER="zathura"
 export LESS='-R' # Цвета через less
+export MANPAGER='nvim +Man!' # Запускает man'уал через редактор nvim, очень удобно
+# export MANPAGER="less -R --use-color -Dd+g -Du+b -Ds+r -DS+r -DP+r -DE+r"
 
 # Игнор команд из истории
 export HISTORY_IGNORE="(ls|cd|cd ..|cd -|pwd|zsh|exit|reboot|sudo reboot|poweroff|clear|history)"
@@ -69,13 +71,17 @@ export WINEDLLOVERRIDES="winemenubuilder.exe="
 
 # Other program settings:
 export MOZ_USE_XINPUT2="1" # (X11) Mozilla smooth scrolling/touchpads.
+
+# GPG
+# if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
+#   export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
+# fi
 #export GPG_TTY=$(tty)
-export GPG_TTY=$TTY
+#export GPG_TTY=$TTY
+
 # export QT_STYLE_OVERRIDE=kvantum # Устанавливаю Kvantum для всех Qt программ
 # export QT_QPA_PLATFORMTHEME="qt5ct" #gtk2 предоставляет AUR пакет qt5-styleplugins
 export MANWIDTH=80 # Ширина man'уала. 80 default, 999 максимум (ломает некоторые мануалы)
-export MANPAGER='nvim +Man!' # Запускает man'уал через редактор nvim, очень удобно
-# export MANPAGER="less -R --use-color -Dd+g -Du+b -Ds+r -DS+r -DP+r -DE+r"
 export NO_AT_BRIDGE=1 # Подавляет предупреждения о accessibility bus в GTK
 
 # Цветной man'уал

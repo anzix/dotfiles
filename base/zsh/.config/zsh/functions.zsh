@@ -1,12 +1,12 @@
 # Функция чтобы выполнять содержимое файла
 # в текущей оболочке, если они существуют
-function file() {
+file() {
     [ -f "$ZDOTDIR/$1" ] && source "$ZDOTDIR/$1"
 }
 
 # Функция для выполнения sparse clone вытягивания плагинов oh-my-zsh
 # https://stackoverflow.com/a/13738951
-function git_omz_plugins() (
+git_omz_plugins() (
   rurl="$1" tmpdir="$ZDOTDIR/tmp" && shift "$4" # Для предотвращения "shift:1: shift count must be <= $#"
 
   mkdir -p "$tmpdir"
@@ -33,7 +33,7 @@ function git_omz_plugins() (
 
 # Вытягивает плагин из репо omz
 # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
-function omz_plug() {
+omz_plug() {
     PLUGIN_NAME=$(echo $1 )
     if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
         # For plugins
@@ -54,7 +54,7 @@ function omz_plug() {
 
 # Вытягивает плагин из репо unixorn
 # https://github.com/unixorn/awesome-zsh-plugins#plugins
-function plug() {
+plug() {
     PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
     if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
         # For plugins
@@ -67,7 +67,7 @@ function plug() {
 
 # Zsh завершение
 # https://github.com/zsh-users/zsh-completions/tree/master/src
-function zsh_add_completion() {
+zsh_add_completion() {
     PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
     if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
         # For completions
@@ -83,19 +83,150 @@ function zsh_add_completion() {
 	if [ "$2" = true ] && compinit "${completion_file:1}"
 }
 
-killp() {
-  local pid=$(ps -ef | sed 1d | eval "fzf ${FZF_DEFAULT_OPTS} -m --header='[kill:process]'" | awk '{print $2}')
-  if [[ "$pid" != "" ]]; then
-    echo $pid | xargs sudo kill -${1:-9}
-    killp
+# TUI пакетный менеджер [pacman+AUR] (Нужен: fzf)
+aurstore() { yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}' | xargs -ro yay -S ;}
+pacstore() { pacman -Slq | fzf -q "$1" -m --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S ;}
+deinst() { yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rn ;}
+
+# lgogdownloader - GOG обвёртка
+# Функции для более удобного синтаксиса argv загрузчика GOG
+# Источник: https://github.com/ssokolow/profile/blob/master/home/.common_sh_init/aliases
+# Win установщик с бонусами
+gogd() { local IFS=| lgogdownloader --retries=7 --download --game "^($*)\$";}
+# Win установщик без бонусов
+gogu() { local IFS=| lgogdownloader --retries=7 --download --exclude=extras --game "^($*)\$";}
+# Linux установщик с бонусами
+lgogd() { local IFS=| lgogdownloader --retries=7 --download --platform=linux --game "^($*)\$";}
+# Linux установщик без бонусов
+lgogu() { local IFS=| lgogdownloader --retries=7 --download --exclude=extras --platform=linux --game "^($*)\$";}
+
+
+# Перейти в директорию после создания
+mkcd () { mkdir -pv $1; cd $1 ;}
+
+# Создаёт .bak (backup) в том же каталоге
+backup () { cp "$1"{,.bak};}
+
+# Терминальные советы и рекомендации
+# пример: cheat btrfs
+cheat () { curl cheat.sh/$1 | less ;}
+
+# Показывает опциональные пакеты, полезно юзать для wine
+# пример: sudo pacman -S --needed $(popts wine-staging)
+popts() { expac -S '%o' $1 | tr ' ' '\n' | sed '/^$/d' }
+
+# Установить ssh-соединение + записать лог-файл
+logssh() { ssh $1 | tee sshlog ;}
+
+# Сгенерировать пароль
+# usage: genpass <число_символов>
+genpass() { head -c 32 < /dev/urandom | base64 | tr -dc '[:alnum:]' | head -c ${1:-20} ; echo }
+
+# Подробная информация о смонтированных устройствах
+lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | column -t; }
+
+# Проверка правописания hunspell
+check-word-en () { echo "$1" | hunspell -d en_US ;}
+check-word-ru () { echo "$1" | hunspell -d ru_RU ;}
+check-list () { hunspell -d en_US,ru_RU -l "$1" }
+check-file () { hunspell -d en_US,ru_RU "$1" ;}
+
+# Конвертирование
+# пример: hex2text "68656c6c6f"
+hex2text () { printf "$@" | xxd -p -r; echo ;}
+hex2text-utf8 () { printf "$@" | xxd -p -r | iconv -f iso-8859-1 -t UTF-8; echo ;}
+text2hex () { printf "$@" | xxd -p ;}
+hex2bin () {
+  hex=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+  echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s\n", $0}'
+}
+bin2hex () {
+    bin=$1
+    printf "%x\n" "$((2#$bin))"
+}
+ascii2bin () {
+  while read hex; do
+    echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
+  done < <(printf "$@" | xxd -p -c1 -u); echo
+}
+
+# Конвертирование образов
+# Использование: convert2chd [файл]
+convert2chd(){ chdman createcd -i "$1" -o "${1%.*}.chd" ;}
+chd2cue(){ chdman extractcd -i "$1" -o "${1%.*}.cue" ;}
+iso2cso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso/PS2: yay -S maxcso-git
+iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu
+# 3DS: yay -S makerom-git
+# Xbox/Xbox360: yay -S extract-xiso-git
+
+# Топ команд
+tophist() {
+ cat ${HISTFILE:-$HOME/.zsh_history} \
+ | cut -d ';' -f 2- 2>/dev/null \
+ | awk '{a[$1]++ } END{for(i in a){print a[i] " " i}}' \
+ | sort -rn \
+ | head
+}
+
+# Генерировать случайную музыку из /dev/urandom
+randmusic-minor () {
+ cat /dev/urandom \
+ | hexdump -v -e '/1 "%u\n"' \
+ | awk '{ split("0,2,3,5,7,8,10,12",a,","); for (i = 0; i < 1; i+= 0.0001) printf("%08X\n", 100*sin(1382*exp((a[$1 % 8]/12)*log(2))*i)) }' \
+ | xxd -r -p \
+ | aplay -c 2 -f S32_LE -r 16000
+}
+
+ram () {
+ # get top process eating memory
+ # usage: ram {кол-во столбцов}
+ ps axch -o cmd:15,%mem --sort=-%mem | head -"$1"
+}
+
+cpu () {
+ # get top process eating cpu
+ # usage: cpu {кол-во столбцов}
+ ps axch -o cmd:15,%mem --sort=-%mem | head -"$1"
+}
+
+# Погода cli
+# пример: wts {Город}
+wts () { curl "wttr.in/$1?M&lang=ru" }
+wtss () { curl "wttr.in/$1?format=3" } # Коротко
+
+# Git
+# Клонирование
+gc () { git clone "$1" ${2} ;}
+
+# Прыгнуть в каталог после клонирования
+gcj () {
+  if [[ -n "$2" ]]; then
+    git clone "$1" "$2"
+    cd "$2"
+  else
+    git clone "$1"
+    local to=$(echo ${1##*/}|sed 's/\..*//')
+    cd $to
+    # $EDITOR .
   fi
 }
 
+# Добавление всех файлов + коммит
+gacm () {
+  git add --all
+  git commit -am "$1"
+}
 
-# if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
-#   export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
-# fi
+# Библиотека man'уалов используя fzf
+manlist() {
+    man $(man -k . | fzf --prompt='Man> ' --preview="man \$(echo {} | awk '{print \$1}')" | awk '{print $1}')
+}
 
+# mangrep - поиск в man странице
+# пример: mang <manpage> <word>
+mangrep() { man $1 | grep --color=auto $2 -C 5 }
+
+# XDG открыть файл под все окружения
 open() {
   if [[ -n "${commands[xdg-open]}" ]]; then
     xdg-open "$@"
@@ -110,7 +241,7 @@ open() {
 }
 
 # Просмотр .crt файл сертификата
-# usage: viewcert file.crt
+# пример: viewcert file.crt
 viewcert() {
     local cert=$1
 
@@ -122,6 +253,7 @@ viewcert() {
     openssl x509 -in "$cert" -noout -text
 }
 
+# Сгенерировать ssl сертификат
 gencert() {
     local server="$1"
 
@@ -143,26 +275,18 @@ favicon() {
 }
 
 # Кодировка/декодировка url адресса
-# Usage: urlencode "Hello, World."
+# пример: urlencode "Hello, World."
 # urldecode Hello%2C%20World.
 urlencode() { python3 -c "import sys, urllib.parse as parse; print(parse.quote(sys.argv[1]))" $1; }
 urldecode() { python3 -c "import sys, urllib.parse as parse; print(parse.unquote(sys.argv[1]))" $1; }
 
 # Переименовывает ПРОПИСНЫЕ в строчные (и наоборот) названия всех файлов и каталогов
 # Использовать внутри каталога
-uppercase2lowercase() {
-	for f in * ; do
-		mv -v -- "$f" "$(tr [:upper:] [:lower:] <<< "$f")" ;
-	done
-}
-lowercase2uppercase() {
-	for f in * ; do
-		mv -v -- "$f" "$(tr [:lower:] [:upper:] <<< "$f")" ;
-	done
-}
+uppercase2lowercase() { for f in * ; do mv -v -- "$f" "$(tr [:upper:] [:lower:] <<< "$f")" ; done ;}
+lowercase2uppercase() { for f in * ; do mv -v -- "$f" "$(tr [:lower:] [:upper:] <<< "$f")" ; done ;}
 
-### IMAGE COMPRESSION
-# usage: imageoptim <file> <options>
+# Сжатие изображения
+# пример: imageoptim <file> <options>
 imageoptim () {
   if [ -f $1 ] ; then
     case $1 in
@@ -178,56 +302,23 @@ imageoptim () {
 
 # Конвертирование изображений
 # Использовать находясь внутри каталога
-bulk_heic2jpg() {
-	for f in *.HEIC; do
-		heif-convert -q 100 $f "${f%.*}.jpg"
-	done
-}
-bulk_all2jxl() {
-	for f in *.png *.jpg *.ppm; do
-		cjxl -e 8 -d 0 "$f" "${f%.*}.jxl"
-	done
-}
+bulk_heic2jpg() { for f in *.HEIC; do heif-convert -q 100 $f "${f%.*}.jpg"; done ;}
+bulk_all2jxl() { for f in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$f" "${f%.*}.jxl"; done ;}
 
 # Конверация видео форматов (полезно для Davinci Resolve)
-bulk_mkv2mov() {
-	for i in *.mkv; do
-		ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"
-	done
-}
+bulk_mkv2mov() { for i in *.mkv; do ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"; done ;}
 bulk_mp42mov() {
-	# использовать MKV как мост
-	for i in *.mp4; do
-		ffmpeg -i "$i" -c copy "${i%.*}.mkv";
-	done
-	;
-	for i in *.mkv; do
-		ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"
-	done; rm *.mkv
-}
-bulk_webm2mp4() {
-	for i in *.webm; do
-		ffmpeg -fflags +genpts -i "$i" -r 24 "${i%.*}.mp4"
-	done
-}
+ # использовать MKV как мост
+ for i in *.mp4; do ffmpeg -i "$i" -c copy "${i%.*}.mkv"; done
+ ; for i in *.mkv; do ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"; done; rm *.mkv ;}
+bulk_webm2mp4() { for i in *.webm; do ffmpeg -fflags +genpts -i "$i" -r 24 "${i%.*}.mp4"; done ;}
 
 # Извлечение аудио дорожки из видео
-bulk_mp42flac() {
-	for i in *.mp4; do
-		ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"
-	done
-}
-bulk_mkv2flac() {
-	for i in *.mkv; do
-		ffmpeg -i "$i" -vn -y "${i%.*}.flac"
-	done
-}
+bulk_mp42flac() { for i in *.mp4; do ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"; done ;}
+bulk_mkv2flac() { for i in *.mkv; do ffmpeg -i "$i" -vn -y "${i%.*}.flac"; done ;}
 
 # Извлечение кадров из видео
-vid2frames() {
-	mkdir $(pwd)/FrameDir
-	ffmpeg -i "$1" "FrameDir/frame-%03d.jpg"
-}
+vid2frames() { mkdir "$(pwd)/FrameDir"; ffmpeg -i "$1" "$(pwd)/FrameDir/frame-%03d.jpg" ;}
 
 # Download soundcloud music and add metadata.
 # If lossless, convert to flac immediately.
@@ -296,6 +387,7 @@ powermode () {
 }
 
 # Узнать MIME тип файла
+# пример: read_mime {файл}
 read_mime() {
   local file="$1"
   xdg-mime query filetype "$file" 2>/dev/null | cut -d ';' -f 1
@@ -317,7 +409,7 @@ function ftext() {
 # HEX сравнение 2-х бинарников
 # - RED $1
 # + GREEN $2
-function bindiff {
+bindiff() {
   test -n "$1" || {
     echo "No input files" >&2
     return 1
@@ -331,7 +423,7 @@ function bindiff {
 
 # Запись экрана смартфона используя adb
 # сохраняет во внутреннюю память
-function android_screen_record() {
+android_screen_record() {
     local filename="$(mktemp -u -p "./").mp4"
 
     echo "Press CTRL+C to stop recording."
@@ -343,7 +435,7 @@ function android_screen_record() {
 
 # Скриншот экрана смартфона
 # сохраняет во внутреннюю память
-function android_screen_capture() {
+android_screen_capture() {
     local filename="$(mktemp -u -p './').png"
 
     adb shell screencap -p "/sdcard/$filename"
@@ -461,15 +553,4 @@ pk () {
     else
         echo "'$1' не является допустимым файлом"
     fi
-}
-
-# TUI Установщик пакетов используя yay+fzf
-function yin () {
-    yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}' | xargs -ro yay -S
-}
-
-# TUI Деинсталятор пакетов используя yay+fzf
-function yre () {
-    # yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns # Удалить с зависимостями
-    yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rn
 }
