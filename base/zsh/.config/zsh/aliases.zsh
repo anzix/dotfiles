@@ -1,16 +1,16 @@
 # Весь список alias, функции, пути одим списком
 alias \
-	alist="alias | sed 's/=.*//'" \
-	fncla="declare -f | grep '^[a-z].* ()' | sed 's/{$//'" \
-	fncl='declare -f $(grep -oP "^[a-zA-Z0-9_]+(?=\\s*\\(\\))" $ZDOTDIR/functions.zsh) | grep "^[a-z].* ()" | sed "s/{$//"' \
-	paths='echo -e ${PATH//:/\\n}'
+ alist="alias | sed 's/=.*//'" \
+ fncla="declare -f | grep '^[a-z].* ()' | sed 's/{$//'" \
+ fncl='declare -f $(grep -oP "^[a-zA-Z0-9_]+(?=\\s*\\(\\))" $ZDOTDIR/functions.zsh) | grep "^[a-z].* ()" | sed "s/{$//"' \
+ paths='echo -e ${PATH//:/\\n}'
 
 # Юзать doas вместо sudo (если присутствует)
 if hash doas 2>/dev/null; then
-    alias sudo='doas'
+ alias sudo='doas'
 else
-    # Позволяет юзать sudo [alias]
-    alias sudo='sudo '
+ # Позволяет юзать sudo [alias]
+ alias sudo='sudo '
 fi
 
 # eza - ls замена
@@ -26,7 +26,7 @@ if hash eza 2>/dev/null; then
   lt3="lt -L 3" \
   l.='eza -d .* --group-directories-first' `# Показать только . (dot)`
 else
-# GNU `ls`
+ # GNU `ls`
  alias \
   ls='ls --color=auto --group-directories-first' \
   ll='ls -l' `# +Подробно +листом вниз` \
@@ -41,8 +41,8 @@ fi
 
 # Навигация
 # alias \
-# 	...='cd ../../' \
-# 	....='cd ../../../' \
+#  ...='cd ../../' \
+#  ....='cd ../../../' \
 
 # Расширенные стандартные команды
 alias \
@@ -79,7 +79,7 @@ alias \
  dosbox="dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf" \
  winetricks='winetricks -q' `# Тихая установка` \
  protontricks='protontricks -q' \
- bat="bat --style=numbers" \
+ bat="bat --style=numbers"
 
 # Сокращённые команды
 alias \
