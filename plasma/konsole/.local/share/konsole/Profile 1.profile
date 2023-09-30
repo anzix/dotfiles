@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=WhiteOnBlack
-UseFontLineChararacters=false
+UseFontLineChararacters=true
 
 [General]
 Name=Profile 1

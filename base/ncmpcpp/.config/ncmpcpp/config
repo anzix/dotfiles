@@ -7,9 +7,16 @@ mpd_music_dir "/media/Media/music"
 display_bitrate = "yes"
 autocenter_mode = "yes" # Центрировать играющий трек в списке
 lines_scrolled = "2" # Скролл за 1 ход колёсиком мыши
+playlist_disable_highlight_delay = "2" # Задержка выделения текущего трека при воспроизведении в секундах
+message_delay_time = "2" # Задержка в появления сообщения в секундах
+connected_message_on_startup = "no"
+clock_display_seconds = "yes"
+playlist_show_remaining_time = "yes"
 
 # --- Внешность плеера
-## Если цвета блеклые, настраивайте цветовую схему вашего терминала
+# Если цвета блеклые, настраивайте цветовую схему вашего терминала,
+# либо используйте кастомные цвета из конца help страницы (F1)
+# пример использования кастомных цветов: "$(209)" оранжевый
 
 # Использовать классический вид
 playlist_display_mode = classic
@@ -22,19 +29,28 @@ song_list_format = "$7{%t}$9 · $5{%a}$9$R $8{%l}$9"
 # Пример: Название · Автор · Альбом, Дата
 song_status_format = "{{$7%t$9{ · $5%a$/b$9 · }{$8%b$9{, %y}}}}"
 
-# Префикс текущего трека (указатель)
-now_playing_prefix = "=> $b"
+# Указатель текущего трека в списке
+now_playing_prefix = "$9=> $b"
 
-# --- Цвета
+# Выделенный текущий трек на insert
+selected_item_prefix = "$(210)"
+
+# Цвет главного окна
 main_window_color = "white"
+
+# Подсветка текущего курсора (для консистентности со цветом окна)
 current_item_prefix = "$(white)$r"
 
+# Для множество столбцов
+current_item_inactive_column_prefix = "$(9)$r"
+
 # --- Настройка визуализации
+# Информация должна соответствовать файлу mpd.conf
 visualizer_data_source = /tmp/mpd.fifo
-visualizer_output_name = "Visualizer feed"
-visualizer_in_stereo = yes
+visualizer_output_name = "Visualizer"
+visualizer_in_stereo = no
 visualizer_type = ellipse
-visualizer_color =  8, 9, 5, 1
+visualizer_color = 8, 9, 5, 1
 
 # --- Список визуализаций
 ## Только один активный на выбор

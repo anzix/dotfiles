@@ -13,7 +13,7 @@ else
  alias sudo='sudo '
 fi
 
-# eza - ls замена
+# eza - замена ls
 if hash eza 2>/dev/null; then
  alias \
   ls='eza -b --color=always --icons --group-directories-first' `# (-b) Понятные размеры файлов +Цвета +Иконки, Сгруппировано` \
@@ -130,7 +130,6 @@ alias \
 alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su" # Использовать в первую очередь если очень долго не обновлялись
 alias checkupdates="checkupdates; yay -Qqu"
 alias \
- yay="yay -Pw; yay" `# обновление` \
  y="yay -S --needed" `# установка пакета` \
  yn="yay -S --noconfirm --needed" `# установка пакета без подтверждения` \
  yo="yay -S --overwrite='*'" `# установив пакет, перезаписав существующие файлы` \
@@ -171,7 +170,7 @@ alias \
 
 # Системное администрирование
 alias \
- xlog='grep "(EE)\|(WW)\|error\|failed" ~/.local/share/xorg/Xorg.0.log' `# Для startx` \
+ xlog='grep "(EE)\|(WW)\|error\|failed" ~/.local/share/xorg/Xorg.0.log' `# Для запуска из под tty используя startx` \
  xlogdm='grep "(EE)\|(WW)\|error\|failed" /var/log/Xorg.0.log' `# Для DM` \
  paclog='bat /var/log/pacman.log' `# Лог транзакций pacman` \
  hwis="hwinfo --short" `# Информация о оборудовании` \

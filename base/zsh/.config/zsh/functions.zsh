@@ -40,15 +40,8 @@ omz_plug() {
         file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.plugin.zsh" || \
         file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.zsh"
     else
-
-        if read -q "choice?Установить плагин $PLUGIN_NAME ?: "; then
-            echo
-            echo "Добавляю плагин $PLUGIN_NAME"
-            git_omz_plugins "http://github.com/ohmyzsh/ohmyzsh/" "plugins/$PLUGIN_NAME"
-        else
-            echo
-            echo "Пропускаю..."
-        fi
+        echo "Добавляю плагин $PLUGIN_NAME"
+        git_omz_plugins "http://github.com/ohmyzsh/ohmyzsh/" "plugins/$PLUGIN_NAME"
     fi
 }
 
@@ -128,7 +121,7 @@ lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | co
 # Проверка правописания hunspell
 check-word-en () { echo "$1" | hunspell -d en_US ;}
 check-word-ru () { echo "$1" | hunspell -d ru_RU ;}
-check-list () { hunspell -d en_US,ru_RU -l "$1" }
+check-list () { hunspell -d en_US,ru_RU -l "$1" ;}
 check-file () { hunspell -d en_US,ru_RU "$1" ;}
 
 # Конвертирование
@@ -140,10 +133,7 @@ hex2bin () {
   hex=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s\n", $0}'
 }
-bin2hex () {
-    bin=$1
-    printf "%x\n" "$((2#$bin))"
-}
+bin2hex () { printf "%x\n" "$((2#$1))" }
 ascii2bin () {
   while read hex; do
     echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
@@ -158,6 +148,27 @@ iso2cso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso/PS2: yay -S maxcso-gi
 iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu
 # 3DS: yay -S makerom-git
 # Xbox/Xbox360: yay -S extract-xiso-git
+
+# Torrents
+# пример: torrent2magnet {файл} / magnet2torrent {magnet_url}
+torrent2magnet() { transmission-show -m "$1" ;}
+magnet2torrent() { aria2c -q --bt-metadata-only --bt-save-metadata "$1" ;}
+
+# btfs
+# пример: mpvbtfs [torrent_file/magnet]
+mpvbtfs() {
+ # Генерация случайной строки и создание директории
+ randstr=$(tr -dc 'a-zA-Z0-9' </dev/urandom | head -c 10)
+ dirname="/tmp/btfs/${randstr}"
+ mkdir -p "$dirname"
+ btfs "$@" "$dirname"
+ sleep 5
+ # Открытие mpv
+ mpv "$dirname"
+
+ # Очистка после закрытия mpv
+ [ -d "$dirname" ] && { mountpoint "$dirname" && fusermount -uz "$dirname"; rm -rfv "$dirname"; }
+}
 
 # Топ команд
 tophist() {
@@ -177,17 +188,10 @@ randmusic-minor () {
  | aplay -c 2 -f S32_LE -r 16000
 }
 
-ram () {
- # get top process eating memory
- # usage: ram {кол-во столбцов}
- ps axch -o cmd:15,%mem --sort=-%mem | head -"$1"
-}
-
-cpu () {
- # get top process eating cpu
- # usage: cpu {кол-во столбцов}
- ps axch -o cmd:15,%mem --sort=-%mem | head -"$1"
-}
+# get top process eating memory/cpu
+# пример: ram/cpu {кол-во столбцов}
+ram () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
+cpu () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
 
 # Погода cli
 # пример: wts {Город}
@@ -319,6 +323,9 @@ bulk_mkv2flac() { for i in *.mkv; do ffmpeg -i "$i" -vn -y "${i%.*}.flac"; done 
 
 # Извлечение кадров из видео
 vid2frames() { mkdir "$(pwd)/FrameDir"; ffmpeg -i "$1" "$(pwd)/FrameDir/frame-%03d.jpg" ;}
+
+# Извлечение обложки из аудио
+extcover() { ffmpeg -i "$1" -an -vcodec copy cover.jpg ;}
 
 # Download soundcloud music and add metadata.
 # If lossless, convert to flac immediately.
