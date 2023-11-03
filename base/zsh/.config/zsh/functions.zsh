@@ -100,7 +100,7 @@ mkcd () { mkdir -pv $1; cd $1 ;}
 # Создаёт .bak (backup) в том же каталоге
 backup () { cp "$1"{,.bak};}
 
-# Терминальные советы и рекомендации
+# Короткие консольные заметки
 # пример: cheat btrfs
 cheat () { curl cheat.sh/$1 | less ;}
 
@@ -230,6 +230,13 @@ manlist() {
 # пример: mang <manpage> <word>
 mangrep() { man $1 | grep --color=auto $2 -C 5 }
 
+# Fuzzy search music library
+fmp() {
+	local FORMAT="[%file%]"
+	mpc listall -f "$FORMAT" | fzf --multi --preview 'mediainfo /media/Media/music/{}' | mpc add
+}
+
+
 # XDG открыть файл под все окружения
 open() {
   if [[ -n "${commands[xdg-open]}" ]]; then
@@ -310,6 +317,7 @@ bulk_heic2jpg() { for f in *.HEIC; do heif-convert -q 100 $f "${f%.*}.jpg"; done
 bulk_all2jxl() { for f in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$f" "${f%.*}.jxl"; done ;}
 
 # Конверация видео форматов (полезно для Davinci Resolve)
+# [TODO] добавить GNU parallel для более быстрой конвертации
 bulk_mkv2mov() { for i in *.mkv; do ffmpeg -i "$i" -c:v copy -c:a pcm_s16le -f mov "${i%.*}.mov"; done ;}
 bulk_mp42mov() {
  # использовать MKV как мост
@@ -320,6 +328,11 @@ bulk_webm2mp4() { for i in *.webm; do ffmpeg -fflags +genpts -i "$i" -r 24 "${i%
 # Извлечение аудио дорожки из видео
 bulk_mp42flac() { for i in *.mp4; do ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"; done ;}
 bulk_mkv2flac() { for i in *.mkv; do ffmpeg -i "$i" -vn -y "${i%.*}.flac"; done ;}
+
+# Массовое конвертирование flac в mp3
+# parallel - можно уменьшить время конвертации в 2 раза
+# bulk_flac2mp3 () { find . -name "*.flac" -print0 | parallel -0 ffmpeg -i {} -acodec libmp3lame -ab 320k -map_metadata 0 -id3v2_version 3 "{.}.mp3" }
+bulk_flac2mp3() { for i in *.flac; do ffmpeg -i "$i" -acodec libmp3lame -ab 320k "${i%.*}.mp3"; done ;}
 
 # Извлечение кадров из видео
 vid2frames() { mkdir "$(pwd)/FrameDir"; ffmpeg -i "$1" "$(pwd)/FrameDir/frame-%03d.jpg" ;}

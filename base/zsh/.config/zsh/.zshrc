@@ -7,6 +7,7 @@ fi
 
 # Отключает комбинацию ctrl+s которая заставляет терминал зависнуть намертво
 # Закоментированно из-за p10k output'а "stty: 'стандартный ввод': Неприменимый к данному устройству ioctl
+# https://catonmat.net/annoying-keypress-in-linux
 # stty stop undef
 
 # Альтернативная команда для тех кто юзает p10k
@@ -83,13 +84,13 @@ file "vim-mode.zsh"
 # (plug) Для большего выбора плагинов: https://github.com/unixorn/awesome-zsh-plugins#plugins
 plug "zsh-users/zsh-autosuggestions" # Автозаполнение
 plug "zsh-users/zsh-syntax-highlighting" # Подсветка синтаксиса
-plug "zsh-users/zsh-history-substring-search"
+plug "zsh-users/zsh-history-substring-search" # История zsh стрелками вверх вниз
 plug "MichaelAquilina/zsh-you-should-use" # Напоминалка о использовании aliases
 plug "MichaelAquilina/zsh-auto-notify" # Уведомления shell
 plug "hlissner/zsh-autopair" # Полезно для работы с кавычками
 plug "romkatv/powerlevel10k" # Prompt
 plug "junegunn/fzf" # Fuzzy finder (fzf_install функция находится в functions.zsh)
-# plug "Aloxaf/fzf-tab" # TAB fzf функционал
+# plug "Aloxaf/fzf-tab" # Replace zsh's default completion selection menu with fzf!
 
 
 # (omz_plug) Плагины из репо oh-my-zsh: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins

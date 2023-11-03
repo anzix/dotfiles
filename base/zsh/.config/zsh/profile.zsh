@@ -8,7 +8,7 @@ SAVEHIST=$HISTSIZE
 # PATH
 export PATH=$HOME/.local/bin:$PATH:$HOME/.local/bin/scripts
 
-# Default programs
+# Программы по умолчанию
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 export TERM='xterm-256color'
@@ -17,9 +17,11 @@ export BROWSER="chromium"
 export READER="zathura"
 export LESS='-R' # Цвета через less
 export MANPAGER='nvim +Man!' # Запускает man'уал через редактор nvim, очень удобно
+export DIFFPROG="nvim -d" # Для использования neovim в pacdiff
 # export MANPAGER="less -R --use-color -Dd+g -Du+b -Ds+r -DS+r -DP+r -DE+r"
 
 # Игнор команд из истории
+# Игнорируемые команды остаются только в текущей сессии, открыв новую они пропадают
 export HISTORY_IGNORE="(ls|cd|cd ..|cd -|pwd|zsh|exit|reboot|sudo reboot|poweroff|clear|history)"
 
 # Пользовательские директории
@@ -46,6 +48,7 @@ export GOPATH="$XDG_DATA_HOME/go"
 export HISTFILE="$XDG_STATE_HOME/history"
 export CCACHE_DIR="$XDG_CACHE_HOME/ccache"
 export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch-config"
+export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
 export PYTHONDONTWRITEBYTECODE=1 # Предотвращает создание папок __pycache__ и pycache
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 export INPUTRC="$XDG_CONFIG_HOME/shell/inputrc"
@@ -53,7 +56,6 @@ export KODI_DATA="$XDG_DATA_HOME/kodi"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/password-store"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export NUGET_PACKAGES="$XDG_CACHE_HOME/NuGetPackages"
-export ASPELL_CONF="per-conf $XDG_CONFIG_HOME/aspell/aspell.conf; personal $XDG_CONFIG_HOME/aspell/en.pws; repl $XDG_CONFIG_HOME/aspell/en.prepl"
 export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 # Отключает телеметрию .NET
@@ -69,8 +71,14 @@ export WINEDLLOVERRIDES="winemenubuilder.exe="
 # Только ошибки и предупреждения wine
 # export WINEDEBUG=-all,+err,+warn
 
-# Other program settings:
-export MOZ_USE_XINPUT2="1" # (X11) Mozilla smooth scrolling/touchpads.
+# (X11) Mozilla smooth scrolling/touchpads.
+export MOZ_USE_XINPUT2="1"
+
+# Ширина man'уала. 80 default, 999 максимум (ломает некоторые мануалы)
+export MANWIDTH=80
+
+# Подавляет предупреждения о accessibility bus в GTK
+export NO_AT_BRIDGE=1
 
 # GPG
 # if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
@@ -78,11 +86,6 @@ export MOZ_USE_XINPUT2="1" # (X11) Mozilla smooth scrolling/touchpads.
 # fi
 #export GPG_TTY=$(tty)
 #export GPG_TTY=$TTY
-
-# export QT_STYLE_OVERRIDE=kvantum # Устанавливаю Kvantum для всех Qt программ
-# export QT_QPA_PLATFORMTHEME="qt5ct" #gtk2 предоставляет AUR пакет qt5-styleplugins
-export MANWIDTH=80 # Ширина man'уала. 80 default, 999 максимум (ломает некоторые мануалы)
-export NO_AT_BRIDGE=1 # Подавляет предупреждения о accessibility bus в GTK
 
 # Цветной man'уал
 # man() {
@@ -99,10 +102,6 @@ export NO_AT_BRIDGE=1 # Подавляет предупреждения о acces
 # LF иконки (требуется шрифты семейства Nerd)
 export LF_ICONS="di=:fi=:ln=:or=:*.c=:*.cc=:*.clj=:*.coffee=:*.cpp=:*.css=:*.d=:*.dart=:*.erl=:*.exs=:*.fs=:*.go=:*.h=:*.hh=:*.hpp=:*.hs=:*.html=:*.java=:*.jl=:*.js=:*.json=:*.lua=:*.md=:*.php=:*.pl=:*.pro=:*.py=:*.rb=:*.rs=:*.scala=:*.ts=:*.vim=:*.cmd=:*.ps1=:*.sh=:*.bash=:*.zsh=:*.fish=:*.tar=:*.tgz=:*.arc=:*.arj=:*.taz=:*.lha=:*.lz4=:*.lzh=:*.lzma=:*.tlz=:*.txz=:*.tzo=:*.t7z=:*.zip=:*.z=:*.dz=:*.gz=:*.lrz=:*.lz=:*.lzo=:*.xz=:*.zst=:*.tzst=:*.bz2=:*.bz=:*.tbz=:*.tbz2=:*.tz=:*.deb=:*.rpm=:*.jar=:*.war=:*.ear=:*.sar=:*.rar=:*.alz=:*.ace=:*.zoo=:*.cpio=:*.7z=:*.rz=:*.cab=:*.wim=:*.swm=:*.dwm=:*.esd=:*.jpg=:*.jpeg=:*.mjpg=:*.mjpeg=:*.gif=:*.bmp=:*.pbm=:*.pgm=:*.ppm=:*.tga=:*.xbm=:*.xpm=:*.tif=:*.tiff=:*.png=:*.PNG=:*.svg=:*.svgz=:*.mov=:*.mpeg=:*.mkv=:*.m4v=:*.webm=:*.mp4=:*.wmv=:*.avi=:*.flv=:*.flac=:*.mp3=:.m4a=:*.wav=:*.pdf=:*.iso=:*.img=:*.gitignore=:*.vimrc=:*.viminfo=:*.nix=:ex="
 
-
-# if [[ "$XDG_CURRENT_DESKTOP" == "KDE" ]]; then
-# 	export QT_QPA_PLATFORMTHEME="xdgdesktopportal"
-# fi
 
 # Wayland переменные
 if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then

@@ -36,8 +36,7 @@ return require('packer').startup(function(use)
 
 	use({
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.1", -- fuzzy finder на стероидах
-		-- or                            , branch = '0.1.x',
+		branch = "0.1.x", -- fuzzy finder на стероидах
 	})
 
 	use("nvim-lua/plenary.nvim")

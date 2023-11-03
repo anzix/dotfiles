@@ -78,8 +78,8 @@ alias \
  strace='strace -yy' `# Вывести всю доступную информацию, связанную с файловыми дескрипторами` \
  dosbox="dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf" \
  winetricks='winetricks -q' `# Тихая установка` \
- protontricks='protontricks -q' \
- bat="bat --style=numbers"
+ protontricks='protontricks -q'
+# bat="bat --style=numbers"
 
 # Сокращённые команды
 alias \
@@ -118,6 +118,7 @@ alias \
  lsip='lsof -P -i -n' \
  diffgit="diff -Naur --strip-trailing-cr" `# Формат diff такой как в git` \
  killsession="pkill -u $(whoami)" `# Убивает сессию X11 (использовать с root привилегиями)` \
+ steam-minimal="steam -no-browser +open steam://open/minigameslist &" `# Только окно библиотеки игр` \
  hdmp="od -Ax -tx1z -v" `# Дамп бинарного файла в формате hexademical` \
  disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T`
 
@@ -126,15 +127,19 @@ alias \
  sxiv="nsxiv-rifle" \
  lf="lfub"
 
-# Pacman & AUR
+# Pacman & AUR помощник
 alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su" # Использовать в первую очередь если очень долго не обновлялись
-alias checkupdates="checkupdates; yay -Qqu"
+
+alias \
+ checkupdates="checkupdates; yay -Qqu" \
+ yayrebuildtree="checkrebuild | awk '{print $2}' | xargs -r yay -S --noconfirm --rebuildtree"
+
 alias \
  y="yay -S --needed" `# установка пакета` \
  yn="yay -S --noconfirm --needed" `# установка пакета без подтверждения` \
  yo="yay -S --overwrite='*'" `# установив пакет, перезаписав существующие файлы` \
  yuo="yay -U --overwrite='*'" \
- yg="yay -G" `# Выгрузить PKGBUILD в pwd` \
+ yg="yay -G" `# Выгрузить PKGBUILD в текущий каталог` \
  ysc="yay -Sc" `# очистка кэша но оставить локально установленные` \
  yscc="yay -Scc" `# очистить весь кэш` \
  yr="yay -R" `# удаление пакет(а,ов)` \
@@ -330,7 +335,8 @@ alias \
  upfc="sudo fc-cache -vf" `# Обновление шрифтов` \
  nvpu="nvim +'PackerUpadate' +qa" `# Обновление плагинов neovim менеджером packer` \
  zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P10 -I {} -0 git -C {} pull" `# Обновление плагинов zsh` \
- upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg" `# Обновление конфига Grub`
+ upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg" `# Обновление конфига Grub` \
+ updeskdb="update-desktop-database ~/.local/share/applications" `# Обновление пользовательских ярлыков`
 
 # Открывает случайную man страницу — отличный способ изучать новые команды.
 alias randman="apropos . | shuf -n 1 | awk '{ print \$1}' | xargs man"
