@@ -76,6 +76,15 @@ zsh_add_completion() {
 	if [ "$2" = true ] && compinit "${completion_file:1}"
 }
 
+# Обновление файла zcompdump
+zshcompupd() {
+ autoload -U zrecompile
+ rm -rf "$ZSH_COMPDUMP"*
+ compinit -u -d "$ZSH_COMPDUMP"
+ zrecompile -p "$ZSH_COMPDUMP"
+ exec zsh
+}
+
 # TUI пакетный менеджер [pacman+AUR] (Нужен: fzf)
 aurstore() { yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}' | xargs -ro yay -S ;}
 pacstore() { pacman -Slq | fzf -q "$1" -m --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S ;}
@@ -313,8 +322,9 @@ imageoptim () {
 
 # Конвертирование изображений
 # Использовать находясь внутри каталога
-bulk_heic2jpg() { for f in *.HEIC; do heif-convert -q 100 $f "${f%.*}.jpg"; done ;}
-bulk_all2jxl() { for f in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$f" "${f%.*}.jxl"; done ;}
+bulk_heic2jpg() { for i in *.HEIC; do heif-convert -q 100 "$i" "${i%.*}.jpg"; done ;}
+bulk_all2jxl() { for i in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$i" "${i%.*}.jxl"; done ;}
+bulk_png2webp() { for i in *.png; do cwebp -q 75 "$i" -o "${i%.*}.webp"; done ;}
 
 # Конверация видео форматов (полезно для Davinci Resolve)
 # [TODO] добавить GNU parallel для более быстрой конвертации
@@ -490,7 +500,7 @@ vboxshare () {
   sudo mount -t vboxsf -o rw,uid=1000,gid=984 vboxshare vboxshare
 }
 # Qemu (virtio-9p)
-# HOST_PATH (куда ложить файлы): /home/user/Public
+# HOST_PATH (куда ложить файлы): /home/username_host/Public
 # GUEST_PATH (mount_tag): host0
 # https://www.baeldung.com/linux/qemu-from-terminal#6-sharing-a-directory-between-host-and-guest
 vmshare () {

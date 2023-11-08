@@ -1,5 +1,14 @@
 ### Бинды
 
+# Отключает комбинацию ctrl+s которая заставляет терминал зависнуть намертво
+# Закоментированно из-за p10k output'а "stty: 'стандартный ввод': Неприменимый к данному устройству ioctl
+# https://catonmat.net/annoying-keypress-in-linux
+# stty stop undef
+
+# Альтернативная команда для тех кто юзает p10k
+# (https://github.com/romkatv/powerlevel10k/issues/388)
+stty -ixon <$TTY >$TTY
+
 # Plug 'zsh-users/zsh-history-substring-search'
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down

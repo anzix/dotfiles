@@ -1,8 +1,11 @@
-bindkey -v # Vi Mode | по стандарту в insert mode, вход в normal mode нажать esc | (i) или (a) обратно в insert mode | (v) - visual mode
+# Vi Mode
+# Вход в normal mode - esc
+# (i) или (a) обратно в insert mode
+# (v) - visual mode
+bindkey -v
 
 # Нет задержки перехода в vi mode
 export KEYTIMEOUT=1
-
 
 # Fix backspace bug when switching modes
 bindkey "^?" backward-delete-char

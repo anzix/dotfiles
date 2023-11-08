@@ -2,7 +2,7 @@
 
 # --- Основное ---
 
-# Шрифт
+# Шрифт статуса
 set font Hack normal 9
 
 # Use primary selection instead of clipboard for copying

@@ -35,6 +35,7 @@ export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export XINITRC="$XDG_CONFIG_HOME/X11/xinitrc"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh" # Папка zsh
 export ZPLUGDIR="$ZDOTDIR/plugins" # Папка zsh плагинов
+export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/.zcompdump"
 export LESSHISTFILE="-" # Перестаёт создавать в $HOME файл .lesshst
 export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
@@ -86,6 +87,16 @@ export NO_AT_BRIDGE=1
 # fi
 #export GPG_TTY=$(tty)
 #export GPG_TTY=$TTY
+
+# https://github.com/mverna27/dotfiles/blob/base/.zshrc
+# automatically start ssh-agent and make sure that only one ssh-agent process runs at a time
+# if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+#     ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
+# fi
+# if [[ ! "$SSH_AUTH_SOCK" ]]; then
+#     source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
+# fi
+
 
 # Цветной man'уал
 # man() {

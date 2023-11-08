@@ -5,75 +5,58 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Отключает комбинацию ctrl+s которая заставляет терминал зависнуть намертво
-# Закоментированно из-за p10k output'а "stty: 'стандартный ввод': Неприменимый к данному устройству ioctl
-# https://catonmat.net/annoying-keypress-in-linux
-# stty stop undef
-
-# Альтернативная команда для тех кто юзает p10k
-# (https://github.com/romkatv/powerlevel10k/issues/388)
-stty -ixon <$TTY >$TTY
-
-# Добавляет цвета в shell
-eval "$(dircolors -b)"
-
 # Вставка текста без подсветки
 zle_highlight=('paste:none')
 
 # (Plug) zsh-users/zsh-history-substring-search
-autoload -U history-substring-search-up
-autoload -U history-substring-search-down
-zle -N history-substring-search-up
-zle -N history-substring-search-down
+autoload -U history-substring-search-up; zle -N history-substring-search-up
+autoload -U history-substring-search-down; zle -N history-substring-search-down
 
 # Ctrl+xx открывает текущую линию в $EDITOR, полезно когда пишешь функции или редактируешь множество команд.
-autoload -U edit-command-line
-zle -N edit-command-line
+autoload -U edit-command-line; zle -N edit-command-line
 
-# Basic auto/tab complete
 # Позволяем разворачивать сокращенный ввод, к примеру cd /u/sh в /usr/share
-autoload -U compinit colors
-zmodload zsh/complist
-compinit -d
-colors
-_comp_options+=(globdots) # Включая скрытые файлы
+autoload -U compinit # Авто завершение
+zmodload -i zsh/complist # Авто завершение меню
 
-zstyle ':completion:*' menu select # Позволяет перемещаться с помощью стрелок
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # Авто завершение независимо от регистра
-# unsetopt CASE_GLOB
-zstyle ':completion:*' rehash true                              # automatically find new executables in path
-zstyle ':completion:*' accept-exact '*(N)'
+# Инициализировать завершение
+# (-u): заставить все найденные файлы использоваться без запроса
+compinit -u -d -C "$ZSH_COMPDUMP"
+_comp_options+=(globdots) # Авто завершать со скрытыми файлами
 
-# Использовать кэширование, чтобы сделать автодополнение для таких команд, как dpkg и apt, пригодным для использования.
-zstyle ':completion:*' use-cache on
+# Настройка завершений
+# Шаблон завершений
+# :completion:<function>:<completer>:<command>:<argument>:<tag>
+zstyle ':completion:*' use-cache on # Использовать кэширование, для улучшения завершений dpkg и apt
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}"/zsh/zcompcache
-WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
+zstyle ':completion:*' rehash true # Автоматически находить новые исполняемые файлы по пути
+zstyle ':completion:*' verbose true # Выводить более подробную информацию о процессе при дополнении
+zstyle ':completion:*' accept-exact '*(N)' # Дополнить если имеется точное совпадение из предложенных вариантов
+zstyle ':completion:*:*:*:*:*' menu select # Тип автозавершения - меню, для перемещения - стрелки
+zstyle ':completion:*:match:*' original only # Показывать только исходный порядок слов, а не все возможные варианты.
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # Дополнение независимо от регистра
+zstyle ':completion:*' list-dirs-first true # Показывать сначало каталоги при дополнении, нужен group-name ''
+zstyle ':completion::complete:*' gain-privileges 1 # Автодополнения в привилегированных окружениях (sudo)
+zstyle ':completion:*' completer _complete _match _approximate _ignored # Использовать функции завершающих completer для автодополнения
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # Устанавливает порядок (тэг) автодополнений cd
 
-zstyle ':completion:*:matches' group 'yes'
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
+# Ярлыки и категории
+zstyle ':completion:*' group-name '' # Группировать различные категории завершений
+zstyle ':completion:*:matches' group 'yes' # Групировать совпадающие в меню автодополнения (напр: ls -{tab})
 
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' list-dirs-first true
+# Автоисправление опечатков в завершениях.
+zstyle ':completion:*:correct:*' original true # Отображать оригинальную команду при автоисправлении.
+zstyle ':completion:*:correct:*' insert-unambiguous true # При наличии неоднозначного ввода вставлять максимально длинную неоднозначную строку.
+zstyle ':completion:*:approximate:*' max-errors 1 numeric # Кол-во допустимых ошибок при автодополнения
 
-# Fuzzy match mistyped completions.
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
-
-# ssh/scp/rsync
-zstyle ':completion:*:(ssh|scp|rsync):*:hosts' ignored-patterns 'localhost*' loopback
-zstyle -e ':completion:*:hosts' hosts 'reply=()'
-
-
-# Цвета при авто дополнении
-zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
+# Добавляет цвета при авто дополнении
+eval "$(dircolors -b)"
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # Очень необходимые функции
 source "$ZDOTDIR/functions.zsh"
 
-# Normal files to source
+# Загрузка пользовательских zsh файлов
 file "profile.zsh"
 file "options.zsh"
 file "aliases.zsh"
@@ -90,8 +73,9 @@ plug "MichaelAquilina/zsh-auto-notify" # Уведомления shell
 plug "hlissner/zsh-autopair" # Полезно для работы с кавычками
 plug "romkatv/powerlevel10k" # Prompt
 plug "junegunn/fzf" # Fuzzy finder (fzf_install функция находится в functions.zsh)
+plug "zsh-users/zsh-completions"
 # plug "Aloxaf/fzf-tab" # Replace zsh's default completion selection menu with fzf!
-
+# plug "desyncr/auto-ls" # Автоматически выполняет ls -a при cd
 
 # (omz_plug) Плагины из репо oh-my-zsh: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
 # Находит пакет если команда не найдена
@@ -102,11 +86,10 @@ omz_plug "command-not-found" \
 	&& sudo systemctl enable pkgfile-update.timer
 # omz_plug "dirhistory" # Быстрое перемещение по каталогам зажать alt+[стрелки]
 
-
+# Загрузка, должно быть последним
 source $ZPLUGDIR/zsh-you-should-use/you-should-use.plugin.zsh
 source $ZPLUGDIR/zsh-auto-notify/auto-notify.plugin.zsh
 source $ZPLUGDIR/powerlevel10k/powerlevel10k.zsh-theme
-
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/p10k.zsh.
 [[ ! $ZDOTDIR/p10k.zsh ]] || source $ZDOTDIR/p10k.zsh
