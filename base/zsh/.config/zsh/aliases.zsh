@@ -249,9 +249,12 @@ alias \
  py3="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python $HOME/.local/bin/python && sudo ln -s /usr/bin/python-config $HOME/.local/bin/python-config"
 
 # Конвертирование документов
+# Необходимо указать входной файл
 alias \
  2pdf="libreoffice --headless --convert-to pdf" \
- 2csv='libreoffice --headless --convert-to csv'
+ 2csv='libreoffice --headless --convert-to csv' \
+ pdf2doc='soffice --infilter="writer_pdf_import" --convert-to doc' \
+ pdf2odt='soffice --infilter="writer_pdf_import" --convert-to odt'
 
 # Конвертирование котировок
 alias \
@@ -327,7 +330,7 @@ alias \
  git-undo="git reset --soft HEAD^" `# Undo last commit but dont throw away your changes`
 
 # Обновить все репозитории в текущем каталоге
-alias git-pull-all="eza -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
+alias bulk_git_pull="eza -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
 
 # Обновления
 # zpu="cd '$ZDOTDIR/plugins' && eza -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"

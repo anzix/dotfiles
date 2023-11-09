@@ -478,7 +478,7 @@ android_screen_capture() {
 # Конвертирует видео фрагмент в гифку
 vid2gif() {
     if test $# -lt 4; then
-		echo "Usage: $0 input.(mp4|avi|webm|flv|...) output.gif hor_res(1080|720|...) fps"
+		echo "Usage: $0 input.(mp4|avi|webm|flv|...) output.gif hor_res(1080|720|...) fps_number"
         return 0
     fi
 

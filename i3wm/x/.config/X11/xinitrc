@@ -41,17 +41,9 @@ xsetroot -cursor_name left_ptr &
 # /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & # Polkit аутентификатор
 /usr/bin/lxqt-policykit-agent &
 picom -b & # Композитор (b) - в фоне
-mpd & # Музыкальный демон
-mpd-mpris -no-instance & # Чтобы работал playerctl для mpd
 udiskie -At & # Монтирование usb флешек с треем (A) - без авто монтирования (t) - трей
-dunst & # Демон уведомлений
 keepassxc & # Менеджер паролей
-greenclip daemon & # dmenu менеджер буфера обмена
-cdemu-daemon & # Эмуляция iso образов
 nitrogen --restore & # Менеджер обоев (чтобы обои не слетали)
-steam -silent &
-redshift & # Беречь глаза
-otd & # Драйвера opentabletdriver для XP-PEN G640
 # bluetoothctl power on & Включение Bluetooth
 # unclutter & # Убирает мышь при 5 сек простоя
 # blueman-applet & # Трей менеджера Bluetooth
