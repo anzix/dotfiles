@@ -86,53 +86,25 @@ export NO_AT_BRIDGE=1
 #   export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
 # fi
 #export GPG_TTY=$(tty)
-#export GPG_TTY=$TTY
 
 # https://github.com/mverna27/dotfiles/blob/base/.zshrc
+# Или использовать systemd сервис
+# systemctl --user enable ssh-agent.service
 # automatically start ssh-agent and make sure that only one ssh-agent process runs at a time
-# if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-#     ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
-# fi
-# if [[ ! "$SSH_AUTH_SOCK" ]]; then
-#     source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
-# fi
-
-
-# Цветной man'уал
-# man() {
-#     LESS_TERMCAP_mb=$'\e[1;32m' \
-#     LESS_TERMCAP_md=$'\e[1;32m' \
-#     LESS_TERMCAP_me=$'\e[0m' \
-#     LESS_TERMCAP_se=$'\e[0m' \
-#     LESS_TERMCAP_so=$'\e[01;33m' \
-#     LESS_TERMCAP_ue=$'\e[0m' \
-#     LESS_TERMCAP_us=$'\e[1;4;31m' \
-#   command man "$@"
-# }
-
-# LF иконки (требуется шрифты семейства Nerd)
-export LF_ICONS="di=:fi=:ln=:or=:*.c=:*.cc=:*.clj=:*.coffee=:*.cpp=:*.css=:*.d=:*.dart=:*.erl=:*.exs=:*.fs=:*.go=:*.h=:*.hh=:*.hpp=:*.hs=:*.html=:*.java=:*.jl=:*.js=:*.json=:*.lua=:*.md=:*.php=:*.pl=:*.pro=:*.py=:*.rb=:*.rs=:*.scala=:*.ts=:*.vim=:*.cmd=:*.ps1=:*.sh=:*.bash=:*.zsh=:*.fish=:*.tar=:*.tgz=:*.arc=:*.arj=:*.taz=:*.lha=:*.lz4=:*.lzh=:*.lzma=:*.tlz=:*.txz=:*.tzo=:*.t7z=:*.zip=:*.z=:*.dz=:*.gz=:*.lrz=:*.lz=:*.lzo=:*.xz=:*.zst=:*.tzst=:*.bz2=:*.bz=:*.tbz=:*.tbz2=:*.tz=:*.deb=:*.rpm=:*.jar=:*.war=:*.ear=:*.sar=:*.rar=:*.alz=:*.ace=:*.zoo=:*.cpio=:*.7z=:*.rz=:*.cab=:*.wim=:*.swm=:*.dwm=:*.esd=:*.jpg=:*.jpeg=:*.mjpg=:*.mjpeg=:*.gif=:*.bmp=:*.pbm=:*.pgm=:*.ppm=:*.tga=:*.xbm=:*.xpm=:*.tif=:*.tiff=:*.png=:*.PNG=:*.svg=:*.svgz=:*.mov=:*.mpeg=:*.mkv=:*.m4v=:*.webm=:*.mp4=:*.wmv=:*.avi=:*.flv=:*.flac=:*.mp3=:.m4a=:*.wav=:*.pdf=:*.iso=:*.img=:*.gitignore=:*.vimrc=:*.viminfo=:*.nix=:ex="
-
-
-# Wayland переменные
-if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
-	export MOZ_ENABLE_WAYLAND=1 # Для бразуера Firefox
-	# export SDL_VIDEODRIVER="wayland,x11" # Позволяет запускать SDL2 игры на wayland
-	# export QT_QPA_PLATFORM="wayland;xcb" # QT: Позволяет запускать QT приложения на wayland
-	export GDK_BACKEND="wayland,x11" # GTK3/4: Юзать wayland, если доступен. Если нет, вернутся к x11
-	export _JAVA_AWT_WM_NONREPARENTING=1 # Исправляет отрисовку приложений Java jre8 таких как pycharm
-	export WLR_NO_HARDWARE_CURSORS=1 # Включает курсор мыши на виртуальных машинах
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
+fi
+# Необходимо как и для systemd сервиса так и без
+if [[ ! "$SSH_AUTH_SOCK" ]]; then
+    source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
 fi
 
 
-# Запуск X
-# if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-#   startx $XINITRC
-# fi
+# LF иконки (требуется шрифты семейства Nerd)
+export LF_ICONS="di=:fi=:ln=:or=:*.c=:*.cc=:*.clj=:*.coffee=:*.cpp=:*.css=:*.d=:*.dart=:*.erl=:*.exs=:*.fs=:*.go=:*.h=:*.hh=:*.hpp=:*.hs=:*.html=:*.java=:*.jl=:*.js=:*.json=:*.lua=:*.md=:*.php=:*.pl=:*.pro=:*.py=:*.rb=:*.rs=:*.scala=:*.ts=:*.vim=:*.cmd=:*.ps1=:*.sh=:*.bash=:*.zsh=:*.fish=:*.tar=:*.tgz=:*.arc=:*.arj=:*.taz=:*.lha=:*.lz4=:*.lzh=:*.lzma=:*.tlz=:*.txz=:*.tzo=:*.t7z=:*.zip=:*.z=:*.dz=:*.gz=:*.lrz=:*.lz=:*.lzo=:*.xz=:*.zst=:*.tzst=:*.bz2=:*.bz=:*.tbz=:*.tbz2=:*.tz=:*.deb=:*.rpm=:*.jar=:*.war=:*.ear=:*.sar=:*.rar=:*.alz=:*.ace=:*.zoo=:*.cpio=:*.7z=:*.rz=:*.cab=:*.wim=:*.swm=:*.dwm=:*.esd=:*.jpg=:*.jpeg=:*.mjpg=:*.mjpeg=:*.gif=:*.bmp=:*.pbm=:*.pgm=:*.ppm=:*.tga=:*.xbm=:*.xpm=:*.tif=:*.tiff=:*.png=:*.PNG=:*.svg=:*.svgz=:*.mov=:*.mpeg=:*.mkv=:*.m4v=:*.webm=:*.mp4=:*.wmv=:*.avi=:*.flv=:*.flac=:*.mp3=:.m4a=:*.wav=:*.pdf=:*.iso=:*.img=:*.gitignore=:*.vimrc=:*.viminfo=:*.nix=:ex="
 
 # Запуск i3 на tty1 после входа в систему, если он еще не запущен
 # [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x i3 >/dev/null && startx $XINITRC
 
 # sway
-# [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ] && exec sway # --verbose >> ~/.cache/sway.log /var/log/sway.log
-# 	export QT_WAYLAND_DISABLE_WINDOWDECORATION=1 # hide window decoratins in older versions of QT
+# [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ] && exec sway # --verbose >> ~/.cache/sway.log # /var/log/sway.log

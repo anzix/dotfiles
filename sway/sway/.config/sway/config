@@ -5,7 +5,6 @@
 # - app_id
 # - title
 
-
 # Переменные
 set {
 	# Ставит win клавишу как основную
@@ -16,7 +15,14 @@ set {
 	$term alacritty
 }
 
-# Заставлять юзать для приложений и игр xwayland
+# Дисплей + Обои
+# Для нахождения дисплея: swaymsg -t get_outputs
+output DP-2 {
+	mode 1920x1080@144Hz
+	bg "/media/Media/Галарея/Обои на раб.стол/Ramen.jpg" fill
+}
+
+# Заставлять использовать для приложений и игр xwayland
 xwayland force
 
 
@@ -27,7 +33,7 @@ smart_gaps off
 #gaps bottom 0
 
 
-# Убираеть Title bar
+# Убирает заголовоки в окнах
 default_border pixel 2
 default_floating_border pixel 2
 
@@ -36,7 +42,7 @@ font pango:monospace 8
 
 
 # Media control
-bindsym --locked {
+bindsym --to-code --locked {
     XF86AudioLowerVolume exec pulsemixer --change-volume -2
     XF86AudioRaiseVolume exec pulsemixer --change-volume +2
     XF86AudioMute        exec pulsemixer --toggle-mute
@@ -54,13 +60,13 @@ floating_modifier $mod normal
 bindsym $mod+Return exec $term
 
 # Убить окно которое в фокусе
-bindsym $mod+q kill
+bindsym --to-code $mod+q kill
 
 # Запуск Wofi
-bindsym $mod+d exec wofi --show drun --allow-images
+bindsym --to-code $mod+d exec wofi --show drun --allow-images
 
 # bindcode - Бинд независимо от раскладки клавиатуры, будь то русская или английская
-bindsym {
+bindsym --to-code {
 	# Менять фокус окна vim клавишами
 	$mod+h focus left
 	$mod+j focus down
@@ -82,7 +88,7 @@ bindsym {
 	$mod+Shift+Up move up
 	$mod+Shift+Right move right
 }
-# bindsym {
+# bindsym --to-code {
 # 	# Разделить по горизонтали
 # 	$mod+h splith
 # 	# Разделить по вертикали
@@ -90,10 +96,10 @@ bindsym {
 # }
 
 # Full screen когда окно в фокусе
-bindsym $mod+f fullscreen
+bindsym --to-code $mod+f fullscreen
 
 # Менять стиль контейнера
-bindsym {
+bindsym --to-code {
 	# Списком вниз
 	$mod+s layout stacking
 	# Табы
@@ -132,10 +138,10 @@ bindsym {
 }
 
 # Перезагрузить sway конфиг файл
-bindsym $mod+Shift+c reload
+bindsym --to-code $mod+Shift+c reload
 
 # Выйти из sway (logs you out of your Wayland session)
-bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym --to-code $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
 
 # Scratchpad:
@@ -154,9 +160,9 @@ bindsym {
 
 # Режим измение размер окна при тайлинге
 # Можно юзать мышь, окно в фокусе и зажать win+rmb
-bindsym $mod+r mode "resize"
+bindsym --to-code $mod+r mode "resize"
 mode "resize" {
-	bindsym {
+	bindsym --to-code {
 		# Vim клавиши
 		h resize shrink width 10 px or 10 ppt
 		k resize grow height 10 px or 10 ppt
@@ -175,15 +181,12 @@ mode "resize" {
 }
 
 
-
-output DP-2 mode 1920x1080@144Hz {
-	bg "/media/Media/Галарея/Обои на раб.стол/Ramen.jpg" fill
-}
-
+# FIXME: как мне исправить это если у меня другая раскладка?
 input "type:keyboard" {
     # Смена раскладки
 	xkb_layout us,ru
     xkb_options grp:caps_toggle,grp_led:caps,grp:switch
+	# xkb_options grp:alt_shift_toggle
 
 	# Ускорение печатания
 	repeat_delay 210
@@ -198,22 +201,14 @@ input "1133:49284:Logitech_G102_Prodigy_Gaming_Mouse" {
 bar swaybar_command waybar
 
 # Тема и размер курсора
-seat * xcursor_theme capitaine-cursors 16
+seat * xcursor_theme capitaine-cursors 24
 
 # Запуск программ и скриптов
 exec {
 	autotiling
 	/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-	mako
-	mpd
-	mpDris2
 	udiskie -t
-	corectrl
 	steam -silent
-	kdeconnecttd
-	kdeconnect-indicator
-	gammastep-indicator
-	otd
 	# Clipboard (https://github.com/sentriz/cliphist)
 	wl-paste --watch cliphist store
 	# Запускает xwayland игры на основной монитор
@@ -253,15 +248,18 @@ for_window {
 	# Kill Firefox sharing indicator. It opens as an own container. Does not kill functionality
 	[title = "Firefox - Sharing Indicator"] kill
 	[title = "Firefox — Sharing Indicator"] kill
-	# Маркировать xwayland окна [X]
+	# Маркировать xwayland окна, только для заголовках
 	# [shell="xwayland"] title_format "<span>[X] %title</span>"
+	# [shell="xwayland"] title_format "%title <small>[XWayland]</small>"
+	# Маркировать xwayland окна, убрав границы
+	[shell="xwayland"] border normal 0
 	# Disable swayidle on fullscreen apps
 	# [class="^.*"] inhibit_idle fullscreen
 	# [app_id="^.*"] inhibit_idle fullscreen
 }
 
 # Показать clipboard (для копирования)
-bindsym $mod+v exec cliphist list \
+bindsym --to-code $mod+v exec cliphist list \
   | wofi -d \
   | cliphist decode \
   | wl-copy
@@ -284,7 +282,7 @@ bindsym Print exec --no-startup-id \
 
 # Скрин с выделением области или клик на окно в фокусе + буфер обмена
 # Если вам не нужен буфер обмена уберите строку с wl-copy
-bindsym $mod+Shift+s exec --no-startup-id \
+bindsym --to-code $mod+Shift+s exec --no-startup-id \
   IMG=$scr-dir/$(date +%s).png \
   && swaymsg -t get_tree \
 	| jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
@@ -297,7 +295,7 @@ bindsym $mod+Shift+s exec --no-startup-id \
 # Сканер палитры (color picker)
 # https://github.com/swaywm/sway/wiki/Tricks#html-color-picker
 # bindsym $mod+Shift+p exec grim -g "$(slurp -p)" -t ppm - | convert - -format '%[pixel:p{0,0}]' txt:- | tail -n 1 | cut -d ' ' -f 4 | wl-copy
-bindsym $mod+Shift+d exec --no-startup-id \
+bindsym --to-code $mod+Shift+d exec --no-startup-id \
 	notify-send "Color Picker" "Выберите цвет" && \
     grim -g "$(slurp -p)" -t ppm /tmp/color-picker.png && \
     convert -size 100x100 xc:"$(convert /tmp/color-picker.png -format '#%[hex:s]\n' info:)" /tmp/color-picker.png && \
@@ -306,7 +304,7 @@ bindsym $mod+Shift+d exec --no-startup-id \
 
 # OCR сканер
 # Требуется: tesseract tesseract-data-rus tesseract-data-eng tesseract-data-jpn wl-copy slurp
-bindsym $mod+Shift+f exec --no-startup-id slurp \
+bindsym --to-code $mod+Shift+f exec --no-startup-id slurp \
   | xargs -I {} grim -s 2 -t png -g {} - \
   | tesseract -l rus+eng+jpn - - \
   | wl-copy -n
@@ -322,7 +320,7 @@ bindsym Shift+Print exec \
 
 # Быстрый перевод на Русский
 # Требуется: tesseract tesseract-data-rus tesseract-data-eng tesseract-data-jpn translate-shell slurp grim wl-copy
-bindsym alt+t exec --no-startup-id \
+bindsym --to-code alt+t exec --no-startup-id \
 	ocr-translate-sway
 
 # История уведомлений Mako win+`
@@ -346,7 +344,7 @@ bindsym $mod+grave exec makoctl restore
 # bindsym $mod+Print mode "$mode_screenshot"
 
 # wshowkeys - показ клавиш
-bindsym $mod+p exec "killall wshowkeys || wshowkeys -a bottom -t 1"
+bindsym --to-code $mod+p exec "killall wshowkeys || wshowkeys -a bottom -t 1"
 
 
 # bindsym $mod+Shift+a [class="KeePassXC"] scratchpad show, move position center
