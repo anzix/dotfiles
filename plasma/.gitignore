@@ -1,0 +1,2 @@
+konsole/.local/share/konsole/*
+!konsole/.local/share/konsole/Profile.profile
