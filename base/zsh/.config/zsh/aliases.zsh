@@ -127,8 +127,18 @@ alias \
  sxiv="nsxiv-rifle" \
  lf="lfub"
 
+# Tmux мультиплексор
+alias \
+ ta='tmux attach' `# Подключится на текущую сессию` \
+ tls='tmux ls' `# Список сессий мультиплексора` \
+ tat='tmux attach -t' `# Подключится к определённой сессии, tab для подсказки` \
+ tns='tmux new-session -s' `# Создать новую сессию с вашим именем`
+
 # Pacman & AUR помощник
-alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su" # Использовать в первую очередь если очень долго не обновлялись
+
+# Использовать в первую очередь если очень долго не обновлялись
+# Исправляет неверные или поврежденные пакеы (РGР-подпись)
+alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su"
 
 alias \
  checkupdates="checkupdates; yay -Qqu" \
@@ -241,7 +251,10 @@ alias \
 # Полезно при проверке на вирус
 alias cutexe="sed '$ s/\x30*$//' $1"
 
-# Python - смена версий (для сборки)
+# Python
+alias venv=". ./.venv/bin/activate || python3 -m venv .venv --prompt $(basename $PWD) && . ./.venv/bin/activate"
+
+# Смена версий (для сборки)
 # Проверить версию: python -V
 # yay -S python2 или python2-bin
 alias \
