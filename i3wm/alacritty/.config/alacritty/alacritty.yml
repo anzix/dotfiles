@@ -33,10 +33,10 @@ font:
   bold: # Жирный
     family: JetBrains Mono Nerd Font
     style:  Bold
-  italic: # Курсив
+  italic: # Курсив, для включения разъединить названия в style
     family: JetBrains Mono Nerd Font
     style:  MediumItalic
-  bold_italic: # Жирный курсив
+  bold_italic: # Жирный курсив, для включения разъединить названия в style
     family: JetBrains Mono Nerd Font
     style: BoldItalic
   # Размер шрифта (14.0 самый подходящий при 1920x1080 24дюйм)
@@ -142,8 +142,16 @@ selection:
 live_config_reload: true
 
 # Указывает оболочку для alacritty
+# И подключается к сессии tmux
+# если нет запускает её
+# Закрыв alacritty сессия tmux остаётся включённой
+# TODO: закрывать сессии после завершения работы в alacritty?
 shell:
   program: /usr/bin/zsh
+  args:
+    - -l
+    - -c
+    - "tmux attach || tmux new-session -s home"
 
 key_bindings:
   #Когда нахожусь в любой папке, win+shift+enter дублирует окно терминала с доступом к этой же папке
