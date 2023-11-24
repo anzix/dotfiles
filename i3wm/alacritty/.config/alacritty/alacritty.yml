@@ -8,6 +8,7 @@
 # Ctrl+[+/-] - Увеличивает/уменьшает текст
 # Ctrl+0 - Сбрасывает размер текста на дефолт
 
+# https://wiki.archlinux.org/title/Alacritty#Terminal_functionality_unavailable_in_remote_shells
 env:
   TERM: xterm-256color
 
@@ -28,16 +29,16 @@ scrolling:
 # Шрифты
 font:
   normal: # Обычный
-    family: JetBrains Mono Nerd Font
+    family: JetBrainsMono NF
     style:  Medium
   bold: # Жирный
-    family: JetBrains Mono Nerd Font
+    family: JetBrainsMono NF
     style:  Bold
   italic: # Курсив, для включения разъединить названия в style
-    family: JetBrains Mono Nerd Font
+    family: JetBrainsMono NF
     style:  MediumItalic
   bold_italic: # Жирный курсив, для включения разъединить названия в style
-    family: JetBrains Mono Nerd Font
+    family: JetBrainsMono NF
     style: BoldItalic
   # Размер шрифта (14.0 самый подходящий при 1920x1080 24дюйм)
   size: 14.0
@@ -142,19 +143,23 @@ selection:
 live_config_reload: true
 
 # Указывает оболочку для alacritty
-# И подключается к сессии tmux
-# если нет запускает её
-# Закрыв alacritty сессия tmux остаётся включённой
-# TODO: закрывать сессии после завершения работы в alacritty?
+# И подключается к активной сессии tmux
+# если нет создаёт её с моими пресетами которые указаны в конфиге tmux.conf
+# Закрыв alacritty сессия master в tmux остаётся включённой
 shell:
   program: /usr/bin/zsh
   args:
     - -l
     - -c
-    - "tmux attach || tmux new-session -s home"
+    - "tmux -u attach -t master"
+
+    # Использовать только если "нету" в конце конфига tmux автозапуск сессии
+    # - "tmux attach || tmux new-session -d -s master -n term \\;
+    #                        new-window -d -t master -n music 'ncmpcpp' \\;
+    #                        select-window -t 1"
 
 key_bindings:
-  #Когда нахожусь в любой папке, win+shift+enter дублирует окно терминала с доступом к этой же папке
+  # Когда нахожусь в любой папке, win+shift+enter дублирует окно терминала с доступом к этой же папке
   - { key: Return, mods: Super|Shift, action: SpawnNewInstance }
   # - { key: V, mods: Control, action: Paste } # сtrl+v вставить
 

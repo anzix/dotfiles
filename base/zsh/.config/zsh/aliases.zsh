@@ -13,7 +13,7 @@ else
  alias sudo='sudo '
 fi
 
-# eza - замена ls
+# Использовать замену ls - eza, если доступно
 if hash eza 2>/dev/null; then
  alias \
   ls='eza -b --color=always --icons --group-directories-first' `# (-b) Понятные размеры файлов +Цвета +Иконки, Сгруппировано` \
@@ -122,10 +122,17 @@ alias \
  hdmp="od -Ax -tx1z -v" `# Дамп бинарного файла в формате hexademical` \
  disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T`
 
-# Без имени
+# Разное
 alias \
  sxiv="nsxiv-rifle" \
  lf="lfub"
+
+# CLI мусорка gio
+alias \
+ trash="gio trash" `# отправить в мусорку` \
+ trashempty="gio trash --empty" `# очистить мусорку` \
+ trashlist="gio trash --list | column -t -s $'\t' | sort" `# список мусорки` \
+ trashrestore="gio trash --list | column -t -s $'\t' | fzf -i -e -m -d / --with-nth 4.. --bind 'home:first,end:last,ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all' --prompt='gio trash restore file(s): ' | cut -d ' ' -f1 | while read -r line ; do gio trash --restore "$line" ; done"
 
 # Tmux мультиплексор
 alias \
@@ -193,13 +200,14 @@ alias \
  raminfo="sudo dmidecode --type 17" `# Информация о планках памяти` \
  microcode_vuln='grep . /sys/devices/system/cpu/vulnerabilities/*' `# Проверка уязвимостей микрокода` \
  soundinfo='cat /proc/asound/card*/codec* | head -n 9' `# Информация о звуковой карте` \
+ soundcardall='cat /proc/asound/cards' `# Все звуковые карты` \
  userlist="cut -d: -f1 /etc/passwd"
 
 # systemd
 alias \
  jr='journalctl -k' `# Вся информация` \
- jrs='journalctl -p 3 -xb' `# Только текущие сообщения об ошибках` \
- jrf='journalctl -b0 -p4' `# Все предупреждения и ошибки` \
+ jrs='journalctl -p 3 -xb -e' `# Только текущие сообщения об ошибках` \
+ jrf='journalctl -b0 -p4 -e' `# Все предупреждения и ошибки` \
  fstrimcheck='journalctl -u fstrim' \
  sysls='systemctl --all --failed' \
  sysulist="systemctl list-unit-files" `# --state=enabled` \
@@ -283,14 +291,44 @@ alias \
 # Просмотр CSV данных через CLI
 alias viewcsv="cat $1 | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S"
 
-# Docker (TODO)
-# alias dke='docker exec -it'
-# alias dkr='docker run -d -P --name'
+# Docker
+# alias \
+#  dcu="docker-compose up -d" `# Запустить как демон` \
+#  dcd="docker-compose down" `# Остановить и удалить контейнер` \
+#  dcs="docker-compose stop" `# Остановить контейнер` \
+#  ds="docker stop $(docker ps -a -q)" `# Останаливает всё` \
+#  dcl="docker-compose logs" `# Логи выхлопа контейнера` \
+#  dim="docker images" `# Список образов в локальном хранилище` \
+#  dps="docker ps" `# Информация о контейнерах` \
+#  dpsa="docker ps -a" `# Вся информация о контейнерах` \
+#  de='docker exec -it' `# Выполнение команд внутри уже запущенного контейнера` \
+#  dr='docker run -d -P --name' `# Создание и запуск нового контейнера как демон` \
+#  dsp="docker system prune --all" `# Рекурсивно удалить из окружения Docker все неиспользуемые контейнеры, образы, тома и сети`
 
+# [TODO]
 # Run Docker GUI application in container.
 # Specify the Docker container name on command line.
 # Ensure that 'xhost' has been run prior to enable permissions to X11 display.
-alias d-run="docker run --rm -it --net=host --cpuset-cpus 0 --memory 512mb -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY "
+# alias d-run="docker run --rm -it --net=host --cpuset-cpus 0 --memory 512mb -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY "
+
+# Podman
+alias \
+ pcu='podman-compose up -d' `# Запустить как демон` \
+ pcd='podman-compose down' `# Остановить и удалить контейнер` \
+ pcs='podman-compose stop "$(podman ps -q)"' `# Остановить контейнер` \
+ pcl='podman-compose logs' `# Логи выхлопа контейнера` \
+ pim='podman images' `# Список образов в локальном хранилище` \
+ pps='podman ps' `# Информация о контейнерах` \
+ ppsa='podman ps -a' `# Вся информация о контейнерах` \
+ pe='podman exec -it' `# Выполнение команд внутри уже запущенного контейнера` \
+ dr='podman run -d -P --name' `# Создание и запуск нового контейнера как демон` \
+ psp='podman system prune --all' `# Рекурсивно удалить из окружения Podman все неиспользуемые контейнеры, образы, тома и сети`
+
+# [TODO]
+# Run Podman GUI application in container.
+# Specify the Podman container name on command line.
+# Ensure that 'xhost' has been run prior to enable permissions to X11 display.
+# alias p-run=podman run --rm --it --net=host --security-opt=label=type:container_runtime_t -v /tmp/.X11-unix:/tmp/.X11-unix <имя_образа> <команда_запуска>
 
 # ncdu - анализатор диска
 alias \
@@ -339,7 +377,7 @@ alias \
  gml='git submodule' \
  gcm='git commit -m' \
  gco='git checkout' \
- gl='git log --stat --oneline --graph --decorate=short' \
+ gl="git log --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset'" \
  git-undo="git reset --soft HEAD^" `# Undo last commit but dont throw away your changes`
 
 # Обновить все репозитории в текущем каталоге
@@ -366,7 +404,5 @@ alias \
  yt1080="yt -f 'bestvideo[height<=1080][fps<=60]+bestaudio/best'" \
  ytmp4="yt -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'" \
  ytmp3="yt-dlp --embed-thumbnail --embed-metadata -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o '%(title)s.%(ext)s'" \
- ytmp3pl="yt-dlp --embed-thumbnail --embed-metadata -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o '%(playlist_index)02d - %(title)s.%(ext)s'"
-
-# fzf
-alias fzf="fzf --cycle --info=hidden --preview='bat --color=always --style=numbers {}'"
+ ytmp3pl="yt-dlp --embed-thumbnail --embed-metadata -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o '%(playlist_index)02d - %(title)s.%(ext)s'" \
+ ytt="yt --skip-download --write-thumbnail"

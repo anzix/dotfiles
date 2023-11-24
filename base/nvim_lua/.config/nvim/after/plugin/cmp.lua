@@ -32,10 +32,10 @@ cmp.setup({
 		end,
 	},
 	mapping = cmp.mapping.preset.insert({
-		-- scroll up and down in the completion documentation
+		-- прокрутка вверх и вниз документацию по завершению
 		["<C-d>"] = cmp.mapping.scroll_docs(-4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		-- navigate items on the list
+		-- перемещаться по элементам в списке
 		["<C-p>"] = cmp.mapping.select_prev_item(),
 		["<C-n>"] = cmp.mapping.select_next_item(),
 		["<C-Space>"] = cmp.mapping.complete({}),

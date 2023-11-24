@@ -155,13 +155,15 @@ convert2chd(){ chdman createcd -i "$1" -o "${1%.*}.chd" ;}
 chd2cue(){ chdman extractcd -i "$1" -o "${1%.*}.cue" ;}
 iso2cso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso/PS2: yay -S maxcso-git
 iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu
-# 3DS: yay -S makerom-git
-# Xbox/Xbox360: yay -S extract-xiso-git
+# [TODO] 3DS: yay -S makerom-git
+# [TODO] Xbox/Xbox360: yay -S extract-xiso-git
+nsz2nsp() { nsz -D "$1" "${1%.*}.nsz" ;} # Switch: yay -S nsz-git && необходим prod.keys в ~/.switch
+
 
 # Torrents
 # пример: torrent2magnet {файл} / magnet2torrent {magnet_url}
 torrent2magnet() { transmission-show -m "$1" ;}
-magnet2torrent() { aria2c -q --bt-metadata-only --bt-save-metadata "$1" ;}
+magnet2torrent() { aria2c -q --bt-metadata-only --bt-save-metadata "$1" ;} # На выходе файла в имени присваивается инфо-хеш V1
 
 # btfs
 # пример: mpvbtfs [torrent_file/magnet]
