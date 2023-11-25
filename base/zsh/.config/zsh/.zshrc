@@ -69,6 +69,8 @@ plug "zsh-users/zsh-autosuggestions" # Автозаполнение
 plug "zsh-users/zsh-syntax-highlighting" # Подсветка синтаксиса
 plug "zsh-users/zsh-history-substring-search" # История zsh стрелками вверх вниз
 plug "MichaelAquilina/zsh-you-should-use" # Напоминалка о использовании aliases
+plug "kutsan/zsh-system-clipboard" `# Для поддержки буфера обмена в vi режиме` \
+	; export ZSH_SYSTEM_CLIPBOARD_METHOD=xsc # Использовать xsel (Xorg X11)
 plug "MichaelAquilina/zsh-auto-notify" # Уведомления shell
 plug "hlissner/zsh-autopair" # Полезно для работы с кавычками
 plug "romkatv/powerlevel10k" # Prompt
