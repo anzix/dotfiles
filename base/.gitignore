@@ -1,3 +1,5 @@
+scripts/.local/share/
+scripts/.local/state/
 mpd/.config/mpd/database
 mpd/.config/mpd/pid
 mpd/.config/mpd/state
