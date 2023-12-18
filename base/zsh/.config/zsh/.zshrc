@@ -81,11 +81,7 @@ plug "zsh-users/zsh-completions"
 
 # (omz_plug) Плагины из репо oh-my-zsh: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
 # Находит пакет если команда не найдена
-omz_plug "command-not-found" \
-	; [[ ! -f /bin/pkgfile ]] \
-	&& sudo pacman -S pkgfile --noconfirm \
-	&& sudo pkgfile -u \
-	&& sudo systemctl enable pkgfile-update.timer
+omz_plug "command-not-found"
 # omz_plug "dirhistory" # Быстрое перемещение по каталогам зажать alt+[стрелки]
 
 # Загрузка, должно быть последним

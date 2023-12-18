@@ -14,17 +14,17 @@ else
 fi
 
 # Использовать замену ls - eza, если доступно
-if hash eza 2>/dev/null; then
+if hash exa 2>/dev/null; then
  alias \
-  ls='eza -b --color=always --icons --group-directories-first' `# (-b) Понятные размеры файлов +Цвета +Иконки, Сгруппировано` \
+  ls='exa -b --color=always --icons --group-directories-first' `# (-b) Понятные размеры файлов +Цвета +Иконки, Сгруппировано` \
   ll='ls -l' `# +Подробно +листом вниз` \
   la='ls -a' `# +Показ скрытых` \
   lla='ls -la' `# +Подробно +Показ скрытых +листом вниз` \
-  lt="eza -aT --color=always --icons --group-directories-first -h --git-ignore --ignore-glob '.git|.gitignore|.DS_Store|node_modules'" `# Дерево (-h) Добавляет строку заголовка в каждый столбец` \
+  lt="exa -aT --color=always --icons --group-directories-first -h --git-ignore --ignore-glob '.git|.gitignore|.DS_Store|node_modules'" `# Дерево (-h) Добавляет строку заголовка в каждый столбец` \
   lt1="lt -L 1" \
   lt2="lt -L 2" \
   lt3="lt -L 3" \
-  l.='eza -d .* --group-directories-first' `# Показать только . (dot)`
+  l.='exa -d .* --group-directories-first' `# Показать только . (dot)`
 else
  # GNU `ls`
  alias \
@@ -96,8 +96,11 @@ alias \
  nfts='sudo nft -f /etc/nftables.conf' \
  btrfsfs="sudo btrfs filesystem df /" \
  btrfsls="sudo btrfs su li / -t" \
- snapls="sudo snapper list" \
+ snapper="snapper -v" \
+ snaprls="sudo snapper -c root list" \
+ snaphls="sudo snapper -c home list" \
  snapcr="sudo snapper -c root create" \
+ snapch="sudo snapper -c home create" \
  gdl="gallery-dl -d $HOME/Pictures/gallery-dl/" \
  gog="lgogdownloader" \
  gogl="lgogdownloader --list" \
@@ -172,6 +175,9 @@ alias lsnulldeps='expac -S '%n %E%o' | awk '$2==""{print $1}''
 # Фиксит ошибку: failed to synchronize all databases (не удалось заблокировать базу данных)
 alias punlock='sudo rm /var/lib/pacman/db.lck'
 
+# Показать пакеты у которых отличаются разрешения
+alias pacdiffer='grep -A1 "differ" /var/log/pacman.log'
+
 # Список установленных пакетов
 # Можно использовать как экспорт
 # пример: paclist > список.txt
@@ -179,6 +185,38 @@ alias \
  paclist='pacman -Qqen' \
  aurlist='pacman -Qqem' \
  pkglist='pacman -Qqe'
+
+
+# APT/APTITUDE & DPKG
+# -s simulate/симулировать
+# --reinstall переустановить
+
+alias \
+ ai="sudo apt install" \
+ ain="sudo apt install -y" `# Установить пакет без подтверждения` \
+ ar="sudo apt remove" `# Удаление пакетов` \
+ arp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакеты, их конфигурацию и ненужные зависимости.` \
+ aap="sudo apt autopurge" `# Удалить ненужные пакеты` \
+ ac='sudo apt-get clean && sudo apt-get autoclean' `# Очищает кэш` \
+ as='apt-cache search' \
+ au="sudo apt update && sudo apt upgrade" \
+ adu="sudo apt update && sudo apt dist-upgrade" `# Upgrade устаревших пакетов` \
+ reconfigure="sudo dpkg-reconfigure"
+
+alias \
+ apttw="aptitude why" `# Причина наличия этого пакета` \
+ apttwn="aptitude why-not" `# Причина неимение это пакета`
+
+alias \
+ apt-installed="apt list --installed" \
+ dpkg-installed="dpkg --get-selections | grep -v deinstall"
+
+# Показывает список установленные вручную пакеты
+# TODO: Можно использовать как экспорт
+alias lpkgs="apt-mark showmanual"
+
+# Показывает отличающиеся конфиг. файлы от дефолтов
+alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$2,\$1}" | LANG=C md5sum -c 2> /dev/null | awk -F": " "\$2 !~ /OK\$/{print \$1}" | sort | less'
 
 # Flatpak
 alias \
@@ -205,14 +243,16 @@ alias \
 
 # systemd
 alias \
- jr='journalctl -k' `# Вся информация` \
- jrs='journalctl -p 3 -xb -e' `# Только текущие сообщения об ошибках` \
- jrf='journalctl -b0 -p4 -e' `# Все предупреждения и ошибки` \
+ journalctl="journalctl --no-hostname" \
+ jr='journalctl -k -e' `# Вся информация` \
+ jrp='journalctl -b -1 -p 2..4 -e' `# Все важные логи предыдущего сеанса` \
+ jrl='journalctl -b 0 -p 2..4 -e' `# Все важные логи текущего сеанса` \
  fstrimcheck='journalctl -u fstrim' \
  sysls='systemctl --all --failed' \
  sysulist="systemctl list-unit-files" `# --state=enabled` \
  sysuulist="systemctl --user list-unit-files" \
  sysap="systemd-analyze plot > startup.svg"
+# jrs='journalctl -p 3 -xb -e' `# Только текущие сообщения об ошибках`
 
 # Xorg
 alias \
@@ -232,7 +272,8 @@ alias \
  wcpufrq="watch -n 1 grep \'cpu MHz\' /proc/cpuinfo" \
  wgpu='sudo watch -n 1 cat /sys/kernel/debug/dri/0/amdgpu_pm_info' \
  wzram='watch -n 0.5 zramctl' \
- wdiskw='watch -n1 grep -e Dirty: -e Writeback: /proc/meminfo'
+ wdiskw='watch -n1 grep -e Dirty: -e Writeback: /proc/meminfo' \
+ wnvsmi='watch -n1 nvidia-smi'
 # temp-watch='watch -n 2 sensors' # `Замеры CPU+GPU` \
 # alias watchgpu='watch --color gpustat --color' # https://github.com/wookayin/gpustat
 
@@ -381,10 +422,10 @@ alias \
  git-undo="git reset --soft HEAD^" `# Undo last commit but dont throw away your changes`
 
 # Обновить все репозитории в текущем каталоге
-alias bulk_git_pull="eza -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
+alias bulk_git_pull="exa -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
 
 # Обновления
-# zpu="cd '$ZDOTDIR/plugins' && eza -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
+# zpu="cd '$ZDOTDIR/plugins' && exa -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
 alias \
  upfc="sudo fc-cache -vf" `# Обновление шрифтов` \
  nvpu="nvim +'PackerUpadate' +qa" `# Обновление плагинов neovim менеджером packer` \

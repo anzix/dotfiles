@@ -22,8 +22,8 @@ output DP-2 {
 	bg "/media/Media/Галарея/Обои на раб.стол/Ramen.jpg" fill
 }
 
-# Заставлять использовать для приложений и игр xwayland
-xwayland force
+# Использовать для приложений и игр xwayland
+xwayland enable
 
 
 #smart_borders no_gaps

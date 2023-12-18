@@ -386,7 +386,7 @@ scdl() {
 # 2. Убираю все комментарии
 # 3. Добавляю отступ следующей строки в начале
 uphosts () {
- wget -t 2 -O- https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts \
+ wget -q --show-progress -t 2 -O- https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts \
   | grep '^0\.0\.0\.0' \
   | grep -v '^0\.0\.0\.0 [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*$' \
   | sed '1s/^/\n/' > /tmp/adlist-all
@@ -398,7 +398,8 @@ uphosts () {
  sudo patch /etc/hosts < diff.txt
 
  # Корректировка правил универсального hosts файла
- sudo sed -i "/^0.0.0.0 clck.ru/s/^/#/g" /etc/hosts # Реф ссылки pepper.ru
+ sudo sed -i '/^0.0.0.0 clck.ru\|^0.0.0.0 track.adtraction.com/s/^/#/g' /etc/hosts # Реф ссылки pepper.ru
+
 
  # Удаляем временный файл diff.txt
  rm diff.txt
