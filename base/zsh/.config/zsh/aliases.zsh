@@ -96,7 +96,6 @@ alias \
  nfts='sudo nft -f /etc/nftables.conf' \
  btrfsfs="sudo btrfs filesystem df /" \
  btrfsls="sudo btrfs su li / -t" \
- snapper="snapper -v" \
  snaprls="sudo snapper -c root list" \
  snaphls="sudo snapper -c home list" \
  snapcr="sudo snapper -c root create" \
