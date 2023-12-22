@@ -71,23 +71,21 @@ plug "zsh-users/zsh-history-substring-search" # История zsh стрелк�
 plug "MichaelAquilina/zsh-you-should-use" # Напоминалка о использовании aliases
 plug "kutsan/zsh-system-clipboard" `# Для поддержки буфера обмена в vi режиме` \
 	; export ZSH_SYSTEM_CLIPBOARD_METHOD=xsc # Использовать xsel (Xorg X11)
-plug "MichaelAquilina/zsh-auto-notify" # Уведомления shell
+plug "MichaelAquilina/zsh-auto-notify"
 plug "hlissner/zsh-autopair" # Полезно для работы с кавычками
 plug "romkatv/powerlevel10k" # Prompt
 plug "junegunn/fzf" # Fuzzy finder (fzf_install функция находится в functions.zsh)
 plug "zsh-users/zsh-completions"
-# plug "Aloxaf/fzf-tab" # Replace zsh's default completion selection menu with fzf!
 # plug "desyncr/auto-ls" # Автоматически выполняет ls -a при cd
 
 # (omz_plug) Плагины из репо oh-my-zsh: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
-# Находит пакет если команда не найдена
-omz_plug "command-not-found"
+omz_plug "command-not-found" # Находит пакет если команда не найдена
 # omz_plug "dirhistory" # Быстрое перемещение по каталогам зажать alt+[стрелки]
 
 # Загрузка, должно быть последним
 source $ZPLUGDIR/zsh-you-should-use/you-should-use.plugin.zsh
-source $ZPLUGDIR/zsh-auto-notify/auto-notify.plugin.zsh
 source $ZPLUGDIR/powerlevel10k/powerlevel10k.zsh-theme
+[[ -z "${XDG_SESSION_DESKTOP}" ]] && source $ZPLUGDIR/zsh-auto-notify/auto-notify.plugin.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/p10k.zsh.
 [[ ! $ZDOTDIR/p10k.zsh ]] || source $ZDOTDIR/p10k.zsh
