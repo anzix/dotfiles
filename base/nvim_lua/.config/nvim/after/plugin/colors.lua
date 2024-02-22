@@ -22,4 +22,5 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Делает neovim про�
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" }) -- nvim-gitgutter прозрачная линия
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- Прозрачное окно буффера
+vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" }) -- Прозрачная Debugger панель codelldb
 

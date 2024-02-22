@@ -77,8 +77,7 @@ alias \
  ffplay="ffplay -hide_banner" \
  strace='strace -yy' `# Вывести всю доступную информацию, связанную с файловыми дескрипторами` \
  dosbox="dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf" \
- winetricks='winetricks -q' `# Тихая установка` \
- protontricks='protontricks -q'
+ winetricks='winetricks -q' `# Тихая установка`
 # bat="bat --style=numbers"
 
 # Сокращённые команды
@@ -112,7 +111,7 @@ alias \
  dul="du -h -d 1 | sort -hr" `# Статистика размера всего в текущей папке` \
  dus="du -sh" `# Размер файлов и папок (-s) only total (-h) читабельный формат чисел` \
  inet='ip -c -br a' `# Текущие соединения` \
- asource='pactl list short sources' \
+ palss='pactl list short sources' \
  lsblkf='lsblk --output NAME,SIZE,FSTYPE,MOUNTPOINTS,MODEL' \
  lsblks='lsblk --nodeps --output NAME,MODEL,SIZE' \
  imgsum="identify -format '%#\n' $1" \
@@ -203,8 +202,8 @@ alias \
  reconfigure="sudo dpkg-reconfigure"
 
 alias \
- apttw="aptitude why" `# Причина наличия этого пакета` \
- apttwn="aptitude why-not" `# Причина неимение это пакета`
+ apttw="aptitude why" `# Причины о необходимости этого пакета` \
+ apttwn="aptitude why-not" `# Причины почему этот пакет не может быть установлен`
 
 alias \
  apt-installed="apt list --installed" \
@@ -220,7 +219,7 @@ alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$
 # Flatpak
 alias \
  flat="flatpak run" \
- flatlist="flatpak list --columns=application --app > ~/dotfiles/flatpaks.txt"
+ flatlist="flatpak list --columns=application --app"
 
 # gpg encryption (TODO)
 # alias \

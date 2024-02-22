@@ -17,6 +17,7 @@ null_ls.setup({
 
 		-- Форматирование
 		-- Manpage: https://github.com/mvdan/sh/blob/master/cmd/shfmt/shfmt.1.scd
+		fmt.clang_format, -- C/C++
 		fmt.shfmt, --sh/bash
 		fmt.prettier, -- markdown
 		fmt.prettier.with({

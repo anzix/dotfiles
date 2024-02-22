@@ -19,7 +19,6 @@ mason.setup()
 mason_lspconfig.setup({
 	ensure_installed = {
 		"bashls", -- bash-language-server
-		"awk_ls", -- awk lsp
 		"clangd", -- C
 		-- 'rust_analyzer', -- Rust
 		-- 'gopls', -- Go
@@ -36,6 +35,7 @@ mason_lspconfig.setup({
 -- Форматтеры/Линтеры-Диагностеры
 mason_null_ls.setup({
 	ensure_installed = {
+		"codelldb", -- C/C++ & Rust Debugger
 		"djlint", -- htmldjango
 		"stylua", -- lua formatter
 		"prettier", -- markdown formatter

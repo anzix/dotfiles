@@ -31,7 +31,7 @@ packer.init({
 })
 
 -- Install your plugins here
-return require('packer').startup(function(use)
+return require("packer").startup(function(use)
 	use("wbthomason/packer.nvim") -- Have packer manage itself
 
 	use({
@@ -43,7 +43,7 @@ return require('packer').startup(function(use)
 
 	use("folke/tokyonight.nvim") -- Тема
 
-	use("theprimeagen/harpoon") -- Быстрое переключение
+	-- use("theprimeagen/harpoon") -- Быстрое переключение
 
 	use({
 		"nvim-treesitter/nvim-treesitter", -- Продвинутый синтаксис кода
@@ -94,8 +94,13 @@ return require('packer').startup(function(use)
 	})
 
 	-- formatting & linting
-	use("jose-elias-alvarez/null-ls.nvim")
-	use("jay-babu/mason-null-ls.nvim")
+	use("nvimtools/none-ls.nvim") -- Обратно совместим с null-ls
+	use("jay-babu/mason-null-ls.nvim") -- Есть совместимость с none-ls
+
+	-- Debugger
+	use("mfussenegger/nvim-dap")
+	use("rcarriga/nvim-dap-ui")
+	use("jay-babu/mason-nvim-dap.nvim")
 
 	use({
 		"ruifm/gitlinker.nvim",

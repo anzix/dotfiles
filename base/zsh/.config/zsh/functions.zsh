@@ -148,6 +148,7 @@ ascii2bin () {
     echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
   done < <(printf "$@" | xxd -p -c1 -u); echo
 }
+unidecode () { echo -ne "$@"; echo ;} # Символы начинающиеся с \u
 
 # Конвертирование образов
 # Использование: convert2chd [файл]
@@ -157,7 +158,7 @@ iso2cso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso/PS2: yay -S maxcso-gi
 iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu
 # [TODO] 3DS: yay -S makerom-git
 # [TODO] Xbox/Xbox360: yay -S extract-xiso-git
-nsz2nsp() { nsz -D "$1" "${1%.*}.nsz" ;} # Switch: yay -S nsz-git && необходим prod.keys в ~/.switch
+nsz2nsp() { nsz -D "$1" "${1%.*}.nsz" ;} # Switch: sudo pacman -S nsz && необходим prod.keys в ~/.switch
 
 
 # Torrents
@@ -399,7 +400,8 @@ uphosts () {
 
  # Корректировка правил универсального hosts файла
  sudo sed -i '/^0.0.0.0 clck.ru\|^0.0.0.0 track.adtraction.com/s/^/#/g' /etc/hosts # Реф ссылки pepper.ru
-
+ sudo sed -i '/^0.0.0.0 js.gleam.io\|^0.0.0.0 js.gleam.io/s/^/#/g' /etc/hosts # Gleam раздачи
+ sudo sed -i '/^0.0.0.0 wl.spotify.com\|^0.0.0.0 wl.spotify.com/s/^/#/g' /etc/hosts # Spotify
 
  # Удаляем временный файл diff.txt
  rm diff.txt
@@ -502,13 +504,18 @@ vboxshare () {
   [[ ! -d ~/vboxshare ]] && mkdir -p ~/vboxshare
   sudo mount -t vboxsf -o rw,uid=1000,gid=984 vboxshare vboxshare
 }
-# Qemu (virtio-9p)
+# Qemu virtio-9p/virtiofs
+# virtiofs не требует никаких разрешений в VM
 # HOST_PATH (куда ложить файлы): /home/username_host/Public
 # GUEST_PATH (mount_tag): host0
 # https://www.baeldung.com/linux/qemu-from-terminal#6-sharing-a-directory-between-host-and-guest
-vmshare () {
+virtio-9p_share () {
   [[ ! -d ~/vmshare ]] && mkdir -p ~/vmshare
   sudo mount -v -t 9p -o trans=virtio,version=9p2000.L host0 ~/vmshare
+}
+virtiofs_share () {
+	[[ ! -d ~/vmshare ]] && mkdir -p ~/vmshare
+	sudo mount -v -t virtiofs host0 ~/vmshare
 }
 
 # http://brettterpstra.com/2013/03/14/more-command-line-handiness/

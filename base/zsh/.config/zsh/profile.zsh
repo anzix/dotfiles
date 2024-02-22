@@ -22,7 +22,7 @@ export DIFFPROG="nvim -d" # Для использования neovim в pacdiff
 
 # Игнор команд из истории
 # Игнорируемые команды остаются только в текущей сессии, открыв новую они пропадают
-export HISTORY_IGNORE="(ls|cd|cd ..|cd -|pwd|zsh|exit|reboot|sudo reboot|poweroff|clear|history)"
+export HISTORY_IGNORE='(sudo|rmdir|rm|mkfs|dd|q|ls|less|cd|pwd|zsh|htop|btop|exit|reboot|poweroff|shutdown|clear|history)*'
 
 # Пользовательские директории
 export XDG_CONFIG_HOME="$HOME/.config"
