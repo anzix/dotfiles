@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Делает все jpg картинки монохромными с чётким чёрным цветом (полезно для текста)
+# Плюс скейлит изображает и изменяет расширения на tiff
+
+ls *.jpg | sed "s/\.jpg$//g;" |\
+	xargs -P 4 -I %%\
+		convert %%.jpg\
+			-filter Mitchell -resize 300%\
+			-units pixelsperinch -density 600\
+			-level 50%,70%,0.7 -monochrome\
+			-compress Group4\
+			%%.tiff

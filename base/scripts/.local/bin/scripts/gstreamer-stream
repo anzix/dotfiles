@@ -1,0 +1,53 @@
+#!/bin/bash
+# INFO: Этот скрипт недоделан
+
+# Источник скрипта: https://github.com/m-rzb/screen-recorder-for-steamdeck
+
+# Проверяет, использует ли текущий сеанс сервер отображения Wayland или x11.
+if [ "${XDG_SESSION_TYPE}" != "wayland" ]; then
+    DISPLAY_SERVER="X11 Display Server"
+    echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'ximagesrc'"
+    RECORDING_SOURCE="ximagesrc display-name=:0 show-pointer=true use-damage=false "
+else
+    DISPLAY_SERVER="Wayland Display Server"
+    echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'pipewire'."
+    RECORDING_SOURCE="pipewiresrc do-timestamp=True "
+fi
+
+# Перменные
+VIDEO_VAR="! video/x-raw,framerate=60/1 ! queue ! vaapipostproc ! queue ! vaapih264enc ! h264parse ! mux. "
+AUDIO_VAR="! queue ! audioconvert ! audio/x-raw,rate=48000,channels=2 ! lamemp3enc target=bitrate bitrate=128 cbr=true ! mux. "
+MIC_VAR="! audioconvert ! audio/x-raw, rate=48000, channels=1 ! wavenc "
+DATE_VAR=$(date "+%Y-%m-%d %H:%M")
+
+# Проверяет системное аудиоустройство по умолчанию
+AUDIO_DEVICE=$(pactl get-default-sink)
+# Нет неробходимости, так как по умолчанию сразу берёт активный источник микрофона
+# Список источников: `pactl list sources short`
+# MICROPHONE_DEVICE="rnnoise_source"
+echo "Обнаружено аудиоустройство по умолчанию '$AUDIO_DEVICE'."
+echo "Это устройство будет использоваться для записи звука."
+
+#
+# Записывает в поток RTMP
+GST_VAAPI_ALL_DRIVERS=1 \
+	gst-launch-1.0 -e -v \
+		pipewiresrc do-timestamp=True \
+			! queue \
+			! videoconvert \
+			! queue \
+			! vaapih264enc quality-level=1 quality-factor=1 rate-control=4 keyframe-period=240 bitrate=75000 refs=16 max-bframes=16 cabac=true dct8x8=true trellis=true \
+			! h264parse \
+			! mux. \
+		pulsesrc device="alsa_output.pci-0000_04_00.5-platform-acp5x_mach.0.HiFi__hw_acp5x_1__sink.monitor" \
+			! queue \
+			! avenc_aac bitrate=320000 \
+			! mux. \
+		flvmux name=mux streamable=True \
+			! rtmpsink location='rtmp://192.168.2.82:1935 live=1' \
+            & PIPED_PID=$!
+
+while kill -s 0 $PIPED_PID; do sleep .1; done |
+
+# TODO: изменить описание для стримминга
+( zenity --progress --icon=/usr/share/icons/breeze/actions/16/media-record.svg --width 555 --height 35 --title="Идет запись" --text="<big><b>Идет запись экрана!</b></big>\n\nВ настоящее время ваша система использует <b>$DISPLAY_SERVER.</b>.\nИдентифицированное аудиоустройство: <b>$AUDIO_DEVICE</b>.\n\nВидео будет сохранено в папке <b>$HOME/Videos/</b>.\n\n\nНажмите <b>Отменить</b>, чтобы остановить запись." --pulsate --default-cancel  || kill -2 $PIPED_PID )
