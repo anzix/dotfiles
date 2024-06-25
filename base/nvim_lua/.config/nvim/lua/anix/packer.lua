@@ -40,7 +40,10 @@ return require("packer").startup(function(use)
 	})
 
 	use("nvim-lua/plenary.nvim")
-
+	use({
+		"folke/todo-comments.nvim", -- Быстрое добавление TODO, PREF, NOTE, FIX, WARNING и т.д
+		requires = "nvim-lua/plenary.nvim",
+	})
 	use("folke/tokyonight.nvim") -- Тема
 
 	-- use("theprimeagen/harpoon") -- Быстрое переключение
@@ -68,6 +71,8 @@ return require("packer").startup(function(use)
 	use("lukas-reineke/indent-blankline.nvim")
 
 	use("nvim-tree/nvim-web-devicons")
+
+	use("SidOfc/carbon.nvim")
 
 	use("nvim-lualine/lualine.nvim")
 
@@ -100,6 +105,7 @@ return require("packer").startup(function(use)
 	-- Debugger
 	use("mfussenegger/nvim-dap")
 	use("rcarriga/nvim-dap-ui")
+	use("nvim-neotest/nvim-nio")
 	use("jay-babu/mason-nvim-dap.nvim")
 
 	use({

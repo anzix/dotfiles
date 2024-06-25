@@ -26,8 +26,8 @@ mason_lspconfig.setup_handlers({
 
 local bufopts = { noremap = true, silent = true }
 -- LSP Buffer Keybinds are set here
-vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts) -- Для темно синих и ярко синих в синтаксисе
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts) -- Для ярко синих в синтаксисе
 vim.keymap.set("n", "gI", vim.lsp.buf.implementation, bufopts)
 vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, bufopts)
 vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, bufopts)

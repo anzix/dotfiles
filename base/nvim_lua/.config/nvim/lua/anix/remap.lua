@@ -58,15 +58,15 @@ vim.keymap.set("n", "<C-j>", "<C-w>j" )
 vim.keymap.set("n", "<C-k>", "<C-w>k" )
 
 -- Навигация буферов
--- vim.keymap.set("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = true })
--- vim.keymap.set("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-l>", ":bnext<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-h>", ":bprevious<CR>", { noremap = true, silent = true })
 
--- [Вместо навигации буферов] Удобное перемещение началу и окончанию строки
+-- Удобное перемещение началу и окончанию строки
 vim.keymap.set("n", "<S-l>", "g_", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-h>", "^", { noremap = true, silent = true })
 
--- Лучшая вставка
-vim.keymap.set("v", "p", '"_dP', { silent = true })
+-- Лучшая вставка (изменено с Visual на Normal)
+vim.keymap.set("n", "p", '"_dP', { silent = true })
 
 -- Очистить шаблон поиска на ESC
 vim.keymap.set("n", "<Esc>", ":noh<CR><CR>")

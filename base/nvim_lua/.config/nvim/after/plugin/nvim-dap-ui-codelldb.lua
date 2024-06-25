@@ -30,6 +30,15 @@ dap.configurations.c = {
 		program = function()
 			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 		end,
+		-- FIXME: почему-то иногда первым идёт ввод аргументов а потом исполняемый
+		args = function()
+			local input = vim.trim(vim.fn.input("Arguments (leave empty for no arguments): ", "", "file"))
+			if input == "" then
+				return {}
+			else
+				return vim.split(input, " ")
+			end
+		end,
 		cwd = "${workspaceFolder}",
 		stopOnEntry = false,
 	},
