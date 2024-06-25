@@ -22,16 +22,17 @@ export DIFFPROG="nvim -d" # Для использования neovim в pacdiff
 
 # Игнор команд из истории
 # Игнорируемые команды остаются только в текущей сессии, открыв новую они пропадают
-export HISTORY_IGNORE='(sudo|rmdir|rm|mkfs|dd|q|ls|less|cd|pwd|zsh|htop|btop|exit|reboot|poweroff|shutdown|clear|history)*'
+export HISTORY_IGNORE='(sudo|rmdir|rm|rr|mkfs|dd|q|ls|less|pwd|zsh|htop|btop|exit|reboot|poweroff|shutdown|clear|history)*'
 
-# Пользовательские директории
+# XDG BASE DIR переменные
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-# ~/ Clean-up
+# Чиста домашнего каталога следуя XDG BASE DIR спецификации
+# https://wiki.archlinux.org/title/XDG_Base_Directory
 export XINITRC="$XDG_CONFIG_HOME/X11/xinitrc"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh" # Папка zsh
 export ZPLUGDIR="$ZDOTDIR/plugins" # Папка zsh плагинов
@@ -49,6 +50,9 @@ export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GOPATH="$XDG_DATA_HOME/go"
 export HISTFILE="$XDG_STATE_HOME/history"
+export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
+export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
+export PYTHONUSERBASE="$XDG_DATA_HOME/python"
 export CCACHE_DIR="$XDG_CACHE_HOME/ccache"
 export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch-config"
 export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
@@ -77,6 +81,9 @@ export WINEDLLOVERRIDES="winemenubuilder.exe="
 
 # (X11) Mozilla smooth scrolling/touchpads.
 export MOZ_USE_XINPUT2="1"
+
+# Авто поддержка Wayland для Electron приложений
+export ELECTRON_OZONE_PLATFORM_HINT=auto
 
 # Ширина man'уала. 80 default, 999 максимум (ломает некоторые мануалы)
 export MANWIDTH=80

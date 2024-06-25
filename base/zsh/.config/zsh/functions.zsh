@@ -1,3 +1,7 @@
+# Не вводи здесь наименование функции с тем же именем что и существующая
+# команда системы (напр. journalctl), выведется ошибка при выполнении
+# journalctl: maximum nested function level reached; increase FUNCNEST?
+
 # Функция чтобы выполнять содержимое файла
 # в текущей оболочке, если они существуют
 file() {
@@ -89,6 +93,7 @@ zshcompupd() {
 aurstore() { yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}' | xargs -ro yay -S ;}
 pacstore() { pacman -Slq | fzf -q "$1" -m --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S ;}
 deinst() { yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rn ;}
+ppkginfo() { pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)' ;}
 
 # lgogdownloader - GOG обвёртка
 # Функции для более удобного синтаксиса argv загрузчика GOG
@@ -127,11 +132,27 @@ genpass() { head -c 32 < /dev/urandom | base64 | tr -dc '[:alnum:]' | head -c ${
 # Подробная информация о смонтированных устройствах
 lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | column -t; }
 
+# Systemd
+jr() { journalctl -k -e -b "${1:-0}" } # Вся информация
+jrwe() { journalctl -p 2..4 -e -b "${1:-0}" } # Все важные логи
+fstrimcheck() { journalctl -u fstrim } # Проверка трима для SSD
+errors() { journalctl -p 3 -xb -e -b "${1:-0}" }
+sysls() { systemctl --all --failed }
+sysulist() { systemctl list-unit-files } # --state=enabled
+sysuulist() { systemctl --user list-unit-files } # --state=enabled
+sysap() { systemd-analyze plot > startup.svg }
+
 # Проверка правописания hunspell
 check-word-en () { echo "$1" | hunspell -d en_US ;}
 check-word-ru () { echo "$1" | hunspell -d ru_RU ;}
 check-list () { hunspell -d en_US,ru_RU -l "$1" ;}
 check-file () { hunspell -d en_US,ru_RU "$1" ;}
+
+
+# Decode/Encode Base64 | Расшифровка/Шифровка строки
+# Использование: e64 "строка", d64 "0YHRgtGA0L7QutCwCg=="
+e64() { [[ $# == 1 ]] && base64 -w0 <<<"$1" || base64 -w0; echo }
+d64() { [[ $# == 1 ]] && base64 --decode <<<"$1" || base64 --decode; echo }
 
 # Конвертирование
 # пример: hex2text "68656c6c6f"
@@ -154,17 +175,29 @@ unidecode () { echo -ne "$@"; echo ;} # Символы начинающиеся 
 # Использование: convert2chd [файл]
 convert2chd(){ chdman createcd -i "$1" -o "${1%.*}.chd" ;}
 chd2cue(){ chdman extractcd -i "$1" -o "${1%.*}.cue" ;}
-iso2cso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso/PS2: yay -S maxcso-git
-iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu
-# [TODO] 3DS: yay -S makerom-git
+iso2cso_ciso(){ ciso 9 "$1" "${1%.*}.cso" ;} # PSP: yay -S ciso
+iso2cso_maxcso(){ maxcso "$1" "${1%.*}.cso" ;} # PSP/PS2: sudo pacman -S maxcso
+iso2rvz(){ dolphin-tool convert --input "$1" --output "${1%.iso}.rvz" --format=rvz --block_size="131072" --compression=zstd --compression_level=5 ;} # GameCube: yay -S dolphin-emu-tool
+# [TODO] 3DS Decrypt | cia2cxi (расширение .ncch необходимо переименовать в .3ds):
+# 1. Метод: используя команду `wineconsole` и в термнале использовать `decrypt.exe "имя_образа.cia"`
+# 2. Метод: используя python скрипт:
+# Последнаяя версия базы данных seeddb.bin https://github.com/ihaveamac/3DS-rom-tools/raw/master/seeddb/seeddb.bin
+# Скрипт https://github.com/shijimasoft/cia-unix/blob/experimental/decrypt.py
+# Команда для дешифровки `python decrypt.py *.cia`
+# Проблемы: Нету иконки и обнаружения региона
+# [TODO] 3DS Convert | cia2cci (ncsd): yay -S makerom-git
 # [TODO] Xbox/Xbox360: yay -S extract-xiso-git
 nsz2nsp() { nsz -D "$1" "${1%.*}.nsz" ;} # Switch: sudo pacman -S nsz && необходим prod.keys в ~/.switch
 
 
-# Torrents
+# Конвертирование торрентов
 # пример: torrent2magnet {файл} / magnet2torrent {magnet_url}
 torrent2magnet() { transmission-show -m "$1" ;}
 magnet2torrent() { aria2c -q --bt-metadata-only --bt-save-metadata "$1" ;} # На выходе файла в имени присваивается инфо-хеш V1
+
+# Сжатие PDF файла, необходим пакет ghostscript
+pdfcompr() { gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${1}-compressed.pdf ${1}.pdf ;}
+
 
 # btfs
 # пример: mpvbtfs [torrent_file/magnet]
@@ -303,10 +336,14 @@ favicon() {
 urlencode() { python3 -c "import sys, urllib.parse as parse; print(parse.quote(sys.argv[1]))" $1; }
 urldecode() { python3 -c "import sys, urllib.parse as parse; print(parse.unquote(sys.argv[1]))" $1; }
 
-# Переименовывает ПРОПИСНЫЕ в строчные (и наоборот) названия всех файлов и каталогов
+# Массово удалить все метаданные всех изображениях С перезаписью оригинала и БЕЗ
+bulk_jpgclearexif() { for i in *.jpg; do echo "Processing $i"; exiftool -all= "$i"; done ;}
+bulk_jpgclearexif_oo() { for i in *.jpg; do echo "Processing $i"; exiftool -overwrite_original -all= "$i"; done ;}
+
+# Массово переименовывает ПРОПИСНЫЕ в строчные (и наоборот) названия всех файлов и каталогов
 # Использовать внутри каталога
-uppercase2lowercase() { for f in * ; do mv -v -- "$f" "$(tr [:upper:] [:lower:] <<< "$f")" ; done ;}
-lowercase2uppercase() { for f in * ; do mv -v -- "$f" "$(tr [:lower:] [:upper:] <<< "$f")" ; done ;}
+bulk_uppercase2lowercase() { for f in * ; do mv -v -- "$f" "$(tr [:upper:] [:lower:] <<< "$f")" ; done ;}
+bulk_lowercase2uppercase() { for f in * ; do mv -v -- "$f" "$(tr [:lower:] [:upper:] <<< "$f")" ; done ;}
 
 # Сжатие изображения
 # пример: imageoptim <file> <options>
@@ -328,6 +365,7 @@ imageoptim () {
 bulk_heic2jpg() { for i in *.HEIC; do heif-convert -q 100 "$i" "${i%.*}.jpg"; done ;}
 bulk_all2jxl() { for i in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$i" "${i%.*}.jxl"; done ;}
 bulk_png2webp() { for i in *.png; do cwebp -q 75 "$i" -o "${i%.*}.webp"; done ;}
+bulk_webp2png() { for i in *.webp; do dwebp -quiet "$i" -o "${i%.*}.png"; done ;}
 
 # Конверация видео форматов (полезно для Davinci Resolve)
 # [TODO] добавить GNU parallel для более быстрой конвертации
@@ -342,10 +380,12 @@ bulk_webm2mp4() { for i in *.webm; do ffmpeg -fflags +genpts -i "$i" -r 24 "${i%
 bulk_mp42flac() { for i in *.mp4; do ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"; done ;}
 bulk_mkv2flac() { for i in *.mkv; do ffmpeg -i "$i" -vn -y "${i%.*}.flac"; done ;}
 
-# Массовое конвертирование flac в mp3
+# Массовое конвертирование flac/m4a в mp3
 # parallel - можно уменьшить время конвертации в 2 раза
 # bulk_flac2mp3 () { find . -name "*.flac" -print0 | parallel -0 ffmpeg -i {} -acodec libmp3lame -ab 320k -map_metadata 0 -id3v2_version 3 "{.}.mp3" }
 bulk_flac2mp3() { for i in *.flac; do ffmpeg -i "$i" -acodec libmp3lame -ab 320k "${i%.*}.mp3"; done ;}
+bulk_m4a2mp3() { for i in *.m4a; do ffmpeg -i "$i" -codec:v copy -codec:a libmp3lame -q:a 2 "${i%.*}.mp3"; done ;}
+
 
 # Извлечение кадров из видео
 vid2frames() { mkdir "$(pwd)/FrameDir"; ffmpeg -i "$1" "$(pwd)/FrameDir/frame-%03d.jpg" ;}
@@ -402,6 +442,8 @@ uphosts () {
  sudo sed -i '/^0.0.0.0 clck.ru\|^0.0.0.0 track.adtraction.com/s/^/#/g' /etc/hosts # Реф ссылки pepper.ru
  sudo sed -i '/^0.0.0.0 js.gleam.io\|^0.0.0.0 js.gleam.io/s/^/#/g' /etc/hosts # Gleam раздачи
  sudo sed -i '/^0.0.0.0 wl.spotify.com\|^0.0.0.0 wl.spotify.com/s/^/#/g' /etc/hosts # Spotify
+ sudo sed -i '/^0.0.0.0 www.ojrq.net\|^0.0.0.0 www.ojrq.net/s/^/#/g' /etc/hosts # PCGamingWiki Microsoft game page referal
+ sudo sed -i '/^0.0.0.0 track.adtraction.com\|^0.0.0.0 track.adtraction.com/s/^/#/g' /etc/hosts # PCGamingWiki GOG game page referal
 
  # Удаляем временный файл diff.txt
  rm diff.txt

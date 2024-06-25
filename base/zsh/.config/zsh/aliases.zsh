@@ -10,11 +10,13 @@ if hash doas 2>/dev/null; then
  alias sudo='doas'
 else
  # Позволяет юзать sudo [alias]
+ # TODO: Добавить аргумент -E
  alias sudo='sudo '
 fi
 
 # Использовать замену ls - eza, если доступно
 if hash exa 2>/dev/null; then
+ # FIXME: при использовании `ls *.jpg | xargs ..` не будет работать по причине включенных иконок
  alias \
   ls='exa -b --color=always --icons --group-directories-first' `# (-b) Понятные размеры файлов +Цвета +Иконки, Сгруппировано` \
   ll='ls -l' `# +Подробно +листом вниз` \
@@ -26,12 +28,12 @@ if hash exa 2>/dev/null; then
   lt3="lt -L 3" \
   l.='exa -d .* --group-directories-first' `# Показать только . (dot)`
 else
- # GNU `ls`
+ # GNU `ls` с `tree`
  alias \
   ls='ls --color=auto --group-directories-first' \
   ll='ls -l' `# +Подробно +листом вниз` \
   la='ls -a' `# +Показ скрытых` \
-  lla='ls -la' `# +Подробно +Показ скрыюзатьвниз` \
+  lla='ls -la' `# +Подробно +Показ скрытых +листом вниз` \
   lt='tree -aC --dirsfirst --gitignore -I ".git|.gitignore|.DS_Store|node_modules"' \
   lt1='lt -L 1' \
   lt2='lt -L 2' \
@@ -77,7 +79,9 @@ alias \
  ffplay="ffplay -hide_banner" \
  strace='strace -yy' `# Вывести всю доступную информацию, связанную с файловыми дескрипторами` \
  dosbox="dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf" \
- winetricks='winetricks -q' `# Тихая установка`
+ winetricks='winetricks -q' `# Тихая установка` \
+ fdupes='fdupes -rd' \
+ journalctl='journalctl --no-hostname'
 # bat="bat --style=numbers"
 
 # Сокращённые команды
@@ -116,12 +120,13 @@ alias \
  lsblks='lsblk --nodeps --output NAME,MODEL,SIZE' \
  imgsum="identify -format '%#\n' $1" \
  lsport='sudo netstat -tulpn' `# Прослушиваемые порты` \
- lsip='lsof -P -i -n' \
+ lsip='lsof -P -i -n' `# Тоже прослушивание портов, вроде` \
  diffgit="diff -Naur --strip-trailing-cr" `# Формат diff такой как в git` \
  killsession="pkill -u $(whoami)" `# Убивает сессию X11 (использовать с root привилегиями)` \
  steam-minimal="steam -no-browser +open steam://open/minigameslist &" `# Только окно библиотеки игр` \
  hdmp="od -Ax -tx1z -v" `# Дамп бинарного файла в формате hexademical` \
- disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T`
+ disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T` \
+ utc='env TZ=UTC date' `# UTC время`
 
 # Разное
 alias \
@@ -149,13 +154,13 @@ alias \
 alias pkeyupd="sudo pacman -Sy archlinux-keyring && sudo pacman -Su"
 
 alias \
- checkupdates="checkupdates; yay -Qqu" \
- yayrebuildtree="checkrebuild | awk '{print $2}' | xargs -r yay -S --noconfirm --rebuildtree"
+ checkupdates="checkupdates; yay -Qua" \
+ yayrebuildtree="checkrebuild | cut -f2 | xargs -r yay -S --noconfirm --rebuildtree"
 
 alias \
  y="yay -S --needed" `# установка пакета` \
  yn="yay -S --noconfirm --needed" `# установка пакета без подтверждения` \
- yo="yay -S --overwrite='*'" `# установив пакет, перезаписав существующие файлы` \
+ yo="yay -S --overwrite='*'" `# установив пакет, перезаписав существующие файлы (работает и в pacman)` \
  yuo="yay -U --overwrite='*'" \
  yg="yay -G" `# Выгрузить PKGBUILD в текущий каталог` \
  ysc="yay -Sc" `# очистка кэша но оставить локально установленные` \
@@ -210,7 +215,7 @@ alias \
  dpkg-installed="dpkg --get-selections | grep -v deinstall"
 
 # Показывает список установленные вручную пакеты
-# TODO: Можно использовать как экспорт
+# INFO: Можно использовать как экспорт
 alias lpkgs="apt-mark showmanual"
 
 # Показывает отличающиеся конфиг. файлы от дефолтов
@@ -218,8 +223,11 @@ alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$
 
 # Flatpak
 alias \
- flat="flatpak run" \
+ flatrun="flatpak run" \
  flatlist="flatpak list --columns=application --app"
+
+# ОПАСНО!: Удалить все программы установленные из Flatpak со всеми данными
+alias flatpak-remove-all="flatpak remove --all --delete-data"
 
 # gpg encryption (TODO)
 # alias \
@@ -239,24 +247,16 @@ alias \
  soundcardall='cat /proc/asound/cards' `# Все звуковые карты` \
  userlist="cut -d: -f1 /etc/passwd"
 
-# systemd
-alias \
- journalctl="journalctl --no-hostname" \
- jr='journalctl -k -e' `# Вся информация` \
- jrp='journalctl -b -1 -p 2..4 -e' `# Все важные логи предыдущего сеанса` \
- jrl='journalctl -b 0 -p 2..4 -e' `# Все важные логи текущего сеанса` \
- fstrimcheck='journalctl -u fstrim' \
- sysls='systemctl --all --failed' \
- sysulist="systemctl list-unit-files" `# --state=enabled` \
- sysuulist="systemctl --user list-unit-files" \
- sysap="systemd-analyze plot > startup.svg"
-# jrs='journalctl -p 3 -xb -e' `# Только текущие сообщения об ошибках`
+# SSH
+# Show failed login attempts on Debian
+alias sshfailedlogins='grep sshd.\*Failed /var/log/auth.log | less'
+# Show failed connect attempts on Debian (like a port scanner, for instance)
+alias sshfailedconnects='grep sshd.\*Did /var/log/auth.log | less'
 
 # Xorg
 alias \
   xpropC='xprop | grep "WM_CLASS"' \
   startx="startx $XINITRC"
-
 
 # Чистка и обслуживание
 alias \
@@ -264,6 +264,13 @@ alias \
  pycdel='find . -name \*.pyc -type f -ls -delete' \
  cleanup='sudo paccache -rvk 1 && pacman -Qqdt | sudo pacman -Rns - && yay -Scc --noconfirm' `# Удаляет пакеты сироты вместе с зависимостями` \
  mirror="sudo reflector --verbose -c ru,by -p https,http -l 12 --sort rate --save /etc/pacman.d/mirrorlist" `# Обновление зеркал`
+
+# VFIO (Для 2 GPU со встройкой Intel с дискреткой Nvidia)
+# Отсюда: https://youtu.be/6SoteC1FM14?si=y0LRVbftXPGOwkmK&t=1145
+alias hows-my-gpu='echo "NVIDIA Dedicated Graphics" | grep "NVIDIA" && lspci -nnk | grep "NVIDIA Corporation GA107M" -A 2 | grep "Kernel driver in use" && echo "Intel Integrated Graphics" | grep "Intel" && lspci -nnk | grep "Intel.*Integrated Graphics Controller" -A 3 | grep "Kernel driver in use" && echo "Enable and disable the dedicated NVIDIA GPU with nvidia-enable and nvidia-disable"'
+alias looking-glass='looking-glass-client -m 97'
+alias nvidia-enable='sudo virsh nodedev-reattach pci_0000_01_00_0 && echo "GPU переподключён (теперь Host Ready" && sudo rmmod vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO драйвера удалены" && sudo modprobe -i nvidia_modeset nvidia_uvm nvidia && echo "Nvidia драйвера добавлены" && echo "Завершено!"'
+alias nvidia-disable='sudo rmmod nvidia_modeset nvidia_uvm nvidia && echo "Nvidia драйвера удалены" && sudo modprobe -i vfio_pci vfio_pci_core vfio_iommu_type1 && echo "VFIO драйвера добавлены" && sudo virsh nodedev-detach pci_0000_01_00_0 && echo "GPU отсоединён (теперь VFIO Ready)" && echo "Завершено!"'
 
 # CPU & GPU & Swap/Zram статистики
 alias \
@@ -285,7 +292,8 @@ alias \
 
 # Скачивание сайта
 alias \
- websdl="wget --random-wait -r -p -e robots=off -U mozilla" `# Скачать веб страницу` \
+ webdl_recursive="wget --random-wait -r -p -e robots=off -U mozilla" `# Скачать веб страницу со всеми ассетами, рекурсивно` \
+ webdl="wget --no-clobber --page-requisites --html-extension --convert-links --no-host-directories" `# Скачать текущую веб страницу со всеми ассетами` \
  websdlwarc="wget --mirror --no-parent --convert-links --warc-file=warc" `# Скачать веб страницу в формате Web ARChive`
 
 # Просмотр HTTP-трафика
@@ -301,7 +309,7 @@ alias cutexe="sed '$ s/\x30*$//' $1"
 # Python
 alias venv=". ./.venv/bin/activate || python3 -m venv .venv --prompt $(basename $PWD) && . ./.venv/bin/activate"
 
-# Смена версий (для сборки)
+# Смена версий Python (для сборки)
 # Проверить версию: python -V
 # yay -S python2 или python2-bin
 alias \
@@ -331,6 +339,7 @@ alias \
 alias viewcsv="cat $1 | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S"
 
 # Docker
+# docker-compose build `# (конфликт псевдонима) Пересобирает Docker/Podman образ`
 # alias \
 #  dcu="docker-compose up -d" `# Запустить как демон` \
 #  dcd="docker-compose down" `# Остановить и удалить контейнер` \
@@ -373,6 +382,10 @@ alias \
 alias \
  hdu="ncdu --color dark --show-percent --hide-graph -rr -x --exclude .git --exclude node_modules" `# Статистика свободного места ~` \
  rdu='sudo ncdu --color dark --show-percent --hide-graph -rr -x --exclude .git --exclude node_modules /' `# Статистика свободного места корня`
+
+# Удаляет html теги, очищая раздутую web страницу
+# Использование: curl <url> | htmltagremove
+alias htmltagremove="sed -e 's/<[^>]*>//g'"
 
 # Pastebins
 # Примеры:
