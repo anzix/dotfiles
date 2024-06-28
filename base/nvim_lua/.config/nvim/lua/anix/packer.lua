@@ -39,7 +39,7 @@ return require("packer").startup(function(use)
 		branch = "0.1.x", -- fuzzy finder на стероидах
 	})
 
-	use("nvim-lua/plenary.nvim")
+	use("nvim-lua/plenary.nvim") -- Для украшение границ плавающего окна
 	use({
 		"folke/todo-comments.nvim", -- Быстрое добавление TODO, PREF, NOTE, FIX, WARNING и т.д
 		requires = "nvim-lua/plenary.nvim",
