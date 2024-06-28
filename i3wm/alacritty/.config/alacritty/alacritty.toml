@@ -1,0 +1,110 @@
+# --- Hotkey'и для удобного перемещению по большой истории терминала
+# Не работает внутри tmux
+# Shift+PgUp - пролистать часть вверх
+# Shift+PgDn - пролистать часть вниз
+# Shift+Home - перейти к началу терминала
+# Shift+End - перейти к концу терминала
+
+# --- Hotkey'и для текста
+# Ctrl+[+/-] - Увеличивает/уменьшает текст
+# Ctrl+0 - Сбрасывает размер текста на дефолт
+
+# Актиная тема к Alacritty
+import = ["~/.config/alacritty/themes/ClearT.toml"]
+#import = ["~/.config/alacritty/themes/GruvboxDark.toml"]
+#import = ["~/.config/alacritty/themes/SolarizedDark.toml"]
+
+# После сохранения конфига изменения сразу применяются
+live_config_reload = true
+
+# https://wiki.archlinux.org/title/Alacritty#Terminal_functionality_unavailable_in_remote_shells
+[env]
+TERM = "xterm-256color"
+
+[window]
+opacity = 0.99 # Прозрачность
+
+[window.class]
+general = "Alacritty"
+instance = "Alacritty"
+
+# Отступы
+[window.padding]
+x = 12
+y = 12
+
+[scrolling]
+#auto_scroll = true # Удалено (true) При появлении новой строки в терминале, он прокручивается вниз
+history = 100000 # История терминала (число = линии будет сохранять)
+multiplier = 6 # Сколько строк пропускается за один сдвиг колёсика мыши
+
+# Шрифты
+[font]
+size = 14.0 # Размер шрифта (14.0 самый подходящий при 1920x1080 24дюйм)
+
+# Обычный
+[font.normal]
+family = "JetBrainsMono NF"
+style = "Medium"
+
+# Жирный
+[font.bold]
+family = "JetBrainsMono NF"
+style = "Bold"
+
+# Курсив, для включения разъединить названия в style
+[font.italic]
+family = "JetBrainsMono NF"
+style = "MediumItalic"
+
+# Жирный курсив, для включения разъединить названия в style
+[font.bold_italic]
+family = "JetBrainsMono NF"
+style = "BoldItalic"
+
+[colors]
+# Печатать жирный текст яркими шрифтами
+draw_bold_text_with_bright_colors = true
+
+# Стиль курсора (некоректно работает если включён vim-mode.zsh)
+# Значения для `style`:
+# ▇ Block
+# _ Underline
+# | Beam
+[cursor.style]
+shape = "Beam"
+blinking = "Always"
+
+# (true) Всё что выделяется мышью сразу идёт в буфер обмена
+# ПРЕДУПР: Может мешать если юзаете менеджер буфера обмена [CopyQ/Clipit и т.д]
+[selection]
+save_to_clipboard = false
+
+# Указывает оболочку для alacritty
+# И подключается к активной сессии мультиплексора tmux (необходим пакет tmux)
+# если нет создаёт её с моими пресетами которые указаны в конфиге tmux.conf
+# Закрыв alacritty сессия master в tmux остаётся включённой
+# Если вам не нужен мультиплексор, просто закомментируйте строку args
+[shell]
+args = ["-l", "-c", "tmux -u attach -t master"]
+# Использовать только если "нету" в конце конфига tmux.conf автозапуск сессии
+# args = [
+# 	"-l",
+# 	"-c",
+# 	"tmux attach || tmux new-session -d -s master -n term \\; new-window -d -t master -n music 'ncmpcpp' \\; select-window -t 1 && tmux attach" ]
+program = "/usr/bin/zsh"
+
+[keyboard]
+bindings = [
+	# Когда нахожусь в любой папке, win+shift+enter дублирует окно терминала с доступом к этой же папке
+	{ key = "Return", mods = "Super|Shift", action = "SpawnNewInstance" },
+	# сtrl+v вставить
+	# { key = "V", mods = "Control", action = "Paste" },
+]
+
+[mouse]
+bindings = [
+	# Вставка правой кнопкой мыши
+	# { mouse = "Right", action = "Paste" },
+]
+
