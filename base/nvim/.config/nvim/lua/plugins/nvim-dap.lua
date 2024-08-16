@@ -15,12 +15,7 @@ return {
       },
       { "nvim-neotest/nvim-nio" },
       { "theHamsta/nvim-dap-virtual-text" },
-      -- Убедится, что отладчик C/C++ установлен.
-      {
-         "williamboman/mason.nvim",
-         optional = true,
-         opts = { ensure_installed = { "codelldb" } },
-      }
+      { "WhoIsSethDaniel/mason-tool-installer.nvim" },
    },
    keys = {
       -- Space+dt - Добавить точку на строке (повторно убирает точку)
@@ -42,6 +37,13 @@ return {
       }
    },
    config = function()
+      -- Убедится, что отладчик C/C++ установлен.
+      require("mason-tool-installer").setup({
+         ensure_installed = {
+            "codelldb",
+         }
+      })
+
       require("dapui").setup()
       local dap, dapui = require("dap"), require("dapui")
 
@@ -64,7 +66,7 @@ return {
       dap.configurations.c = {
          {
             name = "Launch",
-            type = "codelldb",
+            type = "gdb",
             request = "launch",
             program = function()
                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
@@ -72,7 +74,7 @@ return {
             -- FIXME: почему-то иногда первым идёт ввод аргументов а потом исполняемый
             args = function()
                local args_str = vim.fn.input({
-                  prompt = 'Arguments: ',
+                  prompt = 'Arguments (leave empty for no arguments): ',
                })
                return vim.split(args_str, ' +')
             end,

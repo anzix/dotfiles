@@ -324,9 +324,6 @@ return {                    -- LSP Configuration & Plugins
          -- LSP
          -- "rust-analyzer", Rust LSP
 
-         -- Дебаггеры
-         -- "codelldb",      -- C/C++ & Rust Debugger
-
          -- Форматирование/Диагностика
          "djlint",       -- Диагностика htmldjango
          "eslint_d",     -- Диагностика JavaScript
