@@ -83,7 +83,7 @@ zsh_add_completion() {
 # Обновление файла zcompdump
 zshcompupd() {
  autoload -U zrecompile
- rm -rf "$ZSH_COMPDUMP"*
+ rm -rf "$ZSH_COMPDUMP"* # FIXME: не безопасно использовать rm -rf
  compinit -u -d "$ZSH_COMPDUMP"
  zrecompile -p "$ZSH_COMPDUMP"
  exec zsh
@@ -132,6 +132,10 @@ genpass() { head -c 32 < /dev/urandom | base64 | tr -dc '[:alnum:]' | head -c ${
 # Подробная информация о смонтированных устройствах
 lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | column -t; }
 
+# Перечисляет все зависимости двоичного файла от ldd -v
+# Источник: https://github.com/paulera/files/blob/master/bin/lddlist
+lddlist() { ldd -v $1 | grep "=> /" | sed 's/.*=> //g' | sort | uniq | sed 's/ ([0-9a-z]\+)$//g' }
+
 # Systemd
 jr() { journalctl -k -e -b "${1:-0}" } # Вся информация
 jrwe() { journalctl -p 2..4 -e -b "${1:-0}" } # Все важные логи
@@ -169,7 +173,8 @@ ascii2bin () {
     echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
   done < <(printf "$@" | xxd -p -c1 -u); echo
 }
-unidecode () { echo -ne "$@"; echo ;} # Символы начинающиеся с \u
+unidecode () { printf '%b\n' "$@" ;} # Узнать символ по UTF-8, напр \uf115. Можно использовать также `echo '\uf115'`
+uniencode () { printf '%x\n' "'$@" ;} # Узнать UTF-8 id символа, напр 
 
 # Конвертирование образов
 # Использование: convert2chd [файл]
@@ -243,6 +248,21 @@ cpu () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
 wts () { curl "wttr.in/$1?M&lang=ru" }
 wtss () { curl "wttr.in/$1?format=3" } # Коротко
 
+# Clang
+# Генерация моего типа форматирования
+gen-clang-format() {
+   clang-format \
+      --style="{
+         BasedOnStyle: Google, \
+         IndentWidth: 4, \
+         TabWidth: 4, \
+         AccessModifierOffset: 0, \
+         IndentAccessModifiers: true, \
+         PackConstructorInitializers: Never
+      }" \
+      --dump-config > .clang-format
+;}
+
 # Git
 # Клонирование
 gc () { git clone "$1" ${2} ;}
@@ -289,6 +309,7 @@ open() {
   elif [[ -n "${commands[kde-open5]}" ]]; then
     kde-open5 "$@"
   elif [[ -n "${commands[gnome-open]}" ]]; then
+    # Не работает
     gnome-open "$@"
   else
     echo "не найдена подходящая команда" >&2
@@ -360,12 +381,16 @@ imageoptim () {
   fi
 }
 
-# Конвертирование изображений
+# Конвертирование изображений и gif
 # Использовать находясь внутри каталога
-bulk_heic2jpg() { for i in *.HEIC; do heif-convert -q 100 "$i" "${i%.*}.jpg"; done ;}
+# TODO: Нужен bulk_heic2jpg но только с использованием пакета heif-enc
+bulk_jpg2heif() { for i in *.jpg; do heif-enc -q 100 "$i" -o "${i%.*}.heic"; done ;}
+bulk_heic2jpg() { for i in *.HEIC; do heif-convert -q 100 "$i" "${i%.*}.jpg"; done ;} # Нужен AUR пакет python-heif-convert
 bulk_all2jxl() { for i in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$i" "${i%.*}.jxl"; done ;}
+bulk_all2avif() { for i in *.png *.jpg; do avifenc "$i" "${i%.*}.avif"; done ;}
 bulk_png2webp() { for i in *.png; do cwebp -q 75 "$i" -o "${i%.*}.webp"; done ;}
 bulk_webp2png() { for i in *.webp; do dwebp -quiet "$i" -o "${i%.*}.png"; done ;}
+bulk_gif1avif() { for i in *.gif; do ffmpeg -i "$i" -pix_fmt yuv420p -f yuv4mpegpipe - | avifenc --stdin --fps 15 "${i%.*}.avif"; done ;} # Убрать 15 fps если нужна оригинальная скорость
 
 # Конверация видео форматов (полезно для Davinci Resolve)
 # [TODO] добавить GNU parallel для более быстрой конвертации
@@ -377,6 +402,7 @@ bulk_mp42mov() {
 bulk_webm2mp4() { for i in *.webm; do ffmpeg -fflags +genpts -i "$i" -r 24 "${i%.*}.mp4"; done ;}
 
 # Извлечение аудио дорожки из видео
+# для добавление в Davinci Resolve (из-за недоступности AAC в Linux)
 bulk_mp42flac() { for i in *.mp4; do ffmpeg -i "$i" -map 0:a -y "${i%.*}.flac"; done ;}
 bulk_mkv2flac() { for i in *.mkv; do ffmpeg -i "$i" -vn -y "${i%.*}.flac"; done ;}
 
@@ -561,6 +587,7 @@ virtiofs_share () {
 }
 
 # http://brettterpstra.com/2013/03/14/more-command-line-handiness/
+# https://github.com/rightthumb/rightthumb-widgets-v0/blob/main/widgets/bash/micro_zip_list.sh#L17-L55
 # ls archives (inspired by `extract`)
 lsa() {
 	if [ $# -ne 1 ]
@@ -570,8 +597,10 @@ lsa() {
 	fi
 	if [ -f $1 ] ; then
 		case $1 in
-			*.tar.bz2|*.tar.gz|*.tar|*.tbz2|*.tgz) tar tvf $1;;
-			*.zip)  unzip -l $1;;
+			*.tar.bz2|*.tar.gz|*.tar|*.tbz2|*.tgz|*tar.zst) tar tvf $1;;
+			*.zip|*.rar)  unzip -l $1;;
+			*.gz)   echo "Gzip does not support listing contents without extracting.";;
+			*.bz2)  echo "Bzip2 does not support listing contents without extracting.";;
 			*)      echo "'$1' unrecognized." ;;
 		esac
 	else

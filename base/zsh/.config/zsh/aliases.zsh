@@ -197,8 +197,8 @@ alias \
 alias \
  ai="sudo apt install" \
  ain="sudo apt install -y" `# Установить пакет без подтверждения` \
- ar="sudo apt remove" `# Удаление пакетов` \
- arp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакеты, их конфигурацию и ненужные зависимости.` \
+ arm="sudo apt remove" `# Удаление пакетов` \
+ armp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакеты, их конфигурацию и ненужные зависимости.` \
  aap="sudo apt autopurge" `# Удалить ненужные пакеты` \
  ac='sudo apt-get clean && sudo apt-get autoclean' `# Очищает кэш` \
  as='apt-cache search' \
@@ -433,14 +433,14 @@ alias \
  git-undo="git reset --soft HEAD^" `# Undo last commit but dont throw away your changes`
 
 # Обновить все репозитории в текущем каталоге
-alias bulk_git_pull="exa -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
+alias bulk_git_pull="exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git -C {} pull"
 
 # Обновления
-# zpu="cd '$ZDOTDIR/plugins' && exa -d */.git | sed 's/\/.git//'| xargs -P10 -I{} git -C {} pull"
+# zpu="cd '$ZDOTDIR/plugins' && exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git -C {} pull"
 alias \
  upfc="sudo fc-cache -vf" `# Обновление шрифтов` \
  nvpu="nvim +'PackerUpadate' +qa" `# Обновление плагинов neovim менеджером packer` \
- zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P10 -I {} -0 git -C {} pull" `# Обновление плагинов zsh` \
+ zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P$(nproc) -I {} -0 git -C {} pull" `# Обновление плагинов zsh` \
  upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg" `# Обновление конфига Grub` \
  updeskdb="update-desktop-database ~/.local/share/applications" `# Обновление пользовательских ярлыков`
 
