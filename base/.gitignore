@@ -8,10 +8,6 @@ mpd/.config/mpd/syslog
 mpv/.config/mpv/watch_later
 mpv/.config/mpv/volume
 ncmpcpp/.config/ncmpcpp/error.log
-nvim_lua/.config/nvim/plugin/packer_compiled.lua
-nvim/.config/nvim/plugged/
-nvim/.config/vim/plugged/
-nvim/.config/vim/viminfo
 zsh/.config/zsh/.zcompdump
 zsh/.config/zsh/.zcompcache/
 zsh/.config/zsh/plugins/
