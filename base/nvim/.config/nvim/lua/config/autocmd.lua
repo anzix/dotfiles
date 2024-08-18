@@ -34,7 +34,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
    end,
 })
 
-
 --- Удалять все пустые пробелы при сохранении
 local TrimWhiteSpaceGrp = vim.api.nvim_create_augroup("TrimWhiteSpaceGrp", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {

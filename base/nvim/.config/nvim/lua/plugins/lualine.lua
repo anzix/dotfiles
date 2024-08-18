@@ -1,5 +1,8 @@
 return {
    "nvim-lualine/lualine.nvim", -- Строка состояния
+   dependencies = {
+      { "nvim-tree/nvim-web-devicons" }, -- Поддержка иконок для lualine
+   },
    opts = {
       options = {
          component_separators = "|",
@@ -26,5 +29,4 @@ return {
       },
       extensions = { "fugitive", "quickfix" },
    },
-   config = true, -- Если выставлены opts параметры, то автоматически запускает `require(MAIN).setup(opts)`
 }

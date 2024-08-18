@@ -11,12 +11,12 @@ return {                  -- Completion & Snippets
       -- Добавляет другие возможности cmp.
       --   nvim-cmp по умолчанию поставляется не со всеми источниками. Они
       --   разделены на несколько репозиториев в целях обслуживания.
-      "hrsh7th/cmp-nvim-lsp", -- Добавляет новые различные возможности (capabilities) завершения в зависимости от клиента lsp
+      "hrsh7th/cmp-nvim-lsp", -- Добавляет новые различные возможности (capabilities) для cmp в зависимости от клиента lsp
       "hrsh7th/cmp-nvim-lua",
       "hrsh7th/cmp-path",     -- path completions
       "hrsh7th/cmp-buffer",   -- buffer completions
       "hrsh7th/cmp-calc",     -- calc completions
-      --"hrsh7th/cmp-nvim-lsp-signature-help", -- TODO: изучить, что-то очень полезное, подсказка подписи показывает что обозначает функция
+      "hrsh7th/cmp-nvim-lsp-signature-help", -- signature function completions
 
       -- Если вы хотите добавить несколько предварительно настроенных сниппетов,
       --   вы можете использовать этот плагин, чтобы помочь вам.
@@ -61,7 +61,6 @@ return {                  -- Completion & Snippets
                luasnip.lsp_expand(args.body) -- Для пользователей luasnip.
             end,
          },
-         -- TODO: Нужно проверить, я ХЗ для чего это?
          completion = { completeopt = "menu,menuone,noinsert" },
 
          -- Чтобы понять, почему были выбраны эти маппинги, вам нужно
@@ -133,8 +132,7 @@ return {                  -- Completion & Snippets
          }),
          sources = {
             { name = "nvim_lsp" },
-            -- TODO: разобраться с nvim_lsp_signature_help
-            -- { name = 'nvim_lsp_signature_help' }, -- display function signatures with current parameter emphasized
+            { name = 'nvim_lsp_signature_help' }, -- Отображает в списке cmp сигнатуру функций с выделенным текущим параметром (группа text)
             { name = "nvim_lua" }, -- complete neovim's Lua runtime API such vim.lsp.*
             { name = "luasnip" },  -- For luasnip users.
             { name = "path" },     -- (cmp-path) Автозавершения путей Linux

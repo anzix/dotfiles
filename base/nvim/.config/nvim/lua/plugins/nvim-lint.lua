@@ -1,8 +1,8 @@
+-- WARN: Здесь только линтеры (т.е диагностеры)
 return {
    "mfussenegger/nvim-lint",
    dependencies = {
       "neovim/nvim-lspconfig",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
    },
    event = {
       -- Плагин будет загружен до того, как файл будет прочитан ИЛИ когда я создам новый файл.
@@ -17,6 +17,9 @@ return {
       lint.linters_by_ft = {
          markdown = { "markdownlint" },
          javascript = { "eslint_d" },
+         -- INFO: Можно совместно использовать с tidy, установка: sudo pacman -S tidy
+         -- FIXME: Однако с tidy есть баг о постоянном exit code
+         -- Issue: https://github.com/htacg/tidy-html5/issues/1071
          html = { "djlint" },
          -- Используйте тип файла "*" для запуска линтеров на всех типов файлов.
          -- ['*'] = { 'global linter' },

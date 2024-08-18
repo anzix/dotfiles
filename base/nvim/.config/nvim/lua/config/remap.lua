@@ -26,7 +26,7 @@ vim.opt.langmap = table.concat(langmap_keys, ',')
 
 vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true }) -- выйти
 vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true }) -- сохранить
-vim.keymap.set("n", "<leader>r", ":so %<CR>", { noremap = true }) -- применить (source) файл
+vim.keymap.set("n", "<leader>.", ":so %<CR>", { noremap = true }) -- применить (source) файл
 
 -- Визуальное перемещение строк H/J/K/L с зажатым shift
 -- Visual Mode

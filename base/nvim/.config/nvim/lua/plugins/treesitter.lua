@@ -12,9 +12,12 @@ return {
             "make",
             "meson",
             "cmake",
+            'qmljs', -- qml файлы
             "yaml", -- синтаксис файла cmake-format
             "bash",
             "html",
+            "htmldjango",
+            "css",
             "lua",
             "vim",
             "markdown",

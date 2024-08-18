@@ -25,6 +25,9 @@ return {                    -- LSP Configuration & Plugins
       { "]d", vim.diagnostic.goto_next, { mode = "n", desc = "Go to next [D]iagnostic message" } },
    },
    config = function()
+      local configs = require "lspconfig.configs"
+      local lspconfig = require "lspconfig"
+
       -- Функция для отключения возможности форматирования определённых lsp
       local disable_formatting = function(client)
          client.server_capabilities.documentFormattingProvider = false
@@ -61,12 +64,226 @@ return {                    -- LSP Configuration & Plugins
          end, { desc = "Toggle diagnostics" }
       )
 
+      -- Серверы и клиенты LSP могут сообщать друг другу, какие функции они поддерживают.
+      -- По умолчанию Neovim не поддерживает все, что указано в спецификации LSP.
+      -- Когда вы добавляете nvim-cmp, luasnip и т. д, у Neovim теперь *больше* возможностей.
+      -- Итак, мы создаем новые возможности с помощью nvim cmp, а затем транслируем их на серверы.
+      local capabilities = nil
+      if pcall(require, "cmp_nvim_lsp") then
+         capabilities = require("cmp_nvim_lsp").default_capabilities()
+      end
+
+      -- Здесь указываются lsp которые не управляются mason, например это могут
+      -- быть те lsp сервера которые установлены локально вашим пакетным менеджером.
+      -- За помощью обращайтесь в `:h lspconfig-new`
+
+      -- function def_conf(name, opt)
+      --    if not configs[name] then
+      --       configs[name] = opt
+      --    end
+      -- end
+
+      -- superhtml
+      -- Устаналивать нужно самому
+      -- https://github.com/kristoff-it/superhtml
+      -- def_conf('superhtml', {
+      --    default_config = {
+      --       name = "superhtml",
+      --       cmd = { "superhtml", "lsp" },
+      --       filetypes = { "html", "superhtml", "htm", "shtml" },
+      --       root_dir = require("lspconfig.util").root_pattern(".git"),
+      --    },
+      -- })
+
+      -- QML
+      -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#qmlls
+      -- Требования: Для работы должны быть скачаны пакеты
+      -- qt6-declarative qt6-languageserver
+
+      if not configs.qmlls then
+         configs.qmlls = {
+            default_config = {
+               cmd = { "qmlls6" },
+               filetypes = { "qml", "qmljs" },
+               root_dir = function(fname)
+                  return lspconfig.util.find_git_ancestor(fname)
+               end,
+               single_file_support = true,
+               docs = {
+                  description = [[
+      https://github.com/qt/qtdeclarative
+
+      LSP implementation for QML (autocompletion, live linting, etc. in editors),
+                       ]],
+               },
+               -- Здесь выставляются настройки непосредственно самого lsp
+               settings = {},
+            },
+         }
+      end
+      -- INFO: Если будут другие локальные lsp сервера помимо qmlls, то мне надо
+      -- строку lspconfig вызвать в массиве.
+      lspconfig.qmlls.setup({
+         capabilities = capabilities,
+      })
+
+      -- Включите следующие языковые серверы
+      --  Не стесняйтесь добавлять/удалять любые LSP, которые вы хотите здесь. Они будут автоматически установлены.
+      --
+      --  Добавьте любую дополнительную конфигурацию переопределения в следующие таблицы. Доступные ключи:
+      --  - cmd (table): Переопределить команду по умолчанию, используемую для запуска сервера
+      --  - filetypes (table): Переопределить список связанных типов файлов по умолчанию для сервера.
+      --  - capabilities (table): Переопределить поля в возможностях. Может использоваться для отключения определенных функций LSP.
+      --  - settings (table): Переопределить настройки по умолчанию, переданные при инициализации сервера.
+      --        Например, чтобы просмотреть параметры lua_ls, вы можете перейти по адресу: https://luals.github.io/wiki/settings/
+      local server_settings = {
+         -- LSP сервер/диагностер и линтер для C/C++
+         clangd = {
+            -- server_capabilities = {
+            --    documentFormattingProvider = false, -- Отключить форматирование
+            -- }
+         },
+         -- ... и т.д. См. `:help lspconfig-all` для получения списка всех предварительно настроенных LSP.
+         --
+         -- Некоторые языки (например, typescript) имеют целые языковые плагины, которые могут быть полезны:
+         --    https://github.com/pmizio/typescript-tools.nvim
+         --
+         -- Но для многих настроек LSP («tsserver») будет работать нормально.
+         -- tsserver = {},
+         --
+
+         -- Rust LSP
+         -- rust_analyzer = {
+         --    cmd = {
+         --       "rustup", "run", "stable", "rust-analyzer",
+         --    },
+         --    -- Здесь выставляются настройки непосредственно самого lsp
+         --    settings = {
+         --       ["rust-analyzer"] = {
+         --          diagnostics = {
+         --             enable = true,
+         --          }
+         --       }
+         --    }
+         -- },
+         -- Go
+         -- gopls = {},
+
+         bashls = {
+            filetypes = { 'sh', 'zsh', 'zshrc', 'bash', 'inc', 'command', 'zsh_*' },
+            -- Здесь выставляются настройки непосредственно самого lsp
+            settings = {
+               bashIde = {
+                  globPattern = "**/*@(.sh|.inc|.bash|.command|.zshrc|.zsh|zsh_*)"
+               }
+            }
+         },
+
+         lua_ls = {
+            -- cmd = {...},
+            -- filetypes = { ...},
+            -- server_capabilities = {},
+            -- Здесь выставляются настройки непосредственно самого lsp
+            settings = {
+               Lua = {
+                  telemetry = { enable = false },
+                  runtime = { version = "LuaJIT" },
+                  workspace = {
+                     checkThirdParty = false,
+                     -- Сообщает lua_ls, где найти все загруженные вами файлы Lua
+                     -- для вашей конфигурации neovim.
+                     library = {
+                        "${3rd}/luv/library",
+                        unpack(vim.api.nvim_get_runtime_file("", true)),
+                     },
+                     -- Если lua_ls на вашем компьютере работает очень медленно, вы можете попробовать это:
+                     -- library = { vim.env.VIMRUNTIME }, -- Уменьшает в 3 раза загрузку
+                  },
+                  completion = {
+                     callSnippet = "Replace",
+                  },
+                  -- Вы можете переключиться ниже, чтобы игнорировать шумные предупреждения lua_ls об «отсутствующих полях».
+                  diagnostics = {
+                     disable = { "missing-fields" },
+                     globals = { "vim" }, -- Get the language server to recognize the `vim` global
+                  },
+               },
+            },
+         },
+
+         yamlls = { -- yaml
+            -- Здесь выставляются настройки непосредственно самого lsp
+            settings = {
+               redhat = { telemetry = { enabled = false } }
+            }
+         },
+         asm_lsp = true,  -- LSP для NASM/GAS/GO
+         mesonlsp = true, -- LSP для системы сборки Meson
+         html = true,     -- html-lsp
+         cssls = true,    -- css lsp
+         emmet_ls = true, -- доп. lsp (для html)
+         jsonls = true,   -- json lsp
+      }
+
+      -- Отфильтровать таблицу server_settings подготавливая названия
+      -- для установки из mason-tool-installer
+      local servers_to_install = vim.tbl_filter(function(key)
+         local t = server_settings[key]
+         if type(t) == "table" then
+            return not t.manual_install
+         else
+            return t
+         end
+      end, vim.tbl_keys(server_settings))
+
+      -- Убедитесь, что указанные выше серверы и инструменты установлены.
+      -- Чтобы проверить текущий статус установленных инструментов и/или вручную
+      -- установить другие инструменты, вы можете запустить
+      --    :Mason
+      --
+      --  Вы можете нажать `g?` для получения помощи в меню Mason.
+      require("mason").setup()
+
+      -- Вы можете добавить сюда другие инструменты которые вы хотите, чтобы
+      -- Mason установил для вас, и чтобы они были доступны в Neovim.
+      local ensure_installed = {
+         -- Форматирование/Диагностика
+         "djlint",       -- Диагностика htmldjango
+         "eslint_d",     -- Диагностика JavaScript
+         "stylua",       -- Форматирования Lua файлов
+         "prettier",     -- Форматирование Markdown файлов
+         "markdownlint", -- Диагностика Markdown файлов
+         "shfmt",        -- Форматирование bash скриптов
+         "shellcheck",   -- Диагностика bash скриптов
+      }
+      vim.list_extend(ensure_installed, servers_to_install)
+      require("mason-tool-installer").setup { ensure_installed = ensure_installed }
+
+      -- Это позволяет переопределить только значения, явно
+      -- переданные в конфигурации сервера, указанной выше.
+      -- Полезно при отключении некоторых функций LSP
+      -- (например, при отключении форматирования для tsserver).
+      for name, config in pairs(server_settings) do
+         if config == true then
+            config = {}
+         end
+
+         config = vim.tbl_deep_extend("force", {}, {
+            capabilities = capabilities,
+         }, config)
+         print("Настраиваю", name) -- DEBUG: Для тестирования
+         lspconfig[name].setup(config)
+      end
+
       -- Использовать LspAttach autocommand чтобы привязать только текущие клавиши
       -- после того как lsp подключится к текущему буфферу
       -- Помощь: `:h lspconfig-configurations`
       vim.api.nvim_create_autocmd("LspAttach", {
-         group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
+         group = vim.api.nvim_create_augroup("user-lsp-attach", { clear = true }),
          callback = function(event)
+            -- these will be buffer-local keybindings
+            -- because they only work if you have an active language server
+
             -- В этом случае мы создаем функцию, которая позволяет нам легче определять
             -- бинды, специфичные для элементов, связанных с LSP. Он каждый
             -- раз устанавливает для нас режим, буфер и описание.
@@ -74,10 +291,17 @@ return {                    -- LSP Configuration & Plugins
                vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
             end
 
+            -- TODO: рассмотреть возможность удаления при использовании neovim 0.11 nightly
+            -- rename, action, references
+
             -- Перейдите к определению слова под курсором.
             -- Это то где *впервые* была объявлена переменная или определена функция и т.д.
             -- Чтобы вернуться назад, нажмите <C-T>.
             map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+
+            -- WARN: Это не определение Goto (Goto Definition), это декларация Goto (Goto Declaration).
+            --  Например, в Си это приведет вас к заголовку (header)
+            map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
             -- Найдите референсы на слово под курсором.
             map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
@@ -113,15 +337,9 @@ return {                    -- LSP Configuration & Plugins
             --  См. `:help K`, для помощи
             map("K", vim.lsp.buf.hover, "Hover Documentation")
 
-            -- WARN: Это не определение Goto (Goto Definition), это декларация Goto (Goto Declaration).
-            --  Например, в Си это приведет вас к заголовку (header)
-            map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-
-            -- TODO: Что-то очень полезное, нужно иследовать
-            -- TODO: Также нужно убрать или переместить в другое место из-за map который настроен только на Normal Mode
-            -- Подсказка подписи показывает что обозначает функция
-            -- Однако нужен плагин hrsh7th/cmp-nvim-lsp-signature-help
-            -- map("i", "<C-h>", vim.lsp.buf.signature_help, "Signature Help")
+            -- Отображает сигнатуру функций (пользовательская функция) с выделенным
+            -- текущим параметром (внутри скобки) и показавает где я нахожусь выделением
+            map("<C-k>", vim.lsp.buf.signature_help, "Signature Help")
 
             -- Следующие две автокоманды используются для выделения ссылок на
             -- слово под курсором, когда курсор находится там некоторое время.
@@ -153,17 +371,6 @@ return {                    -- LSP Configuration & Plugins
                })
             end
 
-            -- -- Автоматически форматировать на сохранении используя vim.lsp.buf.format
-            -- if client and client.server_capabilities.documentFormattingProvider then
-            --    vim.api.nvim_create_autocmd({ "BufWrite" }, {
-            --       group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
-            --       callback = function()
-            --          -- WARN: use false, otherwise not possible to save
-            --          vim.lsp.buf.format({ timeout_ms = 5000, async = false })
-            --       end,
-            --    })
-            -- end
-
             -- Следующий код создает раскладку клавиш для переключения подсказок
             -- в вашем коде, если используемый вами языковой сервер поддерживает
             --
@@ -174,180 +381,6 @@ return {                    -- LSP Configuration & Plugins
             --    end, '[T]oggle Inlay [H]ints')
             -- end
          end,
-      })
-
-      -- Серверы и клиенты LSP могут сообщать друг другу, какие функции они поддерживают.
-      -- По умолчанию Neovim не поддерживает все, что указано в спецификации LSP.
-      -- Когда вы добавляете nvim-cmp, luasnip и т. д, у Neovim теперь *больше* возможностей.
-      -- Итак, мы создаем новые возможности с помощью nvim cmp, а затем транслируем их на серверы.
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-
-      -- Включите следующие языковые серверы
-      --  Не стесняйтесь добавлять/удалять любые LSP, которые вы хотите здесь. Они будут автоматически установлены.
-      --
-      --  Добавьте любую дополнительную конфигурацию переопределения в следующие таблицы. Доступные ключи:
-      --  - cmd (table): Переопределить команду по умолчанию, используемую для запуска сервера
-      --  - filetypes (table): Переопределить список связанных типов файлов по умолчанию для сервера.
-      --  - capabilities (table): Переопределить поля в возможностях. Может использоваться для отключения определенных функций LSP.
-      --  - settings (table): Переопределить настройки по умолчанию, переданные при инициализации сервера.
-      --        Например, чтобы просмотреть параметры lua_ls, вы можете перейти по адресу: https://luals.github.io/wiki/settings/
-      local servers = {
-         clangd = {}, -- LSP сервер/диагностер и линтер для C/C++
-         -- ... и т.д. См. `:help lspconfig-all` для получения списка всех предварительно настроенных LSP.
-         --
-         -- Некоторые языки (например, typescript) имеют целые языковые плагины, которые могут быть полезны:
-         --    https://github.com/pmizio/typescript-tools.nvim
-         --
-         -- Но для многих настроек LSP («tsserver») будет работать нормально.
-         -- tsserver = {},
-         --
-
-         -- rust_analyzer = {
-         --    cmd = {
-         --       "rustup", "run", "stable", "rust-analyzer",
-         --    },
-         --    -- Здесь выставляются настройки непосредственно самого lsp
-         --    settings = {
-         --       ["rust-analyzer"] = {
-         --          diagnostics = {
-         --             enable = true,
-         --          }
-         --       }
-         --    }
-         -- },
-
-         bashls = {
-            filetypes = { 'sh', 'zsh', 'zshrc', 'bash', 'inc', 'command', 'zsh_*' },
-            -- Здесь выставляются настройки непосредственно самого lsp
-            settings = {
-               bashIde = {
-                  globPattern = "**/*@(.sh|.inc|.bash|.command|.zshrc|.zsh|zsh_*)"
-               }
-            }
-         },
-
-         lua_ls = {
-            -- cmd = {...},
-            -- filetypes = { ...},
-            -- capabilities = {},
-            -- Здесь выставляются настройки непосредственно самого lsp
-            settings = {
-               Lua = {
-                  telemetry = { enable = false },
-                  runtime = { version = "LuaJIT" },
-                  workspace = {
-                     checkThirdParty = false,
-                     -- Сообщает lua_ls, где найти все загруженные вами файлы Lua
-                     -- для вашей конфигурации neovim.
-                     library = {
-                        "${3rd}/luv/library",
-                        unpack(vim.api.nvim_get_runtime_file("", true)),
-                     },
-                     -- Если lua_ls на вашем компьютере работает очень медленно, вы можете попробовать это:
-                     -- library = { vim.env.VIMRUNTIME }, -- Уменьшает в 3 раза загрузку
-                  },
-                  completion = {
-                     callSnippet = "Replace",
-                  },
-                  -- Вы можете переключиться ниже, чтобы игнорировать шумные предупреждения lua_ls об «отсутствующих полях».
-                  diagnostics = {
-                     disable = { "missing-fields" },
-                     globals = { "vim" }, -- Get the language server to recognize the `vim` global
-                  },
-               },
-            },
-         },
-
-         -- gopls = {},    -- Go
-         emmet_ls = {}, -- доп. lsp
-         html = {},     -- html-lsp
-         jsonls = {},   -- json
-         cssls = {},    -- css
-         yamlls = {     -- yaml
-            -- Здесь выставляются настройки непосредственно самого lsp
-            settings = {
-               redhat = { telemetry = { enabled = false } }
-            }
-         },
-
-      }
-
-      -- Здесь указываются lsp которые не управляются mason, например это могут
-      -- быть те lsp сервера которые установлены локально вашим пакетным менеджером.
-      -- За помощью обращайтесь в `:h lspconfig-new`
-
-      -- QML
-      -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#qmlls
-      -- Требования: Для работы должны быть скачаны пакеты
-      -- qt6-declarative qt6-languageserver
-      local configs = require "lspconfig.configs"
-      local lspconfig = require "lspconfig"
-      if not configs.qmlls then
-         configs.qmlls = {
-            default_config = {
-               cmd = { "qmlls6" },
-               filetypes = { "qml", "qmljs" },
-               root_dir = function(fname)
-                  return lspconfig.util.find_git_ancestor(fname)
-               end,
-               single_file_support = true,
-               docs = {
-                  description = [[
-      https://github.com/qt/qtdeclarative
-
-      LSP implementation for QML (autocompletion, live linting, etc. in editors),
-                       ]],
-               },
-               -- Здесь выставляются настройки непосредственно самого lsp
-               settings = {},
-            },
-         }
-      end
-      -- INFO: Если будут другие локальные lsp сервера помимо qmlls, то мне надо
-      -- строку lspconfig вызвать в массиве.
-      lspconfig.qmlls.setup({})
-
-      -- Убедитесь, что указанные выше серверы и инструменты установлены.
-      -- Чтобы проверить текущий статус установленных инструментов и/или вручную
-      -- установить другие инструменты, вы можете запустить
-      --    :Mason
-      --
-      --  Вы можете нажать `g?` для получения помощи в этом меню.
-      require("mason").setup()
-
-
-      -- Вы можете добавить сюда другие инструменты которые вы хотите, чтобы
-      -- Mason установил для вас, и чтобы они были доступны в Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-         -- LSP
-         -- "rust-analyzer", Rust LSP
-
-         -- Форматирование/Диагностика
-         "djlint",       -- Диагностика htmldjango
-         "eslint_d",     -- Диагностика JavaScript
-         "stylua",       -- Форматирования Lua файлов
-         "prettier",     -- Форматирование Markdown файлов
-         "markdownlint", -- Диагностика Markdown файлов
-         "shfmt",        -- Форматирование bash скриптов
-         "shellcheck",   -- Диагностика bash скриптов
-      })
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-      require("mason-lspconfig").setup({
-         handlers = {
-            function(server_name)
-               local server = servers[server_name] or {}
-               -- Это позволяет переопределить только значения, явно
-               -- переданные в конфигурации сервера, указанной выше.
-               -- Полезно при отключении некоторых функций LSP
-               -- (например, при отключении форматирования для tsserver).
-               server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-               -- print("Настраиваю ", server_name) -- DEBUG: Для тестирования
-               require("lspconfig")[server_name].setup(server)
-            end,
-         },
       })
    end
 }

@@ -1,8 +1,7 @@
 -- Источник: https://github.com/torresramiro350/nvim_conf/blob/main/lua/plugins/lsp/nvim_dap.lua
 return {
    "mfussenegger/nvim-dap",
-   priority = 1000,
-   event = { "BufRead", "BufReadPost" },
+   event = "BufReadPre",
    dependencies = {
       {
          "rcarriga/nvim-dap-ui",
@@ -15,6 +14,7 @@ return {
       },
       { "nvim-neotest/nvim-nio" },
       { "theHamsta/nvim-dap-virtual-text" },
+      { 'williamboman/mason.nvim' },
       { "WhoIsSethDaniel/mason-tool-installer.nvim" },
    },
    keys = {
@@ -26,7 +26,7 @@ return {
       { "<leader>dt", ":DapToggleBreakpoint<CR>", mode = "n", desc = "Toggle break point" },
       { "<leader>dc", ":DapContinue<CR>",         mode = "n", desc = "Continue debugging" },
       { "<Leader>dx", ":DapTerminate<CR>",        mode = "n", desc = "Terminate debugging" },
-      { "<Leader>do", ":DapStepOver<CR>",         mode = "n", desc = "Step over" },
+      { "<Leader>do", ":DapStepOver<CR>",         mode = "n", desc = "Open DapUI" },
       {
          "<space>?",
          function()
@@ -34,18 +34,22 @@ return {
          end,
          mode = "n",
          desc = "Eval var under cursor"
-      }
+      },
+      { "<Leader>dut", ":DapUIToggle<CR>", mode = "n", desc = "Step over" }
    },
    config = function()
-      -- Убедится, что отладчик C/C++ установлен.
+      local dap, dapui = require("dap"), require("dapui")
+
+      -- Установка отладчика из Meson
       require("mason-tool-installer").setup({
          ensure_installed = {
             "codelldb",
          }
       })
 
-      require("dapui").setup()
-      local dap, dapui = require("dap"), require("dapui")
+      require('nvim-dap-virtual-text').setup({})
+
+      dapui.setup()
 
       dap.adapters.gdb = {
          type = "executable",
@@ -64,14 +68,32 @@ return {
 
       -- C
       dap.configurations.c = {
+         -- На выбор codelldb/gdb
          {
-            name = "Launch",
-            type = "gdb",
+            name = "Codelldb: Launch",
+            type = "codelldb",
             request = "launch",
             program = function()
                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
             end,
             -- FIXME: почему-то иногда первым идёт ввод аргументов а потом исполняемый
+            args = function()
+               local args_str = vim.fn.input({
+                  prompt = 'Arguments (leave empty for no arguments): ',
+               })
+               return vim.split(args_str, ' +')
+            end,
+            cwd = "${workspaceFolder}",
+            stopOnEntry = false,
+            runInTerminal = false,
+         },
+         {
+            name = "GDB: Launch",
+            type = "gdb",
+            request = "launch",
+            program = function()
+               return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+            end,
             args = function()
                local args_str = vim.fn.input({
                   prompt = 'Arguments (leave empty for no arguments): ',
@@ -95,6 +117,10 @@ return {
             end,
          },
       }
+
+      vim.api.nvim_create_user_command("DapUIToggle", function()
+         require("dapui").toggle()
+      end, { desc = "Open DapUI" })
 
       -- If you want to use this for Rust and C, add something like this:
       dap.configurations.cpp = dap.configurations.c
