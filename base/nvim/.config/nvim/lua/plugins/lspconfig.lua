@@ -103,12 +103,15 @@ return {                    -- LSP Configuration & Plugins
       if not configs.qmlls then
          configs.qmlls = {
             default_config = {
+               -- WARN: Обязательно пишите для шестой версии Qt и используйте для
+               -- сборки команду qmake6, иначе lsp будет выдавать кучу предупреждений
+               -- если ПО написана на пятой версии QT
                cmd = { "qmlls6" },
                filetypes = { "qml", "qmljs" },
                root_dir = function(fname)
                   return lspconfig.util.find_git_ancestor(fname)
                end,
-               single_file_support = true,
+               single_file_support = true, -- Если вдруг не инициализирован git
                docs = {
                   description = [[
       https://github.com/qt/qtdeclarative
@@ -219,6 +222,7 @@ return {                    -- LSP Configuration & Plugins
          },
          asm_lsp = true,  -- LSP для NASM/GAS/GO
          mesonlsp = true, -- LSP для системы сборки Meson
+         neocmake = true, -- LSP для системы сборки Cmake
          html = true,     -- html-lsp
          cssls = true,    -- css lsp
          emmet_ls = true, -- доп. lsp (для html)
@@ -248,10 +252,12 @@ return {                    -- LSP Configuration & Plugins
       -- Mason установил для вас, и чтобы они были доступны в Neovim.
       local ensure_installed = {
          -- Форматирование/Диагностика
+         "cmakelint",    -- Диагностика CMake файлов
+         "gersemi",      -- Форматирования CMake файлов
          "djlint",       -- Диагностика htmldjango
          "eslint_d",     -- Диагностика JavaScript
          "stylua",       -- Форматирования Lua файлов
-         "prettier",     -- Форматирование Markdown файлов
+         "prettier",     -- Форматирование Markdown файлов и не только
          "markdownlint", -- Диагностика Markdown файлов
          "shfmt",        -- Форматирование bash скриптов
          "shellcheck",   -- Диагностика bash скриптов
@@ -271,7 +277,7 @@ return {                    -- LSP Configuration & Plugins
          config = vim.tbl_deep_extend("force", {}, {
             capabilities = capabilities,
          }, config)
-         print("Настраиваю", name) -- DEBUG: Для тестирования
+         -- print("Настраиваю", name) -- DEBUG: Для тестирования
          lspconfig[name].setup(config)
       end
 

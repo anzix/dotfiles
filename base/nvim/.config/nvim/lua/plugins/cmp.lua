@@ -33,6 +33,12 @@ return {                  -- Completion & Snippets
       -- Активирует сниппеты как в VS Code
       require("luasnip.loaders.from_vscode").lazy_load()
 
+      -- TODO: Нужно ли мне это или нет?
+      -- friendly-snippets - включить стандартизированные фрагменты комментариев
+      require("luasnip").filetype_extend("c", { "cdoc" })
+      require("luasnip").filetype_extend("cpp", { "cppdoc" })
+      require("luasnip").filetype_extend("sh", { "shelldoc" })
+
       -- Функция для проверки пробела для key мапинга cmp
       local check_backspace = function()
          local col = vim.fn.col(".") - 1

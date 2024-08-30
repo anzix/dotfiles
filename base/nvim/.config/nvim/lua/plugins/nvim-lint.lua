@@ -8,6 +8,7 @@ return {
       -- Плагин будет загружен до того, как файл будет прочитан ИЛИ когда я создам новый файл.
       "BufReadPre",
       "BufNewFile",
+      "InsertLeave",
    },
    config = function()
       local lint = require("lint")
@@ -17,6 +18,8 @@ return {
       lint.linters_by_ft = {
          markdown = { "markdownlint" },
          javascript = { "eslint_d" },
+         bash = { "shellcheck" },
+         cmake = { "cmakelint" },
          -- INFO: Можно совместно использовать с tidy, установка: sudo pacman -S tidy
          -- FIXME: Однако с tidy есть баг о постоянном exit code
          -- Issue: https://github.com/htacg/tidy-html5/issues/1071

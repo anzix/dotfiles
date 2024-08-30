@@ -13,15 +13,36 @@ return {
          -- Для вызова информации о использованном форматтере вызовите :ConformInfo
          -- Вызов форматтеров на тип файла
          formatters_by_ft = {
-            markdown = { "prettier" },
+            yaml = { "prettierd", "prettier" },
+            json = { "prettierd", "prettier" },
+            markdown = { "prettier", "prettierd" },
+            -- toml = { "taplo" },
+            -- tex = { "latexindent" },
+            -- python = function(bufnr)
+            --    if conform.get_formatter_info("ruff_format", bufnr).available then
+            --       -- return { "ruff_format" } -- not supported by ruff as of yet
+            --       return { "isort", "ruff_format" }
+            --    else
+            --       return { "isort", "black" }
+            --    end
+            -- end,
+            cmake = { "gersemi" }, -- форк cmake_format
+            -- glsl = { 'clang_format' },
             -- Conform будет запускать несколько форматтеров последовательно
-            -- python = { "isort", "black" },
             -- Вы можете настроить некоторые параметры формата для типа файла (:help conform.format).
             -- Conform запустит первый доступный форматтер
             -- rust = { "rustfmt", lsp_format = "fallback" },
          },
          -- Настройка форматтеров
-         formatters = {},
+         formatters = {
+            ["gersemi"] = {
+               prepend_args = {
+                  -- Отступы, чтобы cmake-lint не возмущался
+                  "--indent",
+                  "2",
+               }
+            }
+         },
 
          -- Автоматическое форматирование на сохранении файла
          -- (lsp_format = "fallback" автоматически использует

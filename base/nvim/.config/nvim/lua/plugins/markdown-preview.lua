@@ -3,6 +3,8 @@ return {
    -- TODO: расмотреть замену, так как этот начинает не работать и устаревать
    -- Возможна замена, без браузера НО довольно интересно
    -- https://github.com/MeanderingProgrammer/render-markdown.nvim
+   -- Или
+   -- https://github.com/OXY2DEV/markview.nvim
    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
    build = "cd app && yarn install",
    init = function()
