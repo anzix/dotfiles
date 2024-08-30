@@ -126,7 +126,8 @@ alias \
  steam-minimal="steam -no-browser +open steam://open/minigameslist &" `# Только окно библиотеки игр` \
  hdmp="od -Ax -tx1z -v" `# Дамп бинарного файла в формате hexademical` \
  disasm='objdump -d -M att -r -C' `# Отображение дизассемблированных разделов бинарного файла в синтаксисе AT&T` \
- utc='env TZ=UTC date' `# UTC время`
+ utc='env TZ=UTC date' `# UTC время` \
+ p="pushd" +="pushd ." -="popd" d="dirs -l -v" `# Сокращения для работы с активными каталогами`
 
 # Разное
 alias \

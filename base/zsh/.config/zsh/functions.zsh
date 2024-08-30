@@ -286,6 +286,10 @@ gacm () {
   git commit -am "$1"
 }
 
+# Создание PNG картинки из визуализированных данных графика (файла .dot)
+# Нужен пакет graphviz
+dot2png() { dot -Tpng "$1" -O ;}
+
 # Библиотека man'уалов используя fzf
 manlist() {
     man $(man -k . | fzf --prompt='Man> ' --preview="man \$(echo {} | awk '{print \$1}')" | awk '{print $1}')
