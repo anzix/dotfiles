@@ -1,0 +1,45 @@
+"query:Unread:unread=\"yes\""
+
+# Для добавления rss Youtube канала зайдите на канал, откройте
+# "Просмотр кода страницы" жмёте комбинацию Ctrl+f и ищите по ключевому слову
+# "rssurl" и копируйте данную ссылку и вставляйте
+"query:Videos:tags # \"videos\""
+https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA  videos # Brodie Robertson
+https://www.youtube.com/feeds/videos.xml?channel_id=UCkf4VIqu3Acnfzuk3kRIFwA  videos # gotbletu
+https://www.youtube.com/feeds/videos.xml?channel_id=UC3kAbMcYr-JEMSb2xX4OdpA  videos # Aleksey Samoilov
+https://www.youtube.com/feeds/videos.xml?channel_id=UCevW4vL1SJKvKQYGBTf21mA  videos # Nikolay Ivanovich
+https://www.youtube.com/feeds/videos.xml?channel_id=UC5KDiSAFxrDWhmysBcNqtMA  videos # Eric Murphy
+https://www.youtube.com/feeds/videos.xml?channel_id=UCqP87_tOqZczGdExeEz0prg  videos # Eric Parker
+https://www.youtube.com/feeds/videos.xml?channel_id=UCs461scohbZ7OpI8b9okDvg  videos # ITDog
+https://www.youtube.com/feeds/videos.xml?channel_id=UC9IGCNMgZWbzJAHkTQTztDw  videos # Kron4ek
+https://www.youtube.com/feeds/videos.xml?channel_id=UCLx053rWZxCiYWsBETgdKrQ  videos # LGR
+https://www.youtube.com/feeds/videos.xml?channel_id=UCS-WzPVpAAli-1IfEG2lN8A  videos # Michael MJD
+https://www.youtube.com/feeds/videos.xml?channel_id=UC0TP1K4ir7hb77d16_03gfQ  videos # PClect
+https://www.youtube.com/feeds/videos.xml?channel_id=UCnxk5BzZxRN7y3a1IqHhVlA  videos # Pingvinus
+https://www.youtube.com/feeds/videos.xml?channel_id=UCvZlw-BmRJ573k2x6ZGjAFg  videos # Robo n' Tux Guides
+https://www.youtube.com/feeds/videos.xml?channel_id=UCw5X5HfFVvErNL6-e0ol50g  videos # Stephen's Tech Talks
+https://www.youtube.com/feeds/videos.xml?channel_id=UCU867X2F3eE9BXU2rDVJgeg  videos # TroubleChute Linux
+
+"query:News:tags # \"news\""
+https://www.phoronix.com/rss.php       "news"
+https://lwn.net/headlines/newrss       "news"
+https://news.ycombinator.com/rss       "news"
+https://xkcd.com/rss.xml               "news"
+
+"query:Блоги:tags # \"blog\""
+https://anzix.github.io/rss.xml        "blog"
+https://maskray.me/atom.xml            "blog"
+https://mitjafelicijan.com/feed.xml    "blog"
+https://eax.me/feed/                   "blog"
+
+"query:Distro News:tags # \"distro\""
+https://www.archlinux.org/feeds/news/  "distro"
+http://suckless.org/atom.xml           "distro"
+
+# Скрытое
+#https://voidlinux.org/atom.xml        "distro"
+#https://artixlinux.org/feed.php       "distro"
+
+
+
+

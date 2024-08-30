@@ -1,0 +1,40 @@
+auto-reload yes
+reload-time 60
+always-display-description yes
+articlelist-format "%4i %f %D %6L  %?T?%-17T│ ?%t"
+
+unbind-key j
+unbind-key k
+unbind-key J
+unbind-key K
+unbind-key G
+unbind-key g
+bind-key j down
+bind-key k up
+bind-key l open
+bind-key h quit
+bind-key J next
+bind-key K prev
+bind-key g home
+bind-key G end
+bind-key d pagedown
+bind-key u pageup
+bind-key s sort
+bind-key S rev-sort
+
+# macro y set browser "st -e setsid -f mpv --hwdec=vaapi --vo=vaapi --autofit-larger=35%x35% --force-window=yes %u"; open-in-browser-and-mark-read ; set browser "qutebrowser %u"
+
+# browsers
+# browser lynx
+# macro i set browser feh; open-in-browser; set browser lynx
+
+# https://www.calmar.ws/vim/256-xterm-24bit-rgb-color-chart.html
+include /usr/share/doc/newsboat/contrib/colorschemes/gruvbox
+
+#color background            color223     default
+#color listnormal            color250     default
+#color listnormal_unread     color223     default    bold
+#color listfocus             color250     color239
+#color listfocus_unread      color223     color239   bold
+#color info                  color166     default    bold
+#color article               color223     default
