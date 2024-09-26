@@ -39,6 +39,7 @@ zstyle ':completion:*' list-dirs-first true # Показывать сначал�
 zstyle ':completion::complete:*' gain-privileges 1 # Автодополнения в привилегированных окружениях (sudo)
 zstyle ':completion:*' completer _complete _match _approximate _ignored # Использовать функции завершающих completer для автодополнения
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # Устанавливает порядок (тэг) автодополнений cd
+zstyle ':completion:*' hosts off # Игнорировать хост-файл (если очень много записей) для автозаполнения
 
 # Ярлыки и категории
 zstyle ':completion:*' group-name '' # Группировать различные категории завершений

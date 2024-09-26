@@ -56,6 +56,9 @@ export PYTHONUSERBASE="$XDG_DATA_HOME/python"
 export CCACHE_DIR="$XDG_CACHE_HOME/ccache"
 export NOTMUCH_CONFIG="$XDG_CONFIG_HOME/notmuch-config"
 export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
+export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
+export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
+export PYTHONUSERBASE="$XDG_DATA_HOME/python"
 export PYTHONDONTWRITEBYTECODE=1 # Предотвращает создание папок __pycache__ и pycache
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 export INPUTRC="$XDG_CONFIG_HOME/shell/inputrc"
@@ -71,7 +74,8 @@ export GOTELEMETRY=off # Отключает телеметрию GO
 # export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority" # This line will break some DMs.
 
 # Отключает winemenubuilder, который загрязняет меню приложений
-export WINEDLLOVERRIDES="winemenubuilder.exe="
+# WARN: но отключает автоматическое создание desktop ярлыка на раб. столе
+# export WINEDLLOVERRIDES="winemenubuilder.exe="
 
 # Предотващяет wine установку Mono/Gecko
 # export WINEDLLOVERRIDES="mscoree,mshtml="

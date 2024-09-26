@@ -440,7 +440,6 @@ alias bulk_git_pull="exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git
 # zpu="cd '$ZDOTDIR/plugins' && exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git -C {} pull"
 alias \
  upfc="sudo fc-cache -vf" `# Обновление шрифтов` \
- nvpu="nvim +'PackerUpadate' +qa" `# Обновление плагинов neovim менеджером packer` \
  zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P$(nproc) -I {} -0 git -C {} pull" `# Обновление плагинов zsh` \
  upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg" `# Обновление конфига Grub` \
  updeskdb="update-desktop-database ~/.local/share/applications" `# Обновление пользовательских ярлыков`

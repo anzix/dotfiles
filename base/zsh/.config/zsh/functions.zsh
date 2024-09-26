@@ -167,7 +167,7 @@ hex2bin () {
   hex=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s\n", $0}'
 }
-bin2hex () { printf "%x\n" "$((2#$1))" }
+bin2hex () { printf "%x\n" "$((2#$1))" } # bin2hex pipe: alias bin2hex="hexdump -v -e '1/1 \"%02x\"'"
 ascii2bin () {
   while read hex; do
     echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
@@ -264,6 +264,7 @@ gen-clang-format() {
 ;}
 
 # Git
+# TODO: переместить всё что связанное с git в конфиг ~/.config/git/config
 # Клонирование
 gc () { git clone "$1" ${2} ;}
 
