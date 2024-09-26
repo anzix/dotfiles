@@ -1,3 +1,6 @@
+-- TODO: Может расмотреть замену? Например mini.files из https://github.com/echasnovski/mini.nvim
+-- Потому-что может удалять файлы не перманентно а в козину
+-- https://www.reddit.com/r/neovim/comments/1f9ymyw/recover_deleted_folder_in_minifiles/``
 return {
    "SidOfc/carbon.nvim",     -- Минималистичное дерево каталогов
    opts = {

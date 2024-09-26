@@ -11,11 +11,11 @@ return {                  -- Completion & Snippets
       -- Добавляет другие возможности cmp.
       --   nvim-cmp по умолчанию поставляется не со всеми источниками. Они
       --   разделены на несколько репозиториев в целях обслуживания.
-      "hrsh7th/cmp-nvim-lsp", -- Добавляет новые различные возможности (capabilities) для cmp в зависимости от клиента lsp
+      "hrsh7th/cmp-nvim-lsp",                -- Добавляет новые различные возможности (capabilities) для cmp в зависимости от клиента lsp
       "hrsh7th/cmp-nvim-lua",
-      "hrsh7th/cmp-path",     -- path completions
-      "hrsh7th/cmp-buffer",   -- buffer completions
-      "hrsh7th/cmp-calc",     -- calc completions
+      "hrsh7th/cmp-path",                    -- path completions
+      "hrsh7th/cmp-buffer",                  -- buffer completions
+      "hrsh7th/cmp-calc",                    -- calc completions
       "hrsh7th/cmp-nvim-lsp-signature-help", -- signature function completions
 
       -- Если вы хотите добавить несколько предварительно настроенных сниппетов,
@@ -137,13 +137,13 @@ return {                  -- Completion & Snippets
             end, { "i", "s" }),
          }),
          sources = {
-            { name = "nvim_lsp" },
+            { name = "nvim_lsp" },                -- FIXME: с ним у меня возникает дубликация некоторых сниппетов вместе с luasnip
             { name = 'nvim_lsp_signature_help' }, -- Отображает в списке cmp сигнатуру функций с выделенным текущим параметром (группа text)
-            { name = "nvim_lua" }, -- complete neovim's Lua runtime API such vim.lsp.*
-            { name = "luasnip" },  -- For luasnip users.
-            { name = "path" },     -- (cmp-path) Автозавершения путей Linux
+            { name = "nvim_lua" },                -- complete neovim's Lua runtime API such vim.lsp.*
+            { name = "luasnip" },                 -- For luasnip users.
+            { name = "path" },                    -- (cmp-path) Автозавершения путей Linux
             {
-               name = "buffer",    -- (cmp-buffer)
+               name = "buffer",                   -- (cmp-buffer) Автозавершения текста
                option = {
                   -- Избегать случайного запуска на больших файлах
                   get_bufnrs = function()
@@ -154,6 +154,9 @@ return {                  -- Completion & Snippets
                      end
                      return { buf }
                   end,
+                  -- Позволяет завершать текст кириллицы
+                  -- Источник https://github.com/hrsh7th/nvim-cmp/issues/453
+                  keyword_pattern = [[\k\+]]
                },
             },
             { name = "calc" }, -- (cmp-calc) source for math calculation

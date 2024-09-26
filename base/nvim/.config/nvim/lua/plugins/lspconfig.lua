@@ -151,8 +151,8 @@ return {                    -- LSP Configuration & Plugins
          -- Некоторые языки (например, typescript) имеют целые языковые плагины, которые могут быть полезны:
          --    https://github.com/pmizio/typescript-tools.nvim
          --
-         -- Но для многих настроек LSP («tsserver») будет работать нормально.
-         -- tsserver = {},
+         -- Но для многих настроек LSP («ts_ls») будет работать нормально.
+         -- ts_ls = {},
          --
 
          -- Rust LSP
@@ -268,7 +268,7 @@ return {                    -- LSP Configuration & Plugins
       -- Это позволяет переопределить только значения, явно
       -- переданные в конфигурации сервера, указанной выше.
       -- Полезно при отключении некоторых функций LSP
-      -- (например, при отключении форматирования для tsserver).
+      -- (например, при отключении форматирования для tsserver (ts_ls)).
       for name, config in pairs(server_settings) do
          if config == true then
             config = {}
