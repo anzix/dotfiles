@@ -11,7 +11,7 @@ export PATH=$HOME/.local/bin:$PATH:$HOME/.local/bin/scripts
 # Программы по умолчанию
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export TERM='xterm-256color'
+export TERM='tmux-256color' # BUG: с tmux-256color будут проблемы с цветами если не использовать tmux
 export TERMINAL="alacritty"
 export BROWSER="chromium"
 export READER="zathura"
