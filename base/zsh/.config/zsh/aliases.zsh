@@ -203,9 +203,10 @@ alias \
  aap="sudo apt autopurge" `# Удалить ненужные пакеты` \
  ac='sudo apt-get clean && sudo apt-get autoclean' `# Очищает кэш` \
  as='apt-cache search' \
- au="sudo apt update && sudo apt upgrade" \
+ au="sudo apt update && sudo apt upgrade" `# Обновление текущего релиза` \
  adu="sudo apt update && sudo apt dist-upgrade" `# Upgrade устаревших пакетов` \
- reconfigure="sudo dpkg-reconfigure"
+ afup="sudo apt upgrade && sudo apt full-upgrade && sudo apt autoremove" `# Обновление до следующего релиза (если доступно), с удалением неиспользуемых пакетов`
+#reconfigure="sudo dpkg-reconfigure"
 
 alias \
  apttw="aptitude why" `# Причины о необходимости этого пакета` \
@@ -225,9 +226,10 @@ alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$
 # Flatpak
 alias \
  flatrun="flatpak run" \
- flatlist="flatpak list --columns=application --app"
+ flatlist="flatpak list --columns=application --app" \
+ flatpak-remove-unused="flatpak remove --unused"
 
-# ОПАСНО!: Удалить все программы установленные из Flatpak со всеми данными
+# ОПАСНО! Удалить все программы установленные из Flatpak со всеми данными
 alias flatpak-remove-all="flatpak remove --all --delete-data"
 
 # gpg encryption (TODO)
@@ -258,6 +260,10 @@ alias sshfailedconnects='grep sshd.\*Did /var/log/auth.log | less'
 alias \
   xpropC='xprop | grep "WM_CLASS"' \
   startx="startx $XINITRC"
+
+#alias \
+#   piper-pt="sed -i 's/en_US-ryan-medium.onnx/pt_BR-faber-medium.onnx/g' ~/.config/speech-dispatcher/modules/piper.conf" \
+#   piper-en="sed -i 's/pt_BR-faber-medium.onnx/en_US-ryan-medium.onnx/g' ~/.config/speech-dispatcher/modules/piper.conf"
 
 # Чистка и обслуживание
 alias \
