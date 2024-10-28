@@ -16,10 +16,11 @@ return {
 
       -- Вызов линтеров на тип файла
       lint.linters_by_ft = {
-         markdown = { "markdownlint" },
+         markdown = { "markdownlint-cli2" },
          javascript = { "eslint_d" },
          bash = { "shellcheck" },
          cmake = { "cmakelint" },
+         gitcommit = { "commitlint" },
          -- INFO: Можно совместно использовать с tidy, установка: sudo pacman -S tidy
          -- FIXME: Однако с tidy есть баг о постоянном exit code
          -- Issue: https://github.com/htacg/tidy-html5/issues/1071
@@ -31,12 +32,12 @@ return {
          -- ["*"] = { "typos" },
       }
       -- Параметры линтеров
-      markdownlint.args = {
-         -- Отключает Line length (MD013)
-         '--disable',
-         'MD013',
-         '--'
-      }
+      -- markdownlint.args = {
+      --    -- Отключает Line length (MD013)
+      --    '--disable',
+      --    'MD013',
+      --    '--'
+      -- }
 
       -- Автоматически вызывать линтинг при входе в буфер, после записи и после выхода из режима Insert
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
