@@ -10,12 +10,12 @@
 # Ctrl+0 - Сбрасывает размер текста на дефолт
 
 # Актиная тема к Alacritty
-import = ["~/.config/alacritty/themes/ClearT.toml"]
+general.import = ["~/.config/alacritty/themes/ClearT.toml"]
 #import = ["~/.config/alacritty/themes/GruvboxDark.toml"]
 #import = ["~/.config/alacritty/themes/SolarizedDark.toml"]
 
 # После сохранения конфига изменения сразу применяются
-live_config_reload = true
+general.live_config_reload = true
 
 # https://wiki.archlinux.org/title/Alacritty#Terminal_functionality_unavailable_in_remote_shells
 [env]
@@ -85,7 +85,7 @@ save_to_clipboard = false
 # если нет создаёт её с моими пресетами которые указаны в конфиге tmux.conf
 # Закрыв alacritty сессия master в tmux остаётся включённой
 # Если вам не нужен мультиплексор, просто закомментируйте строку args
-[shell]
+[terminal.shell]
 args = ["-l", "-c", "tmux -u attach -t master"]
 # Использовать только если "нету" в конце конфига tmux.conf автозапуск сессии
 # args = [
