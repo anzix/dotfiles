@@ -348,7 +348,7 @@ gencert() {
 
 # Конвертировать изображение в иконку favicon для браузера
 favicon() {
-    convert "$1"  -background white \
+    magick "$1"  -background white \
             \( -clone 0 -resize 16x16 -extent 16x16 \) \
             \( -clone 0 -resize 32x32 -extent 32x32 \) \
             \( -clone 0 -resize 48x48 -extent 48x48 \) \
@@ -420,6 +420,10 @@ bulk_m4a2mp3() { for i in *.m4a; do ffmpeg -i "$i" -codec:v copy -codec:a libmp3
 
 # Извлечение кадров из видео
 vid2frames() { mkdir "$(pwd)/FrameDir"; ffmpeg -i "$1" "$(pwd)/FrameDir/frame-%03d.jpg" ;}
+
+# Создание gif'ки сравнивающей 2 изображения с задержкой в 1-сек
+# использование: gif_compare image1.jpg image2.jpg
+gif_compare() { magick -delay 160 -loop 0 $1 $2 -coalesce result.gif }
 
 # Извлечение обложки из аудио
 extcover() { ffmpeg -i "$1" -an -vcodec copy cover.jpg ;}

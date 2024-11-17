@@ -25,7 +25,7 @@ compinit -u -d -C "$ZSH_COMPDUMP"
 _comp_options+=(globdots) # Авто завершать со скрытыми файлами
 
 # Настройка завершений
-# Шаблон завершений
+# Шаблон завершений, знак `:` - являются компонентами
 # :completion:<function>:<completer>:<command>:<argument>:<tag>
 zstyle ':completion:*' use-cache on # Использовать кэширование, для улучшения завершений dpkg и apt
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}"/zsh/zcompcache

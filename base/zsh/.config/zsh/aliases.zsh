@@ -106,12 +106,13 @@ alias \
  gdl="gallery-dl -d $HOME/Pictures/gallery-dl/" \
  gog="lgogdownloader" \
  gogl="lgogdownloader --list" \
- xargs-I="xargs -I {} "
+ xargs-I="xargs -I {} " \
+ apache_bench="ab -n 100" `# Apache HTTP server benchmarking tool`
 
 
 # Специфичные дополнения стандартных команд
 alias \
- cpv="rsync -pogh -e /dev/null -P --"  `# cp с прогрессом` \
+ cpv="rsync -pogh -e /dev/null -P --" `# cp с прогрессом` \
  dul="du -h -d 1 | sort -hr" `# Статистика размера всего в текущей папке` \
  dus="du -sh" `# Размер файлов и папок (-s) only total (-h) читабельный формат чисел` \
  inet='ip -c -br a' `# Текущие соединения` \
@@ -119,7 +120,7 @@ alias \
  lsblkf='lsblk --output NAME,SIZE,FSTYPE,MOUNTPOINTS,MODEL' \
  lsblks='lsblk --nodeps --output NAME,MODEL,SIZE' \
  imgsum="identify -format '%#\n' $1" \
- lsport='sudo netstat -tulpn' `# Прослушиваемые порты` \
+ lsport='sudo ss -tulpn' `# Открытые порты` \
  lsip='lsof -P -i -n' `# Тоже прослушивание портов, вроде` \
  diffgit="diff -Naur --strip-trailing-cr" `# Формат diff такой как в git` \
  killsession="pkill -u $(whoami)" `# Убивает сессию X11 (использовать с root привилегиями)` \
