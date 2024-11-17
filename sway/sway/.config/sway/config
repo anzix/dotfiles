@@ -207,7 +207,7 @@ seat * xcursor_theme capitaine-cursors 24
 exec {
 	autotiling
 	/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-	udiskie -t
+	udiskie -Ant & # Монтирование usb флешек с треем (A) - без авто монтирования, (n) notify, (t) - трей
 	steam -silent
 	# Clipboard (https://github.com/sentriz/cliphist)
 	wl-paste --watch cliphist store
