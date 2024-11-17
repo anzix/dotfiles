@@ -41,7 +41,7 @@ xsetroot -cursor_name left_ptr &
 # /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & # Polkit аутентификатор
 /usr/bin/lxqt-policykit-agent &
 picom -b & # Композитор (b) - в фоне
-udiskie -At & # Монтирование usb флешек с треем (A) - без авто монтирования (t) - трей
+udiskie -Ant & # Монтирование usb флешек с треем (A) - без авто монтирования, (n) notify, (t) - трей
 keepassxc & # Менеджер паролей
 nitrogen --restore & # Менеджер обоев (чтобы обои не слетали)
 # bluetoothctl power on & Включение Bluetooth
