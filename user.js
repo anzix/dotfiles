@@ -135,8 +135,8 @@ user_pref("media.autoplay.blocking_policy", 2);
 user_pref("plugin.state.libgnome-shell-browser-plugin", 0);
 
 // Установить URL автоматической настройки прокси
-user_pref("network.proxy.autoconfig_url", "https://antizapret.prostovpn.org/proxy.pac");
+// user_pref("network.proxy.autoconfig_url", "https://antizapret.prostovpn.org/proxy.pac");
 // Тип прокси
 // 0=Прямое соединение, без прокси, 1=Ручная настрока прокси, 2=PAC (Proxy Auto-Configuration),
 // 4=Авто обнаружение настроек прокси, 5=Использовать системные настроки прокси (Default)
-user_pref("network.proxy.type", 2);
+// user_pref("network.proxy.type", 2);
