@@ -12,7 +12,7 @@ return {
    end,
    ft = { "markdown" },
    keys = {
-      { "<leader>pv", ":MarkdownPreviewToggle", desc = "MD: [P]re[v]iew Markdown" }
+      { "<leader>pv", "<cmd>MarkdownPreviewToggle<cr>", desc = "MD: [P]re[v]iew Markdown" }
    },
    config = function()
       -- Не закрывайте вкладку предварительного просмотра при переключении на другие буферы

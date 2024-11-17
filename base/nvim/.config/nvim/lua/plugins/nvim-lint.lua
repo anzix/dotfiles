@@ -18,6 +18,15 @@ return {
       lint.linters_by_ft = {
          markdown = { "markdownlint-cli2" },
          javascript = { "eslint_d" },
+
+         -- BUG: При вызове линтинга clangtidy почему-то дублируются предупреждения.
+         -- Одни которые тянуться с файла .clang-tidy и другие которые остаются внутри конфига?
+         -- Может попробовать добавить повторяющиеся предупреждения в clangd а потом активировать clangtidy?
+         -- INFO: Можно совместить cppcheck, вместе с clangtidy и cpplint
+         c = { "cppcheck" },
+         -- c = { "clangtidy" },
+         -- cpp = { "cppcheck", "cpplint"  },
+
          bash = { "shellcheck" },
          cmake = { "cmakelint" },
          gitcommit = { "commitlint" },

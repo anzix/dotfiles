@@ -14,38 +14,39 @@ return {
          end,
          desc = "Generate Annotations (Neogen)",
       },
-      {
-         -- Generate documentation for the current function.
-         "<leader>nf",
-         function()
-            require('neogen').generate({ type = 'func' })
-         end,
-         desc = "Generate function docs",
-      },
-      {
-         -- Generate documentation for the current class.
-         "<leader>ns",
-         function()
-            require('neogen').generate({ type = 'class' })
-         end,
-         desc = "Generate struct docs",
-      },
-      {
-         -- Generate documentation for the current type.
-         "<leader>nt",
-         function()
-            require('neogen').generate({ type = 'type' })
-         end,
-         desc = "Generate type docs",
-      },
-      {
-         -- Generate documentation for the current file.
-         "<leader>nv",
-         function()
-            require('neogen').generate({ type = 'file' })
-         end,
-         desc = "Generate file docs",
-      },
+      -- TODO: Убрать эти бинды, мешаются и тем более <leader>cn достаточно
+      -- {
+      --    -- Generate documentation for the current function.
+      --    "<leader>nf",
+      --    function()
+      --       require('neogen').generate({ type = 'func' })
+      --    end,
+      --    desc = "Generate function docs",
+      -- },
+      -- {
+      --    -- Generate documentation for the current class.
+      --    "<leader>ns",
+      --    function()
+      --       require('neogen').generate({ type = 'class' })
+      --    end,
+      --    desc = "Generate struct docs",
+      -- },
+      -- {
+      --    -- Generate documentation for the current type.
+      --    "<leader>nt",
+      --    function()
+      --       require('neogen').generate({ type = 'type' })
+      --    end,
+      --    desc = "Generate type docs",
+      -- },
+      -- {
+      --    -- Generate documentation for the current file.
+      --    "<leader>nv",
+      --    function()
+      --       require('neogen').generate({ type = 'file' })
+      --    end,
+      --    desc = "Generate file docs",
+      -- },
    },
    config = function()
       local neogen = require("neogen")

@@ -19,10 +19,6 @@ return {                    -- LSP Configuration & Plugins
       --    vim.lsp.buf.format({ timeout_ms = 5000 }) -- timeout_ms, чтобы форматировал длинные файлы
       -- end, { mode = { "n" }}}
 
-      { '<leader>ii', ':lua vim.cmd("DiagnosticsToggleVirtualText")<CR>', { mode = "n", desc = "Выкл/Вкл втроенную (inline) диагностику" } },
-      { '<leader>id', ':lua vim.cmd("DiagnosticsToggle")<CR>', { mode = "n", desc = "Выкл/Вкл диагностику" } },
-      { "[d", vim.diagnostic.goto_prev, { mode = "n", desc = "Go to previous [D]iagnostic message" } },
-      { "]d", vim.diagnostic.goto_next, { mode = "n", desc = "Go to next [D]iagnostic message" } },
    },
    config = function()
       local configs = require "lspconfig.configs"
@@ -142,6 +138,15 @@ return {                    -- LSP Configuration & Plugins
       local server_settings = {
          -- LSP сервер/диагностер и линтер для C/C++
          clangd = {
+            cmd = {
+               "clangd",
+               "--background-index",
+               "--clang-tidy",
+               "--header-insertion=iwyu",
+               "--completion-style=detailed",
+               "--function-arg-placeholders",
+               "--fallback-style=llvm",
+            },
             -- server_capabilities = {
             --    documentFormattingProvider = false, -- Отключить форматирование
             -- }
@@ -183,24 +188,24 @@ return {                    -- LSP Configuration & Plugins
          },
 
          lua_ls = {
-            -- cmd = {...},
-            -- filetypes = { ...},
-            -- server_capabilities = {},
             -- Здесь выставляются настройки непосредственно самого lsp
             settings = {
                Lua = {
                   telemetry = { enable = false },
-                  runtime = { version = "LuaJIT" },
                   workspace = {
                      checkThirdParty = false,
                      -- Сообщает lua_ls, где найти все загруженные вами файлы Lua
                      -- для вашей конфигурации neovim.
                      library = {
-                        "${3rd}/luv/library",
-                        unpack(vim.api.nvim_get_runtime_file("", true)),
+                        -- Настроен на быстрый запуск (для слабых ПК)
+                        vim.env.VIMRUNTIME
+                        -- Depending on the usage, you might want to add additional paths here.
+                        -- "${3rd}/luv/library",
+                        -- "${3rd}/busted/library",
                      },
-                     -- Если lua_ls на вашем компьютере работает очень медленно, вы можете попробовать это:
-                     -- library = { vim.env.VIMRUNTIME }, -- Уменьшает в 3 раза загрузку
+                     -- Или вытягивает всё из 'runtimepath'
+                     -- NOTE: Это на много медленнее и может вызвать проблемы с собственным конфигом
+                     -- library = vim.api.nvim_get_runtime_file("", true), -- Уменьшает в 3 раза загрузку
                   },
                   completion = {
                      callSnippet = "Replace",
@@ -381,11 +386,11 @@ return {                    -- LSP Configuration & Plugins
             -- в вашем коде, если используемый вами языковой сервер поддерживает
             --
             -- Это может быть нежелательно, поскольку они заменяют часть вашего кода.
-            -- if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-            --    map('<leader>th', function()
-            --       vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            --    end, '[T]oggle Inlay [H]ints')
-            -- end
+            if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+               map('<leader>th', function()
+                  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+               end, '[T]oggle Inlay [H]ints')
+            end
          end,
       })
    end

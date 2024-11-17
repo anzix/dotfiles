@@ -14,34 +14,35 @@ return {
       { "<leader>cl", "<cmd>Trouble lsp toggle focus=true win.position=right<cr>",         desc = "LSP Definitions / references / ... (Trouble)", },
       { "<leader>xL", "<cmd>Trouble loclist toggle focus=true<cr>",                        desc = "Location List (Trouble)" },
       { "<leader>xQ", "<cmd>Trouble qflist toggle focus=true<cr>",                         desc = "Quickfix List (Trouble)" },
-      {
-         "[q",
-         function()
-            if require("trouble").is_open() then
-               require("trouble").prev({ skip_groups = true, jump = true })
-            else
-               local ok, err = pcall(vim.cmd.cprev)
-               if not ok then
-                  vim.notify(err, vim.log.levels.ERROR)
-               end
-            end
-         end,
-         desc = "Previous Trouble/Quickfix Item",
-      },
-      {
-         "]q",
-         function()
-            if require("trouble").is_open() then
-               require("trouble").next({ skip_groups = true, jump = true })
-            else
-               local ok, err = pcall(vim.cmd.cnext)
-               if not ok then
-                  vim.notify(err, vim.log.levels.ERROR)
-               end
-            end
-         end,
-         desc = "Next Trouble/Quickfix Item",
-      },
+      -- TODO: Оно вообще нужно? Мне кажется нет
+      -- {
+      --    "[q",
+      --    function()
+      --       if require("trouble").is_open() then
+      --          require("trouble").prev({ skip_groups = true, jump = true })
+      --       else
+      --          local ok, err = pcall(vim.cmd.cprev)
+      --          if not ok then
+      --             vim.notify(err, vim.log.levels.ERROR)
+      --          end
+      --       end
+      --    end,
+      --    desc = "Previous Trouble/Quickfix Item",
+      -- },
+      -- {
+      --    "]q",
+      --    function()
+      --       if require("trouble").is_open() then
+      --          require("trouble").next({ skip_groups = true, jump = true })
+      --       else
+      --          local ok, err = pcall(vim.cmd.cnext)
+      --          if not ok then
+      --             vim.notify(err, vim.log.levels.ERROR)
+      --          end
+      --       end
+      --    end,
+      --    desc = "Next Trouble/Quickfix Item",
+      -- },
    },
    config = function()
       require("trouble").setup({

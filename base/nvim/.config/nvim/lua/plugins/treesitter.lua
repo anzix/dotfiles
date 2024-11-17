@@ -19,6 +19,8 @@ return {
             "htmldjango",
             "css",
             "lua",
+            "regex", -- Требует плагин noice
+            "diff",
             "vim",
             "markdown",
             "markdown_inline",
