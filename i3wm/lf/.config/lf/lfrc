@@ -1,3 +1,6 @@
+# Другие конфиги lf
+# https://github.com/sirnelkher/dotfiles/blob/master/.config/lf/preview
+
 # 1. sudo pacman -S ueberzug
 # 2. The scope file (~/.config/lf/scope for me), must have a command similar to
 #    mine to generate ueberzug images.
