@@ -1,11 +1,35 @@
-feh --image-bg=black \
---draw-filename \
---scale-down \
---auto-zoom \
---fontpath /usr/share/fonts/TTF \
---font Roboto-Regular/11 \
---menu-font Roboto-Regular/11 \
---action1 ";[Скопировать изображение в буфер обмена] xclip -selection clipboard -t image/png < %F && dunstify 'Изображение скопировано!' '%F'" \
---action2 ";[Скопировать путь в буфер обмена] echo %F | xclip -i -selection clipboard && dunstify 'Путь к файлу скопирован' '%F'"  \
---action3 ";[Отредактировать используя Gimp] gimp %F &" \
---action4 ";[Показать в проводнике pcmanfm] pcmanfm %F/.. &"
+
+
+# Здесь выставляется команда заупска feh со всеми опциями как костыль, но главное это работает
+# `--image-bg=black` выставляет задник для изображения чёрным
+# `--scale-down` подгонять изображение под соотношения сторон открытого окна feh
+#   Однако из-за этого появляется баг в котором заметна подгонка изображения при
+#   первом открытии изображения
+# `--zoom-step 4` медленный зум
+# `--start-at` (для cli) просматривать все изображения в каталоге
+# `--info` команда для информационного табло которое переключается на клавишу i
+# `--fontpath` указывается путь к шрифтам для их поиска
+# `--font` основываясь на --fontpath выставляет глобальный шрифт для feh
+# `--menu-font` выставляется шрифт для меню
+#
+# Типы шрифтов (размер 10 более подходящий размер):
+#  `Roboto-Regular/10` (пакет ttf-roboto)
+#  `HackNerdFont-Regular/10` (пакет ttf-hack-nerd)
+#  `OpenSans-Regular/10` (пакет ttf-opensans)
+#
+#  `--action1..4` действия на нажатие цифр 1, 2, 3, 4
+feh \
+  --image-bg=black \
+  --scale-down \
+  --auto-zoom \
+  --zoom-step 4 \
+  --start-at \
+  --info 'echo " %n | %wx%h | $(du -h %F | cut -f1) | $(sed -E "s/0*\.//" <<<%z)%% | [%u/%l] "' \
+  --fontpath /usr/share/fonts/TTF \
+  --font OpenSans-Regular/10 \
+  --menu-font OpenSans-Regular/10 \
+  --action1 ";[Скопировать изображение в буфер обмена] xclip -selection clipboard -t image/png < %F && dunstify 'Изображение скопировано!' '%F'" \
+  --action2 ";[Скопировать путь в буфер обмена] echo %F | xclip -i -selection clipboard && dunstify 'Путь к файлу скопирован' '%F'"  \
+  --action3 ";[Отредактировать используя Gimp] gimp %F &" \
+  --action4 ";[Переименовать изображение] zenity --entry --text 'Rename:' --entry-text %F | xargs mv %F"
+  --action5 ";[Удалить (перенести в мусорку)] zenity --question --text='Вы уверены что хотите удалить изображение?' && gio trash %F" \

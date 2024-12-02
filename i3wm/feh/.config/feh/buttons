@@ -1,8 +1,12 @@
+# Switch menu and zoom keys, useful for two-button touchpads
+menu 2
+zoom 3
+
 # Unbind existing scroll operations
 prev_img
 next_img
 
-# Set <action> <mouse button>
+# Сделать колесо прокрутки (колесо мыши вверх и вниз) масштабированием вместо перелистывания изображений
 zoom_in 4
 zoom_out 5
 
