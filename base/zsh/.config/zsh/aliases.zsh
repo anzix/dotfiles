@@ -107,7 +107,8 @@ alias \
  gog="lgogdownloader" \
  gogl="lgogdownloader --list" \
  xargs-I="xargs -I {} " \
- apache_bench="ab -n 100" `# Apache HTTP server benchmarking tool`
+ apache_bench="ab -n 100" `# Apache HTTP server benchmarking tool` \
+ wev='xev | awk -F'\''[ )]+'\'' '\''/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'\'''
 
 
 # Специфичные дополнения стандартных команд
@@ -193,7 +194,7 @@ alias \
 
 
 # APT/APTITUDE & DPKG
-# -s simulate/симулировать
+# -s (simulate) симулировать
 # --reinstall переустановить
 
 alias \
@@ -202,16 +203,17 @@ alias \
  arm="sudo apt remove" `# Удаление пакетов` \
  armp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакеты, их конфигурацию и ненужные зависимости.` \
  aap="sudo apt autopurge" `# Удалить ненужные пакеты` \
- ac='sudo apt-get clean && sudo apt-get autoclean' `# Очищает кэш` \
- as='apt-cache search' \
+ ac='sudo apt clean && sudo apt autoclean' `# Очищает кэш` \
  au="sudo apt update && sudo apt upgrade" `# Обновление текущего релиза` \
  adu="sudo apt update && sudo apt dist-upgrade" `# Upgrade устаревших пакетов` \
  afup="sudo apt upgrade && sudo apt full-upgrade && sudo apt autoremove" `# Обновление до следующего релиза (если доступно), с удалением неиспользуемых пакетов`
-#reconfigure="sudo dpkg-reconfigure"
+#reconfigure="sudo dpkg-reconfigure" \
 
 alias \
  apttw="aptitude why" `# Причины о необходимости этого пакета` \
- apttwn="aptitude why-not" `# Причины почему этот пакет не может быть установлен`
+ apttwn="aptitude why-not" `# Причины почему этот пакет не может быть установлен` \
+ aptts='aptitude -F "* %p -> %d (%v/%V)" --no-gui --disable-columns search' `# Лучший поиск пакетов` \
+ apttlspkgs="aptitude search '~i!~M'" `# Показать ручные пакеты с подробностями, не для экспорта` \
 
 alias \
  apt-installed="apt list --installed" \
@@ -220,6 +222,9 @@ alias \
 # Показывает список установленные вручную пакеты
 # INFO: Можно использовать как экспорт
 alias lpkgs="apt-mark showmanual"
+
+# Отображает файлы пакета
+alias afs="apt-file search --regexp"
 
 # Показывает отличающиеся конфиг. файлы от дефолтов
 alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$2,\$1}" | LANG=C md5sum -c 2> /dev/null | awk -F": " "\$2 !~ /OK\$/{print \$1}" | sort | less'
@@ -233,7 +238,8 @@ alias \
 # ОПАСНО! Удалить все программы установленные из Flatpak со всеми данными
 alias flatpak-remove-all="flatpak remove --all --delete-data"
 
-# gpg encryption (TODO)
+# TODO: Проверить
+# gpg encryption
 # alias \
 #  gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify" `# verify signature for isos` \
 #  gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys" `# receive the key of a developer`
@@ -337,7 +343,7 @@ alias \
  win2utf="iconv -cf CP1251 -t UTF-8" \
  koi2utf="iconv -cf KOI8-R -t UTF-8"
 
-# [Не проверено]
+# TODO: Не проверено
 # Команда запись на диск (болванку)
 alias \
  cdwrite='xorrecord -v speed=16 dev=/dev/sr0 -eject blank=as_needed' \
@@ -361,7 +367,7 @@ alias viewcsv="cat $1 | sed -e 's/,,/, ,/g' | column -s, -t | less -#5 -N -S"
 #  dr='docker run -d -P --name' `# Создание и запуск нового контейнера как демон` \
 #  dsp="docker system prune --all" `# Рекурсивно удалить из окружения Docker все неиспользуемые контейнеры, образы, тома и сети`
 
-# [TODO]
+# TODO: Проверить
 # Run Docker GUI application in container.
 # Specify the Docker container name on command line.
 # Ensure that 'xhost' has been run prior to enable permissions to X11 display.
@@ -380,7 +386,7 @@ alias \
  dr='podman run -d -P --name' `# Создание и запуск нового контейнера как демон` \
  psp='podman system prune --all' `# Рекурсивно удалить из окружения Podman все неиспользуемые контейнеры, образы, тома и сети`
 
-# [TODO]
+# TODO: Проверить
 # Run Podman GUI application in container.
 # Specify the Podman container name on command line.
 # Ensure that 'xhost' has been run prior to enable permissions to X11 display.
@@ -447,7 +453,7 @@ alias bulk_git_pull="exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git
 # zpu="cd '$ZDOTDIR/plugins' && exa -d */.git | sed 's/\/.git//'| xargs -P$(nproc) -I{} git -C {} pull"
 alias \
  upfc="sudo fc-cache -vf" `# Обновление шрифтов` \
- zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P$(nproc) -I {} -0 git -C {} pull" `# Обновление плагинов zsh` \
+ zpu="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -P$(nproc) -I {} -0 git -C {} pull" `# Обновление плагинов zsh, иногда необходимо удалить fzf бинарник в папке plugins` \
  upgrub="sudo grub-mkconfig -o /boot/grub/grub.cfg" `# Обновление конфига Grub` \
  updeskdb="update-desktop-database ~/.local/share/applications" `# Обновление пользовательских ярлыков`
 

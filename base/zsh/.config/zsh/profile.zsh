@@ -17,7 +17,7 @@ export BROWSER="chromium"
 export READER="zathura"
 export LESS='-R' # Цвета через less
 export MANPAGER='nvim +Man!' # Запускает man'уал через редактор nvim, очень удобно
-export DIFFPROG="nvim -d" # Для использования neovim в pacdiff
+export DIFFPROG="nvim -d" # Для использования neovim в pacdiff (можно использовать GUI'шный meld)
 # export MANPAGER="less -R --use-color -Dd+g -Du+b -Ds+r -DS+r -DP+r -DE+r"
 
 # Игнор команд из истории

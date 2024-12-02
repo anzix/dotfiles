@@ -125,6 +125,12 @@ popts() { expac -S '%o' $1 | tr ' ' '\n' | sed '/^$/d' }
 # Установить ssh-соединение + записать лог-файл
 logssh() { ssh $1 | tee sshlog ;}
 
+# Autossh - пытаться подключаться каждые 0,5 секунд (таймауты по модулю)
+sssh(){ while true; do command ssh -q "$@"; [ $? -ne 0 ] && break || sleep 0.5; done; }
+
+# SSH на эфемерную машину без хранения ключа хоста
+ssh-ephermal(){ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@"; }
+
 # Сгенерировать пароль
 # usage: genpass <число_символов>
 genpass() { head -c 32 < /dev/urandom | base64 | tr -dc '[:alnum:]' | head -c ${1:-20} ; echo }
@@ -238,6 +244,14 @@ randmusic-minor () {
  | aplay -c 2 -f S32_LE -r 16000
 }
 
+# Copy A to B whenever A changes.
+rsync_watch() {
+  rsync --copy-links --progress --recursive "$1" "$2"
+  while inotifywait -r -e create,delete,modify "$1";
+    do rsync --copy-links --progress --recursive "$1" "$2"
+  done
+}
+
 # get top process eating memory/cpu
 # пример: ram/cpu {кол-во столбцов}
 ram () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
@@ -312,9 +326,9 @@ open() {
   if [[ -n "${commands[xdg-open]}" ]]; then
     xdg-open "$@"
   elif [[ -n "${commands[kde-open5]}" ]]; then
-    kde-open5 "$@"
+    kde-open "$@"
   elif [[ -n "${commands[gnome-open]}" ]]; then
-    # Не работает
+    # TODO: Не работает
     gnome-open "$@"
   else
     echo "не найдена подходящая команда" >&2

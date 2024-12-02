@@ -83,6 +83,10 @@ plug "zsh-users/zsh-completions"
 omz_plug "command-not-found" # Находит пакет если команда не найдена
 # omz_plug "dirhistory" # Быстрое перемещение по каталогам зажать alt+[стрелки]
 
+# TODO: необходим плагин zsh-autocompletion
+# https://github.com/zsh-users/zsh-completions
+# https://github.com/clarketm/zsh-completions
+
 # Загрузка, должно быть последним
 source $ZPLUGDIR/zsh-you-should-use/you-should-use.plugin.zsh
 source $ZPLUGDIR/powerlevel10k/powerlevel10k.zsh-theme
