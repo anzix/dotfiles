@@ -1,3 +1,11 @@
+# Вдохновение:
+# https://github.com/raymonddnguyen/dotfiles/blob/master/sxhkd/.config/sxhkd/sxhkdrc
+# https://github.com/omentic/config/blob/arch/sxhkd/sxhkdrc
+#
+# Другие полезные конфиги:
+# https://github.com/Noventicx/dotfiles/blob/main/sxhkd/sxhkdrc # maim alternate bind
+# https://github.com/naordl/dotfiles/blob/master/.config/sxhkd/sxhkdrc
+
 ### Построение для длинных команд
 # | (pipe) данные 1-ой команды действуют как входные данные для 2-ой команды
 # && (and) 2-ая команда будет выполнена только в том случае, если 1-ая успешно выполнена (юзать вместе с \)
@@ -45,7 +53,7 @@ super + shift + s
 	"Обрезанный скриншот сохранён в буфер обмена" "Место: $PIC" || notify-send "Failed to take screenshot"
 
 # Скрин окна который в фокусе (для тех у кого нету мышки)
-# super + 
+# super +
 #     maim ~/Pictures/Screenshots/$(date +%s).png -ui \
 #     $(xdotool getactivewindow) \
 #     && notify-send -i ~/Pictures/Screenshots/$(date +%s).png \
