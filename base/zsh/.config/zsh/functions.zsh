@@ -209,6 +209,24 @@ magnet2torrent() { aria2c -q --bt-metadata-only --bt-save-metadata "$1" ;} # Н�
 # Сжатие PDF файла, необходим пакет ghostscript
 pdfcompr() { gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${1}-compressed.pdf ${1}.pdf ;}
 
+# Функция на более лёгкого добавления ассоциаций типов для программ
+# У гнома ассоциации просто не расставить, на хфсе удобная утилита, на лхде и кде так себе.
+# Добавив --prefer делает ассоциацию программы по умолчанию (Default)
+# Источник: https://github.com/TheToto/dotfiles/blob/master/.zsh_aliases#L56-L68
+# Требование: mimeo
+mimeoadd() {
+    if [ $# -ne 2 ]; then
+        echo "Usage : mimeoadd <app> <file>"
+        return
+    fi
+    app=`mimeo --app2desk "$1" | tail -n 1 | xargs`
+    mime=`mimeo -m "$2" | tail -n 1 | xargs`
+    printf "associate \e[91m$app\e[0m with \e[91m$mime\e[0m ? (y/N) "
+    read rep
+    [ "$rep" != "y" ] && return
+    mimeo --add "$mime" "$app"
+    echo done
+}
 
 # btfs
 # пример: mpvbtfs [torrent_file/magnet]
