@@ -3,8 +3,9 @@
 ## Ставит рандомную обоину
 
 ```sh
-feh --bg-scale $(shuf -n 1 -e ~/.wallpaper/landscape/*)
+# Для одного монитора
+feh --randomize --bg-fill ~/Pictures/wallpapers/*
 
-# Для двух мониторов нужно второй раз выполнять --bg-scale и shuf
-feh --bg-scale $(shuf -n 1 -e ~/.wallpaper/landscape/*) --bg-scale $(shuf -n 1 -e ~/.wallpaper/landscape/*)
+# Для двух мониторов
+feh --randomize --bg-fill ~/Pictures/wallpapers/* --randomize --bg-fill ~/Pictures/wallpapers/*
 ```
