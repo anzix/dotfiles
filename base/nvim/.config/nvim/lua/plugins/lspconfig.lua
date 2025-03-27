@@ -174,8 +174,23 @@ return {                    -- LSP Configuration & Plugins
          --       }
          --    }
          -- },
+
          -- Go
-         -- gopls = {},
+         gopls = {
+            cmd = {"gopls"},
+            filetypes = { "go", "gomod", "gowork", "gotmlp" },
+            root_dir = require("lspconfig.util").root_pattern("go.work", "go.mod", ".git"),
+            settings = {
+               gopls = {
+                  -- Можно указать кастомные флаги сборки для gopls, помогает избажать
+                  -- ошибки: `no package metadata for file "buildFlags"`
+                  -- buildFlags = { "-tags", "gui" },
+                  -- completeUnimported не нужно добавлять оно уже есть
+                  usePlaceholders = true,
+                  -- В analyses не нужно добавлять unusedparams, оно уже есть
+               }
+            }
+         },
 
          bashls = {
             filetypes = { 'sh', 'zsh', 'zshrc', 'bash', 'inc', 'command', 'zsh_*' },

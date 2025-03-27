@@ -1,3 +1,8 @@
+# Тестирование (также работает и с dunstify)
+# notify-send -u low "lol" "kek"
+# notify-send -u normal "lol" "kek"
+# notify-send -u critical "lol" "kek"
+
 # Take a look at the mako manpage with the command:
 #   man 5 mako
 # To view all configuration options.

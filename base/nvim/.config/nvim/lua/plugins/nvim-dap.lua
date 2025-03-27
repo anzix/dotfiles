@@ -6,7 +6,8 @@ return {
    "mfussenegger/nvim-dap",
    event = "BufReadPre",
    dependencies = {
-      { "theHamsta/nvim-dap-virtual-text",          opts = {} },
+      { "theHamsta/nvim-dap-virtual-text", opts = {} },
+      { "leoluz/nvim-dap-go" },
       {
          "rcarriga/nvim-dap-ui",
          dependencies = { "nvim-neotest/nvim-nio" },
@@ -49,12 +50,22 @@ return {
       require("mason-tool-installer").setup({
          ensure_installed = {
             "codelldb",
+            "delve",
          }
       })
 
       require('nvim-dap-virtual-text').setup({})
 
+      require("dap-go").setup()
+
       dapui.setup()
+
+
+      -- dap.adapters.gus_custom_go = {
+      --    type = "server",
+      --    host = "127.0.0.1",
+      --    port = "38697", -- Make sure this matches the port used when starting dlv in headless mode
+      -- }
 
       dap.adapters.gdb = {
          type = "executable",
@@ -77,6 +88,40 @@ return {
          },
       }
 
+      -- -- Go
+      -- -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
+      -- dap.configurations.go = {
+      --    {
+      --       type = "delve",
+      --       name = "Debug",
+      --       request = "launch",
+      --       program = "${file}"
+      --    },
+      --    {
+      --       type = "delve",
+      --       name = "Debug test", -- configuration for debugging test files
+      --       request = "launch",
+      --       mode = "test",
+      --       program = "${file}"
+      --    },
+      --    -- works with go.mod packages and sub packages
+      --    {
+      --       type = "delve",
+      --       name = "Debug test (go.mod)",
+      --       request = "launch",
+      --       mode = "test",
+      --       program = "./${relativeFileDirname}"
+      --    },
+      --    {
+      --       type = "gus_custom_go",
+      --       name = "Gus - Attach to remote DLV",
+      --       request = "attach",
+      --       mode = "remote",
+      --       host = "127.0.0.1", -- Ensure the host matches
+      --       port = 38697,       -- Ensure the port matches
+      --    }
+      -- }
+
       -- C
       dap.configurations.c = {
          -- На выбор codelldb/gdb
@@ -88,6 +133,7 @@ return {
                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
             end,
             -- FIXME: почему-то иногда первым идёт ввод аргументов а потом исполняемый
+            -- FIXME: Не получается использовать аргумент который является перенаправлением ввода `< что-то.txt`
             args = function()
                local args_str = vim.fn.input({
                   prompt = 'Arguments (leave empty for no arguments): ',
@@ -95,6 +141,10 @@ return {
                return vim.split(args_str, ' +')
             end,
             cwd = "${workspaceFolder}",
+            -- HACK: Костыль который можно испольовать как передачу stdio, stdout
+            -- и stderr в программу при отладке.
+            -- stdio = {"build/stdio.txt", nil, nil},
+
             stopOnEntry = false,
             runInTerminal = true,
          },

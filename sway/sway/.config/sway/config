@@ -15,12 +15,18 @@ set {
 	$term alacritty
 }
 
-# Дисплей + Обои
+# Разрешение, герцовка дисплея и обои
 # Для нахождения дисплея: swaymsg -t get_outputs
 output DP-2 {
 	mode 1920x1080@144Hz
 	bg "/media/Media/Галарея/Обои на раб.стол/Ramen.jpg" fill
 }
+
+# Включает VRR (Variable Refresh Rate) Переменную частоту кадров
+# При включении лично у меня возникали мерцания при движении мышки, поэтому
+# я убрал VRR
+# Источник проблемы: https://github.com/swaywm/sway/issues/5076
+# adaptive_sync on
 
 # Использовать для приложений и игр xwayland
 xwayland enable
@@ -32,6 +38,9 @@ xwayland enable
 smart_gaps off
 #gaps bottom 0
 
+
+# Disable dragging of tiles with a mouse.
+# tiling_drag disable
 
 # Убирает заголовоки в окнах
 default_border pixel 2
@@ -193,12 +202,16 @@ input "type:keyboard" {
     repeat_rate 40
 }
 
+# Отключение акселерации на мышке
 input "1133:49284:Logitech_G102_Prodigy_Gaming_Mouse" {
 	accel_profile "flat"
 }
 
 # Старт waybar
 bar swaybar_command waybar
+
+# Убирать простаивающий курсор через 3 сек
+# seat * hide_cursor 3000
 
 # Тема и размер курсора
 seat * xcursor_theme capitaine-cursors 24
@@ -228,6 +241,14 @@ exec_always {
 # floating_maximum_size -1 x -1
 
 # Окна программ которые должны быть плавающими
+# Альтернатива xprop для sway и как это использовать
+#
+# Первый метод
+# $ swaymsg -t get_tree | less
+# И через / искать app_id и вставлять в for_window
+#
+# Метод чуть по проще
+# $ swaymsg -t get_tree | jq '.' | grep app_id
 for_window {
 	[class="^Steam$" title="^(?!Steam$)"] floating enable
 	[title="^galculator"] floating enable
@@ -322,6 +343,9 @@ bindsym Shift+Print exec \
 # Требуется: tesseract tesseract-data-rus tesseract-data-eng tesseract-data-jpn translate-shell slurp grim wl-copy
 bindsym --to-code alt+t exec --no-startup-id \
 	ocr-translate-sway
+
+# Upload screenshot and copy url to clipboard
+# bindsym $mod+Shift+Print exec slurp | grim -g - - | curl --form 'file=@-' http://0x0.st | wl-copy && swaynag -m "screenshot uploaded & url copied to clipboard
 
 # История уведомлений Mako win+`
 bindsym $mod+grave exec makoctl restore

@@ -71,6 +71,8 @@ user_pref("signon.autofillForms", false);
 user_pref("signon.generation.enabled", false);
 // Отключает панель рекомендаций в about:addon (используется Google Analytics)
 user_pref("extensions.getAddons.showPane", false); // [HIDDEN PREF]
+// Отключает сохранённые подсказки для поля логинов (имя пользователя и т.д)
+user_pref("browser.formfill.enable", false);
 // Отключает рекомендации в панелях расширений и тем about:addons
 user_pref("extensions.htmlaboutaddons.recommendations.enabled", false);
 // Отключает персонализированные рекомендации по расширениям в about:addons и AMO

@@ -6,13 +6,18 @@
 # Проверяет, использует ли текущий сеанс сервер отображения Wayland или x11.
 # FIXME: Не работает захват записи экрана на сессии Wayland используя pipewiresrc
 if [ "${XDG_SESSION_TYPE}" != "wayland" ]; then
-    DISPLAY_SERVER="X11 Display Server"
-    echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'ximagesrc'"
-    RECORDING_SOURCE="ximagesrc display-name=:0 show-pointer=true use-damage=false "
-else
-    DISPLAY_SERVER="Wayland Display Server"
-    echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'pipewire'."
-    RECORDING_SOURCE="pipewiresrc do-timestamp=True "
+   DISPLAY_SERVER="X11 Display Server"
+   echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'ximagesrc'"
+   WINDOW_ID=$(xwininfo | grep 'Window id:' | awk '{print $4}')
+   if [ -z "$WINDOW_ID" ]; then
+      echo "No window selected. Exiting..."
+      exit 1
+   fi
+   RECORDING_SOURCE="ximagesrc xid=${WINDOW_ID} show-pointer=true use-damage=false "
+# else
+#     DISPLAY_SERVER="Wayland Display Server"
+#     echo "Для записи экрана на '${DISPLAY_SERVER}' будет использоваться 'pipewire'."
+#     RECORDING_SOURCE="pipewiresrc do-timestamp=True "
 fi
 
 # Перменные
@@ -30,13 +35,12 @@ echo "Это устройство будет использоваться для
 # Запись с аудио дорожкой микрофона
 GST_VAAPI_ALL_DRIVERS=1 \
    gst-launch-1.0 -e \
-		${RECORDING_SOURCE} ${VIDEO_VAR} \
-		pulsesrc device=${AUDIO_DEVICE}.monitor ${AUDIO_VAR} \
-		${MIC_DEVICE} ${MIC_VAR} ! filesink location="${HOME}"/Videos/"${DATE_VAR}".wav \
-		${MATROSKA_MUX} ! filesink location="${HOME}"/Videos/"${DATE_VAR}".mkv \
-	& PIPED_PID=$!
+   ${RECORDING_SOURCE} ${VIDEO_VAR} \
+   pulsesrc device=${AUDIO_DEVICE}.monitor ${AUDIO_VAR} \
+   ${MIC_DEVICE} ${MIC_VAR} ! filesink location="${HOME}"/Videos/"${DATE_VAR}".wav \
+   ${MATROSKA_MUX} ! filesink location="${HOME}"/Videos/"${DATE_VAR}".mkv \
+   &
+PIPED_PID=$!
 
 while kill -s 0 $PIPED_PID; do sleep .1; done |
-
-
-( zenity --progress --icon=/usr/share/icons/breeze/actions/16/media-record.svg --width 555 --height 35 --title="Идет запись" --text="<big><b>Идет запись экрана!</b></big>\n\nВ настоящее время ваша система использует <b>$DISPLAY_SERVER.</b>.\nИдентифицированное аудиоустройство: <b>$AUDIO_DEVICE</b>.\n\nВидео будет сохранено в папке <b>$HOME/Videos/</b>.\n\n\nНажмите <b>Отменить</b>, чтобы остановить запись." --pulsate --default-cancel  || kill -2 $PIPED_PID )
+   (zenity --progress --icon=/usr/share/icons/breeze/actions/16/media-record.svg --width 555 --height 35 --title="Идет запись" --text="<big><b>Идет запись экрана!</b></big>\n\nВ настоящее время ваша система использует <b>$DISPLAY_SERVER.</b>.\nИдентифицированное аудиоустройство: <b>$AUDIO_DEVICE</b>.\n\nВидео будет сохранено в папке <b>$HOME/Videos/</b>.\n\n\nНажмите <b>Отменить</b>, чтобы остановить запись." --pulsate --default-cancel || kill -2 $PIPED_PID)

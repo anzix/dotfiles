@@ -95,6 +95,48 @@ pacstore() { pacman -Slq | fzf -q "$1" -m --preview 'pacman -Si {1}' | xargs -ro
 deinst() { yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rn ;}
 ppkginfo() { pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)' ;}
 
+# Относящийся к VPN
+# TODO: не проверено
+# add temporary route to exclude ip from vpn route
+vpn_exclude() {
+    ip="$1"
+    sudo ip route add "$ip" via 192.168.1.1
+}
+# add permanent route to exclude ip from vpn route
+vpn_exclude_permanent() {
+    ip="$1"
+    vpn_exclude "$ip"
+    nmcli connection modify Wired\ connection\ 1 +ipv4.routes "$ip 192.168.1.1"
+}
+# not use vpn for specific url
+add_url_route() {
+    domain=$(echo "$1" | grep -Po "http(s?)://(\\K).*?(?=/)")
+    ip=$(dig +short $domain | tail -n 1)
+    echo -e "\033[0;34madding route for '$domain' '$ip'\033[0m"
+    vpn_exclude "$ip"
+}
+
+# Безопасное извлечение внешних дисков/флешек с выключением устройства
+# usage: safeunmount sdg1
+# FIXME: Функция неправильно работает, обычно оно должно сначало размонтировать
+# а потом выключать питание
+# safeunmount() {
+#     disk=`lsblk | grep $1`                    # find target disk
+#     mounted="$(echo $disk | cut -d' ' -f7)"   # parse to find mountpoint (6th column)
+#     echo "disk = " $disk
+#     echo "mounted = " $mounted
+#     if [ -z "$mounted" ]
+#     then
+#         # $var is empty so just power off drive
+#         echo "Power off drive $1"
+#         udisksctl power-off -b /dev/$1
+#     else
+#         # $var is not empty so unmount and power off drive
+#         echo "Unmount and power off drive $1"
+#         udisksctl unmount -b /dev/$1 && udisksctl power-off -b /dev/$1
+#     fi
+# }
+
 # lgogdownloader - GOG обвёртка
 # Функции для более удобного синтаксиса argv загрузчика GOG
 # Источник: https://github.com/ssokolow/profile/blob/master/home/.common_sh_init/aliases
@@ -174,11 +216,13 @@ hex2bin () {
   echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s\n", $0}'
 }
 bin2hex () { printf "%x\n" "$((2#$1))" } # bin2hex pipe: alias bin2hex="hexdump -v -e '1/1 \"%02x\"'"
-ascii2bin () {
+ascii2bin () { # Более простая реализация: ascii2binary() { echo -n "$1" | xxd -b | awk '{print $2}';}
   while read hex; do
     echo "ibase=16; obase=2; $hex" | bc | awk '{printf "%08s", $0}'
   done < <(printf "$@" | xxd -p -c1 -u); echo
 }
+decimal2hex () { printf '0x%X\n' "$@" ;} # Из десятичный в шестнадцатеричный, напр 165
+hex2decimal () { printf '%d\n' "$@" ;} # Из шестнадцатеричный в десятичный, напр 0xA5
 unidecode () { printf '%b\n' "$@" ;} # Узнать символ по UTF-8, напр \uf115. Можно использовать также `echo '\uf115'`
 uniencode () { printf '%x\n' "'$@" ;} # Узнать UTF-8 id символа, напр 
 

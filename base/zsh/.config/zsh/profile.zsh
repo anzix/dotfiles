@@ -11,7 +11,6 @@ export PATH=$HOME/.local/bin:$PATH:$HOME/.local/bin/scripts
 # Программы по умолчанию
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export TERM='tmux-256color' # BUG: с tmux-256color будут проблемы с цветами если не использовать tmux
 export TERMINAL="alacritty"
 export BROWSER="chromium"
 export READER="zathura"
@@ -72,10 +71,6 @@ export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 # Отключает телеметрию .NET
 export GOTELEMETRY=off # Отключает телеметрию GO
 # export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority" # This line will break some DMs.
-
-# Отключает winemenubuilder, который загрязняет меню приложений
-# WARN: но отключает автоматическое создание desktop ярлыка на раб. столе
-# export WINEDLLOVERRIDES="winemenubuilder.exe="
 
 # Предотващяет wine установку Mono/Gecko
 # export WINEDLLOVERRIDES="mscoree,mshtml="

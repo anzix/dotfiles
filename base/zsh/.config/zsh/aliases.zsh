@@ -81,7 +81,7 @@ alias \
  dosbox="dosbox -conf "$XDG_CONFIG_HOME"/dosbox/dosbox.conf" \
  winetricks='winetricks -q' `# Тихая установка` \
  fdupes='fdupes -rd' \
- journalctl='journalctl --no-hostname'
+ journalctl='journalctl --no-hostname -e'
 # bat="bat --style=numbers"
 
 # Сокращённые команды
@@ -122,6 +122,7 @@ alias \
  lsblks='lsblk --nodeps --output NAME,MODEL,SIZE' \
  imgsum="identify -format '%#\n' $1" \
  lsport='sudo ss -tulpn' `# Открытые порты` \
+ lssockets'ss -lx' `# Список сокетов` \
  lsip='lsof -P -i -n' `# Тоже прослушивание портов, вроде` \
  diffgit="diff -Naur --strip-trailing-cr" `# Формат diff такой как в git` \
  killsession="pkill -u $(whoami)" `# Убивает сессию X11 (использовать с root привилегиями)` \
@@ -321,6 +322,8 @@ alias \
 alias cutexe="sed '$ s/\x30*$//' $1"
 
 # Python
+# Памятка: Если системная версия python обновилась на новую мажорную версию
+# то вот как обновить venv: Удаляем папку `.venv` и заново выполняем команду venv
 alias venv=". ./.venv/bin/activate || python3 -m venv .venv --prompt $(basename $PWD) && . ./.venv/bin/activate"
 
 # Смена версий Python (для сборки)
@@ -461,6 +464,7 @@ alias \
 alias randman="apropos . | shuf -n 1 | awk '{ print \$1}' | xargs man"
 
 # yt-dlp
+# --proxy socks5://127.0.0.1:12334/
 # --trim-filenames 225: Fix for "name too long" failure
 alias \
  yt="yt-dlp -i --embed-metadata --embed-thumbnail --embed-subs --write-sub --sub-lang='(en|ru|ja)' --no-check-certificate --trim-filenames 225 -o '%(title)s.%(ext)s'" \
