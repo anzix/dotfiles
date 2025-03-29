@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Discord (Netns)
+StartupWMClass=discord
+Comment=All-in-one voice and text chat for gamers that's free, secure, and works on both your desktop and phone (Netns).
+GenericName=Internet Messenger
+Exec=run0 --setenv="DISPLAY=${DISPLAY}" --setenv="WAYLAND_DISPLAY=${WAYLAND_DISPLAY}" --setenv="XAUTHORITY=${XAUTHORITY}" --property "NetworkNamespacePath=/var/run/netns/vpn" --property "BindReadOnlyPaths=/etc/netns/vpn/resolv.conf:/etc/resolv.conf:norbind" -u $(whoami) /usr/bin/discord --start-minimized --ozone-platform-hint=wayland
+Icon=discord
+Type=Application
+Categories=Network;InstantMessaging;
+Path=/usr/bin

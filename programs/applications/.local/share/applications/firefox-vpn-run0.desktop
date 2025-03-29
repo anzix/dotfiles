@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment[ru_RU]=Доступ в Интернет с Network Namespace
+Comment=Browse the World Wide Web with Network Namespace
+#Exec=run0 --setenv="DISPLAY=${DISPLAY}" --setenv="WAYLAND_DISPLAY=${WAYLAND_DISPLAY}" --setenv="XAUTHORITY=${XAUTHORITY}" ip netns exec vpn runuser -u $(whoami) -- /usr/lib/firefox/firefox %u
+Exec=run0 --setenv="DISPLAY=${DISPLAY}" --setenv="WAYLAND_DISPLAY=${WAYLAND_DISPLAY}" --setenv="XAUTHORITY=${XAUTHORITY}" --property "NetworkNamespacePath=/var/run/netns/vpn" --property "BindReadOnlyPaths=/etc/netns/vpn/resolv.conf:/etc/resolv.conf:norbind" -u $(whoami) -- /usr/lib/firefox/firefox %u
+GenericName[ru_RU]=Firefox NetNS (run0)
+GenericName=Firefox NetNS (run0)
+Icon=firefox
+MimeType=application/json;application/pdf;application/rdf+xml;application/rss+xml;application/x-xpinstall;application/xhtml+xml;application/xml;audio/flac;audio/ogg;audio/webm;image/avif;image/gif;image/jpeg;image/png;image/svg+xml;image/webp;text/html;text/xml;video/ogg;video/webm;x-scheme-handler/chrome;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/mailto;
+Name[ru_RU]=Firefox NetNS (run0)
+Name=Firefox NetNS (run0)
+Path=
+Categories=GNOME;GTK;Network;WebBrowser;
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

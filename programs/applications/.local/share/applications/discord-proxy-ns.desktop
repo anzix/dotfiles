@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Discord (proxy-ns)
+StartupWMClass=discord
+Comment=All-in-one voice and text chat for gamers that's free, secure, and works on both your desktop and phone (proxy-ns).
+GenericName=Internet Messenger
+Exec=proxy-ns /usr/bin/discord --start-minimized
+Icon=discord
+Type=Application
+Categories=Network;InstantMessaging;
+Path=/usr/bin
