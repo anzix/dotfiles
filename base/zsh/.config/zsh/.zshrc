@@ -77,15 +77,12 @@ plug "hlissner/zsh-autopair" # Полезно для работы с кавыч�
 plug "romkatv/powerlevel10k" # Prompt
 plug "junegunn/fzf" # Fuzzy finder (fzf_install функция находится в functions.zsh)
 plug "zsh-users/zsh-completions"
+# plug "marlonrichert/zsh-autocomplete" # Асинхронное автозаполнение, опционально для zsh-completions
 # plug "desyncr/auto-ls" # Автоматически выполняет ls -a при cd
 
 # (omz_plug) Плагины из репо oh-my-zsh: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
 omz_plug "command-not-found" # Находит пакет если команда не найдена
 # omz_plug "dirhistory" # Быстрое перемещение по каталогам зажать alt+[стрелки]
-
-# TODO: необходим плагин zsh-autocompletion
-# https://github.com/zsh-users/zsh-completions
-# https://github.com/clarketm/zsh-completions
 
 # Загрузка, должно быть последним
 source $ZPLUGDIR/zsh-you-should-use/you-should-use.plugin.zsh

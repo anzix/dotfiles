@@ -83,7 +83,7 @@ zsh_add_completion() {
 # Обновление файла zcompdump
 zshcompupd() {
  autoload -U zrecompile
- rm -rf "$ZSH_COMPDUMP"* # FIXME: не безопасно использовать rm -rf
+ rm -rfv "$ZSH_COMPDUMP"* # FIXME: не безопасно использовать rm -rf
  compinit -u -d "$ZSH_COMPDUMP"
  zrecompile -p "$ZSH_COMPDUMP"
  exec zsh
