@@ -320,9 +320,10 @@ ram () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
 cpu () { ps axch -o cmd:15,%mem --sort=-%mem | head -"$1" }
 
 # Погода cli
-# пример: wts {Город}
-wts () { curl "wttr.in/$1?M&lang=ru" }
-wtss () { curl "wttr.in/$1?format=3" } # Коротко
+# пример: wttrs {Город}
+wttrs () { curl "ru.wttr.in/$1" }
+wttrss () { curl "ru.wttr.in/$1?M&format=%c+%C+%h+%t+(%f)+%w+%p"; echo } # Коротко
+wttrsss () { curl "ru.wttr.in/$1?format=3" } # Более коротко
 
 # Clang
 # Генерация моего типа форматирования
