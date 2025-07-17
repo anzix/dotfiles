@@ -185,6 +185,7 @@ lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | co
 lddlist() { ldd -v $1 | grep "=> /" | sed 's/.*=> //g' | sort | uniq | sed 's/ ([0-9a-z]\+)$//g' }
 
 # Systemd
+# usage: jr | jr -1 | errors -1 | errors -2
 jr() { journalctl -k -e -b "${1:-0}" } # Вся информация
 jrwe() { journalctl -p 2..4 -e -b "${1:-0}" } # Все важные логи
 fstrimcheck() { journalctl -u fstrim } # Проверка трима для SSD
@@ -472,6 +473,8 @@ bulk_all2jxl() { for i in *.png *.jpg *.ppm; do cjxl -e 8 -d 0 "$i" "${i%.*}.jxl
 bulk_all2avif() { for i in *.png *.jpg; do avifenc "$i" "${i%.*}.avif"; done ;}
 bulk_png2webp() { for i in *.png; do cwebp -q 75 "$i" -o "${i%.*}.webp"; done ;}
 bulk_webp2png() { for i in *.webp; do dwebp -quiet "$i" -o "${i%.*}.png"; done ;}
+# png2jpg(){ find ./ -name "*.png" | awk -F "." '{print $2}' | xargs -i -t mv -v ./{}.png ./{}.jpg ;}
+# jpg2png(){ find ./ -name "*.jpg" | awk -F "." '{print $2}' | xargs -i -t mv -v ./{}.jpg ./{}.png ;}
 bulk_gif1avif() { for i in *.gif; do ffmpeg -i "$i" -pix_fmt yuv420p -f yuv4mpegpipe - | avifenc --stdin --fps 15 "${i%.*}.avif"; done ;} # Убрать 15 fps если нужна оригинальная скорость
 
 # Конверация видео форматов (полезно для Davinci Resolve)
@@ -556,6 +559,7 @@ uphosts () {
  sudo sed -i '/^0.0.0.0 wl.spotify.com\|^0.0.0.0 wl.spotify.com/s/^/#/g' /etc/hosts # Spotify
  sudo sed -i '/^0.0.0.0 www.ojrq.net\|^0.0.0.0 www.ojrq.net/s/^/#/g' /etc/hosts # PCGamingWiki Microsoft game page referal
  sudo sed -i '/^0.0.0.0 track.adtraction.com\|^0.0.0.0 track.adtraction.com/s/^/#/g' /etc/hosts # PCGamingWiki GOG game page referal
+ sudo sed -i  '/^0.0.0.0 click.nvgaming.nvidia.com\|^0.0.0.0 click.nvgaming.nvidia.com/s/^/#/g' /etc/hosts # Отписаться от рассылки nvidia email
 
  # Удаляем временный файл diff.txt
  rm diff.txt
@@ -650,6 +654,12 @@ vid2gif() {
 
     rm -f "$palette"
 }
+
+# Создание фотоколлаж из всех png картинок (на выходе из 4-х размер будет 30+ mb)
+# INFO: Для уменьшения размера можно сконвертировать в avif испольуя bulk_all2avif
+# INFO: -geometry +2+2 для красивых отступов и -border 5 для границ
+# Полезное видео инструкция: https://www.youtube.com/watch?v=ZGXig548QqU
+collage() { montage -density 300 -tile 2x0 -geometry +5+50 -border 10 ./*.png collage.png ;}
 
 # Vbox
 # В локальной машине mkdir vboxshare

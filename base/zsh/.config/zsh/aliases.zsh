@@ -64,6 +64,7 @@ alias \
  rr='rm -rvI' `# Тоже самое но (r) - рекурсивно, только для каталогов` \
  chmod="chmod -v" \
  chown="chown -v" \
+ chgrp="chgrp -v" \
  mount='mount -v' \
  umount='umount -v' \
  dmesg='sudo dmesg -e' `# (-e) Выводить читабельный формат временной отметки` \
@@ -321,17 +322,24 @@ alias \
 # Полезно при проверке на вирус
 alias cutexe="sed '$ s/\x30*$//' $1"
 
+# Радомный MAC адрес
+# Может быть полезным для wifi адаптера (иногда сервер DHCP перестает любить
+# вас по странной причине, и это помогает).
+# Это можно использовать как free wifi hack (халявный wifi хак)
+# Использование: export RANDMAC=$(randmac); echo $RANDMAC && sudo ifconfig en0 ether "{RANDMAC}"
+alias randmac="openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//'"
+
 # Python
 # Памятка: Если системная версия python обновилась на новую мажорную версию
 # то вот как обновить venv: Удаляем папку `.venv` и заново выполняем команду venv
 alias venv=". ./.venv/bin/activate || python3 -m venv .venv --prompt $(basename $PWD) && . ./.venv/bin/activate"
 
-# Смена версий Python (для сборки)
+# Смена версий Python (для сборки) - не нужно
 # Проверить версию: python -V
 # yay -S python2 или python2-bin
-alias \
- py2="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python2 $HOME/.local/bin/python && sudo ln -s /usr/bin/python2-config $HOME/.local/bin/python-config" \
- py3="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python $HOME/.local/bin/python && sudo ln -s /usr/bin/python-config $HOME/.local/bin/python-config"
+# alias \
+#  py2="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python2 $HOME/.local/bin/python && sudo ln -s /usr/bin/python2-config $HOME/.local/bin/python-config" \
+#  py3="rm $HOME/.local/bin/python*; sudo ln -s /usr/bin/python $HOME/.local/bin/python && sudo ln -s /usr/bin/python-config $HOME/.local/bin/python-config"
 
 # Конвертирование документов
 # Необходимо указать входной файл

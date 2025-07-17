@@ -2,6 +2,9 @@
 # umask 077
 
 # История shell
+# FIXME: почему-то история в какой-то момент сокращается и все сохранённые
+# команды исчезают, без понятия как это возникает.
+# Либо это из-за символа ^@ (вызванным отключение питания), либо чем-то другим
 HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 
@@ -90,24 +93,12 @@ export MANWIDTH=80
 # Подавляет предупреждения о accessibility bus в GTK
 export NO_AT_BRIDGE=1
 
-# GPG
-# if [[ -S "/run/user/${UID}/ssh-agent" ]]; then
-#   export SSH_AUTH_SOCK="/run/user/${UID}/ssh-agent"
-# fi
 #export GPG_TTY=$(tty)
 
-# https://github.com/mverna27/dotfiles/blob/base/.zshrc
-# Или использовать systemd сервис
+# Агент SSH должен быть доступен везде
+# INFO: Необходима активация ssh-agent.service
 # systemctl --user enable ssh-agent.service
-# automatically start ssh-agent and make sure that only one ssh-agent process runs at a time
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
-fi
-# Необходимо как и для systemd сервиса так и без
-if [[ ! "$SSH_AUTH_SOCK" ]]; then
-    source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
-fi
-
+export SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-"$XDG_RUNTIME_DIR/ssh-agent.socket"}
 
 # LF иконки (требуется шрифты семейства Nerd)
 export LF_ICONS="di=:fi=:ln=:or=:*.c=:*.cc=:*.clj=:*.coffee=:*.cpp=:*.css=:*.d=:*.dart=:*.erl=:*.exs=:*.fs=:*.go=:*.h=:*.hh=:*.hpp=:*.hs=:*.html=:*.java=:*.jl=:*.js=:*.json=:*.lua=:*.md=:*.php=:*.pl=:*.pro=:*.py=:*.rb=:*.rs=:*.scala=:*.ts=:*.vim=:*.cmd=:*.ps1=:*.sh=:*.bash=:*.zsh=:*.fish=:*.tar=:*.tgz=:*.arc=:*.arj=:*.taz=:*.lha=:*.lz4=:*.lzh=:*.lzma=:*.tlz=:*.txz=:*.tzo=:*.t7z=:*.zip=:*.z=:*.dz=:*.gz=:*.lrz=:*.lz=:*.lzo=:*.xz=:*.zst=:*.tzst=:*.bz2=:*.bz=:*.tbz=:*.tbz2=:*.tz=:*.deb=:*.rpm=:*.jar=:*.war=:*.ear=:*.sar=:*.rar=:*.alz=:*.ace=:*.zoo=:*.cpio=:*.7z=:*.rz=:*.cab=:*.wim=:*.swm=:*.dwm=:*.esd=:*.jpg=:*.jpeg=:*.mjpg=:*.mjpeg=:*.gif=:*.bmp=:*.pbm=:*.pgm=:*.ppm=:*.tga=:*.xbm=:*.xpm=:*.tif=:*.tiff=:*.png=:*.PNG=:*.svg=:*.svgz=:*.mov=:*.mpeg=:*.mkv=:*.m4v=:*.webm=:*.mp4=:*.wmv=:*.avi=:*.flv=:*.flac=:*.mp3=:.m4a=:*.wav=:*.pdf=:*.iso=:*.img=:*.gitignore=:*.vimrc=:*.viminfo=:*.nix=:ex="
