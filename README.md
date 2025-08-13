@@ -12,7 +12,7 @@ sudo pacman -S stow
 
 ```sh
 cd ~
-git clone --recurse-submodules https://gitlab.com/anzix/dotfiles && cd dotfiles/base
+git clone --recurse-submodules https://github.com/anzix/dotfiles && cd dotfiles/base
 ```
 
 Опции:
