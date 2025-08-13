@@ -203,11 +203,11 @@ alias \
  ai="sudo apt install" \
  ain="sudo apt install -y" `# Установить пакет без подтверждения` \
  arm="sudo apt remove" `# Удаление пакетов` \
- armp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакеты, их конфигурацию и ненужные зависимости.` \
+ armp="sudo apt remove --purge && sudo apt autoremove --purge" `# Удаляет пакет и ненужные зависимости вместе с их конфигурациями` \
  aap="sudo apt autopurge" `# Удалить ненужные пакеты` \
  ac='sudo apt clean && sudo apt autoclean' `# Очищает кэш` \
- au="sudo apt update && sudo apt upgrade" `# Обновление текущего релиза` \
- adu="sudo apt update && sudo apt dist-upgrade" `# Upgrade устаревших пакетов` \
+ au="sudo apt -U upgrade" `# Обновление текущего релиза` \
+ adu="sudo apt -U dist-upgrade" `# Upgrade устаревших пакетов` \
  afup="sudo apt upgrade && sudo apt full-upgrade && sudo apt autoremove" `# Обновление до следующего релиза (если доступно), с удалением неиспользуемых пакетов`
 #reconfigure="sudo dpkg-reconfigure" \
 
@@ -219,7 +219,8 @@ alias \
 
 alias \
  apt-installed="apt list --installed" \
- dpkg-installed="dpkg --get-selections | grep -v deinstall"
+ dpkg-installed="dpkg --get-selections | grep -v deinstall" \
+ dpkg-kernels_installed="dpkg --list | grep linux-image"
 
 # Показывает список установленные вручную пакеты
 # INFO: Можно использовать как экспорт
@@ -229,6 +230,7 @@ alias lpkgs="apt-mark showmanual"
 alias afs="apt-file search --regexp"
 
 # Показывает отличающиеся конфиг. файлы от дефолтов
+# FIXME: Возникает "zsh: event not found: ~"
 alias apt-cfgs='dpkg-query -W -f="\${Conffiles}\n" "*" | awk "OFS=\" \"{print \$2,\$1}" | LANG=C md5sum -c 2> /dev/null | awk -F": " "\$2 !~ /OK\$/{print \$1}" | sort | less'
 
 # Flatpak
@@ -343,9 +345,11 @@ alias venv=". ./.venv/bin/activate || python3 -m venv .venv --prompt $(basename 
 
 # Конвертирование документов
 # Необходимо указать входной файл
+# Usage: 2pdf <doc_file>
 alias \
  2pdf="libreoffice --headless --convert-to pdf" \
  2csv='libreoffice --headless --convert-to csv' \
+ rtf2text='soffice --headless --convert-to txt:Text' \
  pdf2doc='soffice --infilter="writer_pdf_import" --convert-to doc' \
  pdf2odt='soffice --infilter="writer_pdf_import" --convert-to odt'
 
@@ -472,6 +476,7 @@ alias \
 alias randman="apropos . | shuf -n 1 | awk '{ print \$1}' | xargs man"
 
 # yt-dlp
+# --cookies-from-browser firefox # Если качаешь NSFW контент, или если видео за авторизацией
 # --proxy socks5://127.0.0.1:12334/
 # --trim-filenames 225: Fix for "name too long" failure
 alias \

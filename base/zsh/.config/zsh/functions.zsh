@@ -182,6 +182,7 @@ lsmount() { (echo "DEVICE: PATH: TYPE: FLAGS:" && mount | awk '$2=$4="";1') | co
 
 # Перечисляет все зависимости двоичного файла от ldd -v
 # Источник: https://github.com/paulera/files/blob/master/bin/lddlist
+# usage: lddlist file
 lddlist() { ldd -v $1 | grep "=> /" | sed 's/.*=> //g' | sort | uniq | sed 's/ ([0-9a-z]\+)$//g' }
 
 # Systemd
