@@ -3,9 +3,12 @@
 # Делает все jpg картинки монохромными с чётким чёрным цветом (полезно для текста)
 # Плюс скейлит изображает и изменяет расширения на tiff
 
+# INFO: Если на выходе изображение половина закрывает чернота, изменить -level
+# с 50 на 20 или 15
+
 ls *.jpg | sed "s/\.jpg$//g;" |\
 	xargs -P 4 -I %%\
-		convert %%.jpg\
+		magick %%.jpg\
 			-filter Mitchell -resize 300%\
 			-units pixelsperinch -density 600\
 			-level 50%,70%,0.7 -monochrome\
